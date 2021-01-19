@@ -170,7 +170,8 @@ export default {
     optionssynced: {
       handler(newVal, oldVal) {
         if (!oldVal.page) return; // its just initial update, skip this to handle
-        this.crudInit();
+        if (this.options.tableoptions.serversidepagination === true)
+          this.crudInit();
       },
       deep: true,
     },

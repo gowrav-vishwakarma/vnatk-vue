@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <vnatk-crud :options="crudoptions2"> </vnatk-crud>
     <vnatk-crud :options="crudoptions">
       <template v-slot:item.email="{ item }">
         {{ "HELLOO" + " " + item.name }}<br />
@@ -61,6 +62,7 @@ export default Vue.extend({
                 attributes: ["name", "status"],
               },
             ],
+            // order: [[{ model: "City" }, "name", "ASC"]],
             // limit: 2,
           },
           headers: true,
@@ -73,6 +75,8 @@ export default Vue.extend({
             },
             mobile: {
               text: "User Mobile",
+              sortable: true,
+
               // moveto: 0,
             },
             city: {
@@ -92,10 +96,10 @@ export default Vue.extend({
           },
           serversidepagination: true, // Skip to fetch all records and do pagination and sorting on client side
           datatableoptions: {
-            groupBY: [],
+            groupBY: [["status", "name"]],
             groupDesc: [],
-            itemsPerPage: 2,
-            multiSort: false,
+            itemsPerPage: 5,
+            multiSort: true,
             mustSort: false,
             // page: 1,
             sortBy: [],
@@ -185,6 +189,10 @@ export default Vue.extend({
           },
         ],
         defaultActionPlacement: "DropDown",
+      },
+      crudoptions2: {
+        service: customer,
+        model: "City",
       },
     };
   },

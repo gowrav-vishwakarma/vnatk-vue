@@ -8,11 +8,14 @@ export default {
             var err = [];
             // check for mandatory options
             if (!options.model) err.push('"model" option not defined in crud options');
-            if (!options.tableoptions) err.push('"tableoptions" option not defined in crud options');
 
             if (err.length) return err;
             // put default mendatory options
             if (!options.basepath) options.basepath = '/crud';
+            if (!options.tableoptions) options.tableoptions = {};//err.push('"tableoptions" option not defined in crud options');
+            if (options.tableoptions.headers !== false) options.tableoptions.headers = true;
+            if (!options.allowactions) options.allowactions = true;
+            if (!options.allowadd) options.allowadd = true;
             return true;
         },
 
