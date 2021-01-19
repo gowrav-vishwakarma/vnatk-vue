@@ -1,7 +1,7 @@
 {
-  "name": "vnatkvue",
+  "name": "vnatk-vue",
   "version": "1.0.0",
-  "description": "VNATKVUE is Frontend part of VNATK (Vue Node AgileTool Kit). Making app development easy by including some best practices as integral part, yet, giving you total customization options.",
+  "description": "VNATK-VUE is Frontend part of VNATK (Vue Node AgileTool Kit). Making app development easy by including some best practices as integral part, yet, giving you total customization options.",
   "main": "dist/vnatkvue.ssr.js",
   "browser": "dist/vnatkvue.esm.js",
   "module": "dist/vnatkvue.esm.js",
@@ -44,7 +44,6 @@
     "vue-router": "^3.4.9",
     "vue-template-compiler": "^2.6.11",
     "vuetify": "^2.2.11",
-    "vuetify-form-base": "^0.3.2",
     "webpack": "^4.46.0"
   },
   "peerDependencies": {
