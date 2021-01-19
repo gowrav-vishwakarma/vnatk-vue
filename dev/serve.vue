@@ -6,8 +6,10 @@
         {{ item.email }}
       </template>
       <template v-slot:item.City.name="{ item }">
-        {{ "HELLOO" + " " + item.City.name }}<br />
-        {{ item.City.status }}
+        <div v-if="item.City">
+          {{ "HELLOO" + " " + item.City.name }}<br />
+          {{ item.City.status }}
+        </div>
       </template>
       <template v-slot:item.State.name="{ item }">
         <div v-if="item.State">
@@ -87,6 +89,17 @@ export default Vue.extend({
             vnatk_actions: {
               moveto: -1, // move to last
             },
+          },
+          serversidepagination: true, // Skip to fetch all records and do pagination and sorting on client side
+          datatableoptions: {
+            groupBY: [],
+            groupDesc: [],
+            itemsPerPage: 2,
+            multiSort: false,
+            mustSort: false,
+            page: 1,
+            sortBy: [],
+            sortDesc: [],
           },
         },
 
@@ -172,7 +185,6 @@ export default Vue.extend({
           },
         ],
         defaultActionPlacement: "DropDown",
-        pageSize: 10,
       },
     };
   },

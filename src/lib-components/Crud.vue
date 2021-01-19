@@ -2,7 +2,9 @@
   <v-data-table
     :headers="headers"
     :items="data"
-    :items-per-page="options.pageSize ? options.pageSize : 5"
+    :loading="loading"
+    :options.sync="optionssynced"
+    :server-items-length="totalRecordsCount"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -132,10 +134,13 @@ export default {
   },
   data() {
     return {
+      loading: true,
       serveroptions: {}, // Mandatory options for backend to be send every communication
       errors: [],
       headers: [],
       data: [],
+      optionssynced: {},
+      totalRecordsCount: -1, // -1 for client side pagination and record count for server side SORT AND paginations
       actions: [],
       buttonGroupActions: [], //single record actions
       dropDownActions: [], //single record actions
@@ -157,11 +162,25 @@ export default {
   },
 
   mounted() {
-    this.crudInit();
+    this.crudInit(true);
+    this.loading = false;
+  },
+
+  watch: {
+    optionssynced: {
+      handler(newVal, oldVal) {
+        if (!oldVal.page) return; // its just initial update, skip this to handle
+        this.crudInit();
+      },
+      deep: true,
+    },
   },
 
   methods: {
-    crudInit() {
+    crudInit(initialCall = false) {
+      if (initialCall) {
+        this.optionssynced = this.overrideOptionSynced();
+      }
       // check for mandatory options and fill missing default values in options in case user didn't provided
       var err = this.checkOptions(this.options);
       if (err !== true) {
@@ -170,7 +189,8 @@ export default {
       }
 
       // filter options that are needed for client side only
-      this.serveroptions = this.filterOptionsForServer(this.options);
+
+      this.serveroptions = this.filterOptionsForServer();
 
       // call initialization from server
       this.options.service
@@ -187,10 +207,13 @@ export default {
           //   handle data
           if (this.options.data !== false) {
             this.data = response.data.data ? response.data.data : [];
+            if (this.options.tableoptions.serversidepagination)
+              this.totalRecordsCount = response.data.datacount;
           }
 
           // handle actions
           if (response.data.actions) {
+            this.resetActions();
             this.actions = this.handleActionsOverrides(
               response.data.actions,
               this.options.actionsoverrides

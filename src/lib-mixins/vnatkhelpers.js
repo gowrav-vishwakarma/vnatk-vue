@@ -16,11 +16,12 @@ export default {
             return true;
         },
 
-        filterOptionsForServer: function (options) {
-            var opt = Object.assign({}, options);
+        filterOptionsForServer: function () {
+            var opt = Object.assign({}, this.options);
             if (opt.actionsoverrides) delete opt.actionsoverrides;
             if (opt.tableoptions !== undefined && opt.tableoptions.headersoverrides !== undefined) delete opt.tableoptions.headeroverrides;
-
+            // merge back datatable optionssynced back to this
+            opt.tableoptions.datatableoptions = this.optionssynced;
             return opt;
         },
 
@@ -113,6 +114,24 @@ export default {
             serviceoptions.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             return serviceoptions;
 
+        },
+
+        overrideOptionSynced() {
+            if (!this.options.tableoptions || !this.options.tableoptions.datatableoptions) return this.optionssynced;
+            return Object.assign(this.optionssynced, this.options.tableoptions.datatableoptions)
+        },
+
+        resetActions() {
+            this.actions = [];
+            this.buttonGroupActions = [];
+            this.dropDownActions = []; //single record actions
+            this.noRecordActions = []; // no record actions
+            this.multiRecordActions = []; // multirecord actions
+            this.actionUIs = {
+                norecord: [],
+                multirecords: [],
+                single: [],
+            };
         }
     }
 }
