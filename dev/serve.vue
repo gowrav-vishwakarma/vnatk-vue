@@ -97,7 +97,7 @@ export default Vue.extend({
             itemsPerPage: 2,
             multiSort: false,
             mustSort: false,
-            page: 1,
+            // page: 1,
             sortBy: [],
             sortDesc: [],
           },
