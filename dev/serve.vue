@@ -52,6 +52,7 @@ export default Vue.extend({
               "city_id",
               "mobile",
             ],
+            // include: ["City", "State"],  // to get all attributes with including
             include: [
               {
                 model: "City",
@@ -91,7 +92,7 @@ export default Vue.extend({
               // moveto: 2,
             },
             vnatk_actions: {
-              moveto: -1, // move to last
+              moveto: "last", // move to last or can use -1 , -2 for position from right
             },
           },
           serversidepagination: true, // Skip to fetch all records and do pagination and sorting on client side
@@ -193,6 +194,22 @@ export default Vue.extend({
       crudoptions2: {
         service: customer,
         model: "City",
+        autoderef: true, //default true, set false to avoid solving de-ref fields automatically, ie for city_id populate City.name field also
+        // tableoptions: {
+        //   modeloptions: {
+        //     include: ["State"],
+        //   },
+        //   headersoverrides: {
+        //     state_id: {
+        //       hide: true,
+        //     },
+        //     state: {
+        //       text: "Sates",
+        //       value: "State.name",
+        //       moveto: -1,
+        //     },
+        //   },
+        // },
       },
     };
   },

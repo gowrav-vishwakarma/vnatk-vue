@@ -230,7 +230,7 @@ export default {
 
       //   Create Form if Action has formschema and not submitting
       if (action.formschema && !submit) {
-        this.currentActionUI.action = action;
+        this.currentActionUI.action = Object.assign({}, action);
         this.currentActionUI.item = {};
 
         var editing_record = false;
@@ -244,6 +244,19 @@ export default {
         var formschema_fields = _.keys(action.formschema);
         for (let i = 0; i < formschema_fields.length; i++) {
           const fld = formschema_fields[i];
+          // remove primary and system fields if not defined explicitly in modeloptions->attributes
+          if (
+            (this.currentActionUI.action.formschema[fld].primaryKey ||
+              this.currentActionUI.action.formschema[fld].isSystem) &&
+            !_.get(
+              this.options,
+              "tableoptions.modeloptions.attributes",
+              []
+            ).includes(fld)
+          ) {
+            delete this.currentActionUI.action.formschema[fld];
+            continue;
+          }
           // load default values for non-loaded fields in case of not editing
           if (
             !editing_record &&
@@ -258,15 +271,22 @@ export default {
           if (action.formschema[fld].type == "autocomplete") {
             if (editing_record) {
               if (item[fld]) {
+                var fieldtext = _.has(item, action.formschema[fld])
+                  ? _.get(item, action.formschema[fld].titlefield)
+                  : false;
+                fieldtext =
+                  fieldtext ||
+                  (_.has(
+                    item[action.formschema[fld].association.name.singular],
+                    "name"
+                  )
+                    ? item[action.formschema[fld].association.name.singular]
+                        .name
+                    : false);
+                fieldtext = fieldtext || "" + item[fld];
                 action.formschema[fld].items = [
                   {
-                    text: _.has(action.formschema[fld], "titlefield")
-                      ? _.get(item, action.formschema[fld].titlefield)
-                      : item[action.formschema[fld].association.name.singular] //Consider Model.name ie City.name as titlefiel by default
-                          .name
-                      ? item[action.formschema[fld].association.name.singular]
-                          .name
-                      : "" + item[fld],
+                    text: fieldtext,
                     value: item[fld],
                   },
                 ];

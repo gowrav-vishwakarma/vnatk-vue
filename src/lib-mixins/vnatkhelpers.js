@@ -12,10 +12,14 @@ export default {
             if (err.length) return err;
             // put default mendatory options
             if (!options.basepath) options.basepath = '/crud';
-            if (!options.tableoptions) options.tableoptions = {};//err.push('"tableoptions" option not defined in crud options');
+            if (!options.tableoptions) options.tableoptions = {};
+            if (options.autoderef !== false) options.autoderef = true;
+            if (!options.tableoptions.modeloptions) options.tableoptions.modeloptions = {};
             if (options.tableoptions.headers !== false) options.tableoptions.headers = true;
-            if (!options.allowactions) options.allowactions = true;
-            if (!options.allowadd) options.allowadd = true;
+            if (options.allowactions !== false) options.allowactions = true;
+            if (options.allowadd !== false) options.allowadd = true;
+            if (options.allowedit !== false) options.allowedit = true;
+            if (options.allowdelete !== false) options.allowdelete = true;
             return true;
         },
 
@@ -30,6 +34,7 @@ export default {
 
         handleHeaderOverrides(serverheaders, overrideheaders) {
             if (!overrideheaders) return serverheaders;
+            // look for server sending hide 
             var finalHeaders = [...serverheaders];
 
             for (const [field, overrideObj] of Object.entries(overrideheaders)) {
@@ -46,10 +51,11 @@ export default {
                 }
                 if (_.has(overrideObj, 'moveto')) {
                     var moveto = overrideObj.moveto;
-                    if (moveto == -1) moveto = finalHeaders.length;
+                    if (moveto == 'last'.toLocaleLowerCase()) moveto = finalHeaders.length;
                     finalHeaders.splice(moveto, 0, finalHeaders.splice(i, 1)[0]);
                 }
             }
+
             return finalHeaders;
         },
 
