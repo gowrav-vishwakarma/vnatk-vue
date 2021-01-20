@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-    :headers="headers"
+    :headers="headers.filter((h) => h.hide !== false)"
     :items="data"
     :loading="loading"
     :options.sync="optionssynced"
@@ -235,7 +235,10 @@ export default {
 
         var editing_record = false;
         // For Row based actions set current item to work on
-        if (action.type == "single".toLowerCase()) {
+        if (
+          action.type == "single".toLowerCase() &&
+          action.name != "vnatk_delete"
+        ) {
           this.currentActionUI.item = Object.assign({}, item);
           editing_record = true;
         }
@@ -263,6 +266,7 @@ export default {
             action.formschema[fld].defaultValue &&
             this.currentActionUI.item[fld] == undefined
           ) {
+            console.log("setDefaultValue");
             this.currentActionUI.item[fld] =
               action.formschema[fld].defaultValue;
           }
@@ -309,7 +313,7 @@ export default {
         return action.execute(item);
       }
 
-      this.options.service
+      return this.options.service
         .post(this.options.basepath + "/executeaction", metaData)
         .then((response) => {
           const currentIndex = this.data.findIndex((p) => p.id === item.id);
@@ -320,6 +324,21 @@ export default {
           else {
             this.data.splice(currentIndex, 1);
           }
+
+          return true;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            for (let i = 0; i < error.response.data.errors.length; i++) {
+              const err = error.response.data.errors[i];
+              this.$set(
+                this.currentActionUI.action.formschema[err.path],
+                "error-messages",
+                err.message
+              );
+            }
+          }
+          return false;
         });
     },
 
@@ -373,9 +392,12 @@ export default {
       };
     },
 
-    actionUIExecute(action, item) {
-      this.executeAction(action, item, true);
-      this.actionUIClose(action, item);
+    async actionUIExecute(action, item) {
+      var response = await this.executeAction(action, item, true);
+      console.log("returned", response);
+      if (response) {
+        this.actionUIClose(action, item);
+      }
     },
 
     actionApplicable(action, item) {

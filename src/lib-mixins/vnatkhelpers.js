@@ -35,28 +35,32 @@ export default {
 
         handleHeaderOverrides(serverheaders, overrideheaders) {
             if (!overrideheaders) return serverheaders;
+            const debug = false;
             // look for server sending hide 
             var finalHeaders = [...serverheaders];
-
+            debug && console.log('serverheader', finalHeaders);
             for (const [field, overrideObj] of Object.entries(overrideheaders)) {
-                const i = finalHeaders.findIndex((p) => p.value === field);
-                if (_.has(overrideObj, 'hide')) {
-                    // look for hide
-                    finalHeaders.splice(i, 1);
-                } else if (i > -1) {
+                debug && console.log('field', field);
+                const i = finalHeaders.findIndex((p) => { debug && console.log(p, field); return p.value == field });
+                debug && console.log('found in server at', i);
+                if (i > -1) {
+                    debug && console.log('overriding', Object.assign({}, finalHeaders[i]), 'with', Object.assign({}, overrideObj));
                     // look for override
                     finalHeaders[i] = Object.assign(finalHeaders[i], overrideObj);
                 } else {
                     // add new header field
+                    debug && console.log('adding new', overrideObj);
                     finalHeaders.push(overrideObj)
                 }
                 if (_.has(overrideObj, 'moveto')) {
                     var moveto = overrideObj.moveto;
                     if (moveto == 'last'.toLocaleLowerCase()) moveto = finalHeaders.length;
+                    debug && console.log('moving to ', moveto);
+
                     finalHeaders.splice(moveto, 0, finalHeaders.splice(i, 1)[0]);
                 }
             }
-
+            debug && console.log('finally finalHeaders', finalHeaders);
             return finalHeaders;
         },
 

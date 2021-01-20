@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <vnatk-crud :options="crudoptions2"> </vnatk-crud>
+    <!-- <vnatk-crud :options="crudoptions2"> </vnatk-crud> -->
     <vnatk-crud :options="crudoptions">
       <template v-slot:item.email="{ item }">
         {{ "HELLOO" + " " + item.name }}<br />
@@ -61,7 +61,7 @@ export default Vue.extend({
               },
               {
                 model: "State",
-                attributes: ["name", "status"],
+                attributes: ["name", "status", "gst_code"],
               },
             ],
             // order: [[{ model: "City" }, "name", "ASC"]],
@@ -78,22 +78,20 @@ export default Vue.extend({
             mobile: {
               text: "User Mobile",
               sortable: true,
-
+              // value: "mobile",
               // moveto: 0,
             },
-            city: {
-              text: "City",
-              value: "City.name",
+            "City.name": {
+              // Override DeReferanced Fields (received from server due to autoderef)
+              text: "Primary City", //Overrided header caption/text
+              value: "City.name", // Value does not have effect as alrady overrided column by slot in template above
               // moveto: 2,
             },
-            state: {
-              text: "State",
-              value: "State.name",
+            "State.gst_code": {
+              text: "State GST Code",
+              value: "State.gst_code",
               sortable: true,
-              // moveto: 2,
-            },
-            vnatk_actions: {
-              moveto: "last", // move to last or can use -1 , -2 for position from right
+              moveto: 4,
             },
           },
           serversidepagination: true, // Skip to fetch all records and do pagination and sorting on client side
@@ -124,7 +122,14 @@ export default Vue.extend({
         editoptions: {
           title: "Edit User - {name}",
           modeloptions: {
-            attributes: ["name", "email", "status", "city_id", "state_id"],
+            attributes: [
+              "name",
+              "email",
+              "status",
+              "city_id",
+              "state_id",
+              "mobile",
+            ],
             include: {
               model: "City",
             },
@@ -140,6 +145,9 @@ export default Vue.extend({
             placeIn: "buttonGroup", // or "DropDown"
             // use this to merge formschema options
             formschemaoverrides: {
+              mobile: {
+                lable: "Mobile Number",
+              },
               city_id: {
                 // titlefield - only used if field is reference/association type
                 // default titlefield is considered as name
@@ -153,6 +161,9 @@ export default Vue.extend({
                   searchfield: ["name"],
                   limit: 10,
                 },
+              },
+              email: {
+                clearable: true,
               },
               // state_id: {
               //   titlefield: "State.name",
