@@ -53,6 +53,8 @@ const external = [
   // list external dependencies, exactly the way it is written in the import statement.
   // eg. 'jquery'
   'vue',
+  'vuetify',
+  'vuetify-form-base'
 ];
 
 // UMD/IIFE shared settings: output.globals

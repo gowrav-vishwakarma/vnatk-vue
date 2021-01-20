@@ -1,11 +1,21 @@
 {
-  "name": "vnatkvue",
-  "version": "1.0.0",
-  "description": "VNATKVUE is Frontend part of VNATK (Vue Node AgileTool Kit). Making app development easy by including some best practices as integral part, yet, giving you total customization options.",
+  "name": "vnatk-vue",
+  "version": "0.0.1",
+  "description": "VNATK-VUE is Frontend part of VNATK (Vue Node AgileTool Kit). Making app development easy by including some best practices as integral part, yet, giving you total customization options.",
   "main": "dist/vnatkvue.ssr.js",
   "browser": "dist/vnatkvue.esm.js",
   "module": "dist/vnatkvue.esm.js",
   "unpkg": "dist/vnatkvue.min.js",
+  "contributors": [
+    "Gowrav Vishwakarma <gowravvishwakarma@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "vue",
+    "vuetify",
+    "crud",
+    "RAD"
+  ],
   "files": [
     "dist/*",
     "src/**/*.vue"
@@ -17,7 +27,9 @@
     "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
-  "dependencies": {},
+  "dependencies": {
+    "vuetify-form-base": "^0.3.2"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.5",
@@ -44,7 +56,6 @@
     "vue-router": "^3.4.9",
     "vue-template-compiler": "^2.6.11",
     "vuetify": "^2.2.11",
-    "vuetify-form-base": "^0.3.2",
     "webpack": "^4.46.0"
   },
   "peerDependencies": {

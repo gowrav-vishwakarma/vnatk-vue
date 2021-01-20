@@ -2,7 +2,9 @@
   <v-data-table
     :headers="headers"
     :items="data"
-    :items-per-page="options.pageSize ? options.pageSize : 5"
+    :loading="loading"
+    :options.sync="optionssynced"
+    :server-items-length="totalRecordsCount"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -16,7 +18,7 @@
         {{ err }}
       </v-alert>
       <v-toolbar flat>
-        <v-toolbar-title>{{ options.dataheading }}</v-toolbar-title>
+        <v-toolbar-title>{{ options.title }}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <span v-for="(action, index) in actionUIs.norecord" :key="index">
@@ -132,10 +134,13 @@ export default {
   },
   data() {
     return {
+      loading: true,
       serveroptions: {}, // Mandatory options for backend to be send every communication
       errors: [],
       headers: [],
       data: [],
+      optionssynced: {},
+      totalRecordsCount: -1, // -1 for client side pagination and record count for server side SORT AND paginations
       actions: [],
       buttonGroupActions: [], //single record actions
       dropDownActions: [], //single record actions
@@ -157,11 +162,26 @@ export default {
   },
 
   mounted() {
-    this.crudInit();
+    this.crudInit(true);
+    this.loading = false;
+  },
+
+  watch: {
+    optionssynced: {
+      handler(newVal, oldVal) {
+        if (!oldVal.page) return; // its just initial update, skip this to handle
+        if (this.options.tableoptions.serversidepagination === true)
+          this.crudInit();
+      },
+      deep: true,
+    },
   },
 
   methods: {
-    crudInit() {
+    crudInit(initialCall = false) {
+      if (initialCall) {
+        this.optionssynced = this.overrideOptionSynced();
+      }
       // check for mandatory options and fill missing default values in options in case user didn't provided
       var err = this.checkOptions(this.options);
       if (err !== true) {
@@ -170,7 +190,8 @@ export default {
       }
 
       // filter options that are needed for client side only
-      this.serveroptions = this.filterOptionsForServer(this.options);
+
+      this.serveroptions = this.filterOptionsForServer();
 
       // call initialization from server
       this.options.service
@@ -187,10 +208,13 @@ export default {
           //   handle data
           if (this.options.data !== false) {
             this.data = response.data.data ? response.data.data : [];
+            if (this.options.tableoptions.serversidepagination)
+              this.totalRecordsCount = response.data.datacount;
           }
 
           // handle actions
           if (response.data.actions) {
+            this.resetActions();
             this.actions = this.handleActionsOverrides(
               response.data.actions,
               this.options.actionsoverrides
@@ -206,7 +230,7 @@ export default {
 
       //   Create Form if Action has formschema and not submitting
       if (action.formschema && !submit) {
-        this.currentActionUI.action = action;
+        this.currentActionUI.action = Object.assign({}, action);
         this.currentActionUI.item = {};
 
         var editing_record = false;
@@ -220,6 +244,19 @@ export default {
         var formschema_fields = _.keys(action.formschema);
         for (let i = 0; i < formschema_fields.length; i++) {
           const fld = formschema_fields[i];
+          // remove primary and system fields if not defined explicitly in modeloptions->attributes
+          if (
+            (this.currentActionUI.action.formschema[fld].primaryKey ||
+              this.currentActionUI.action.formschema[fld].isSystem) &&
+            !_.get(
+              this.options,
+              "tableoptions.modeloptions.attributes",
+              []
+            ).includes(fld)
+          ) {
+            delete this.currentActionUI.action.formschema[fld];
+            continue;
+          }
           // load default values for non-loaded fields in case of not editing
           if (
             !editing_record &&
@@ -234,15 +271,22 @@ export default {
           if (action.formschema[fld].type == "autocomplete") {
             if (editing_record) {
               if (item[fld]) {
+                var fieldtext = _.has(item, action.formschema[fld])
+                  ? _.get(item, action.formschema[fld].titlefield)
+                  : false;
+                fieldtext =
+                  fieldtext ||
+                  (_.has(
+                    item[action.formschema[fld].association.name.singular],
+                    "name"
+                  )
+                    ? item[action.formschema[fld].association.name.singular]
+                        .name
+                    : false);
+                fieldtext = fieldtext || "" + item[fld];
                 action.formschema[fld].items = [
                   {
-                    text: _.has(action.formschema[fld], "titlefield")
-                      ? _.get(item, action.formschema[fld].titlefield)
-                      : item[action.formschema[fld].association.name.singular] //Consider Model.name ie City.name as titlefiel by default
-                          .name
-                      ? item[action.formschema[fld].association.name.singular]
-                          .name
-                      : "" + item[fld],
+                    text: fieldtext,
                     value: item[fld],
                   },
                 ];

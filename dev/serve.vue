@@ -1,13 +1,16 @@
 <template>
   <v-app>
+    <vnatk-crud :options="crudoptions2"> </vnatk-crud>
     <vnatk-crud :options="crudoptions">
       <template v-slot:item.email="{ item }">
         {{ "HELLOO" + " " + item.name }}<br />
         {{ item.email }}
       </template>
       <template v-slot:item.City.name="{ item }">
-        {{ "HELLOO" + " " + item.City.name }}<br />
-        {{ item.City.status }}
+        <div v-if="item.City">
+          {{ "HELLOO" + " " + item.City.name }}<br />
+          {{ item.City.status }}
+        </div>
       </template>
       <template v-slot:item.State.name="{ item }">
         <div v-if="item.State">
@@ -37,6 +40,7 @@ export default Vue.extend({
         service: customer,
         basepath: "/crud", // vnatk service base path, default "/crud"
         model: "User",
+        title: "Users",
 
         tableoptions: {
           title: "Users Management",
@@ -49,6 +53,7 @@ export default Vue.extend({
               "city_id",
               "mobile",
             ],
+            // include: ["City", "State"],  // to get all attributes with including
             include: [
               {
                 model: "City",
@@ -59,6 +64,7 @@ export default Vue.extend({
                 attributes: ["name", "status"],
               },
             ],
+            // order: [[{ model: "City" }, "name", "ASC"]],
             // limit: 2,
           },
           headers: true,
@@ -71,6 +77,8 @@ export default Vue.extend({
             },
             mobile: {
               text: "User Mobile",
+              sortable: true,
+
               // moveto: 0,
             },
             city: {
@@ -85,8 +93,19 @@ export default Vue.extend({
               // moveto: 2,
             },
             vnatk_actions: {
-              moveto: -1, // move to last
+              moveto: "last", // move to last or can use -1 , -2 for position from right
             },
+          },
+          serversidepagination: true, // Skip to fetch all records and do pagination and sorting on client side
+          datatableoptions: {
+            groupBY: [["status", "name"]],
+            groupDesc: [],
+            itemsPerPage: 5,
+            multiSort: true,
+            mustSort: false,
+            // page: 1,
+            sortBy: [],
+            sortDesc: [],
           },
         },
 
@@ -172,7 +191,26 @@ export default Vue.extend({
           },
         ],
         defaultActionPlacement: "DropDown",
-        pageSize: 10,
+      },
+      crudoptions2: {
+        service: customer,
+        model: "City",
+        autoderef: true, //default true, set false to avoid solving de-ref fields automatically, ie for city_id populate City.name field also
+        // tableoptions: {
+        //   modeloptions: {
+        //     include: ["State"],
+        //   },
+        //   headersoverrides: {
+        //     state_id: {
+        //       hide: true,
+        //     },
+        //     state: {
+        //       text: "Sates",
+        //       value: "State.name",
+        //       moveto: -1,
+        //     },
+        //   },
+        // },
       },
     };
   },

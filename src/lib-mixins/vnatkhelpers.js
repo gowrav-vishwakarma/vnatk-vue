@@ -8,24 +8,34 @@ export default {
             var err = [];
             // check for mandatory options
             if (!options.model) err.push('"model" option not defined in crud options');
-            if (!options.tableoptions) err.push('"tableoptions" option not defined in crud options');
 
             if (err.length) return err;
             // put default mendatory options
             if (!options.basepath) options.basepath = '/crud';
+            if (!options.title) options.title = options.model;
+            if (!options.tableoptions) options.tableoptions = {};
+            if (options.autoderef !== false) options.autoderef = true;
+            if (!options.tableoptions.modeloptions) options.tableoptions.modeloptions = {};
+            if (options.tableoptions.headers !== false) options.tableoptions.headers = true;
+            if (options.allowactions !== false) options.allowactions = true;
+            if (options.allowadd !== false) options.allowadd = true;
+            if (options.allowedit !== false) options.allowedit = true;
+            if (options.allowdelete !== false) options.allowdelete = true;
             return true;
         },
 
-        filterOptionsForServer: function (options) {
-            var opt = Object.assign({}, options);
+        filterOptionsForServer: function () {
+            var opt = Object.assign({}, this.options);
             if (opt.actionsoverrides) delete opt.actionsoverrides;
             if (opt.tableoptions !== undefined && opt.tableoptions.headersoverrides !== undefined) delete opt.tableoptions.headeroverrides;
-
+            // merge back datatable optionssynced back to this
+            opt.tableoptions.datatableoptions = this.optionssynced;
             return opt;
         },
 
         handleHeaderOverrides(serverheaders, overrideheaders) {
             if (!overrideheaders) return serverheaders;
+            // look for server sending hide 
             var finalHeaders = [...serverheaders];
 
             for (const [field, overrideObj] of Object.entries(overrideheaders)) {
@@ -42,10 +52,11 @@ export default {
                 }
                 if (_.has(overrideObj, 'moveto')) {
                     var moveto = overrideObj.moveto;
-                    if (moveto == -1) moveto = finalHeaders.length;
+                    if (moveto == 'last'.toLocaleLowerCase()) moveto = finalHeaders.length;
                     finalHeaders.splice(moveto, 0, finalHeaders.splice(i, 1)[0]);
                 }
             }
+
             return finalHeaders;
         },
 
@@ -113,6 +124,24 @@ export default {
             serviceoptions.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             return serviceoptions;
 
+        },
+
+        overrideOptionSynced() {
+            if (!this.options.tableoptions || !this.options.tableoptions.datatableoptions) return this.optionssynced;
+            return Object.assign(this.optionssynced, this.options.tableoptions.datatableoptions)
+        },
+
+        resetActions() {
+            this.actions = [];
+            this.buttonGroupActions = [];
+            this.dropDownActions = []; //single record actions
+            this.noRecordActions = []; // no record actions
+            this.multiRecordActions = []; // multirecord actions
+            this.actionUIs = {
+                norecord: [],
+                multirecords: [],
+                single: [],
+            };
         }
     }
 }
