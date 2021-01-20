@@ -18,7 +18,7 @@
         {{ err }}
       </v-alert>
       <v-toolbar flat>
-        <v-toolbar-title>{{ options.dataheading }}</v-toolbar-title>
+        <v-toolbar-title>{{ options.title }}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <span v-for="(action, index) in actionUIs.norecord" :key="index">

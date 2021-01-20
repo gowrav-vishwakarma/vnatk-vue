@@ -40,6 +40,7 @@ export default Vue.extend({
         service: customer,
         basepath: "/crud", // vnatk service base path, default "/crud"
         model: "User",
+        title: "Users",
 
         tableoptions: {
           title: "Users Management",

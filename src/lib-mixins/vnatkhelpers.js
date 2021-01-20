@@ -12,6 +12,7 @@ export default {
             if (err.length) return err;
             // put default mendatory options
             if (!options.basepath) options.basepath = '/crud';
+            if (!options.title) options.title = options.model;
             if (!options.tableoptions) options.tableoptions = {};
             if (options.autoderef !== false) options.autoderef = true;
             if (!options.tableoptions.modeloptions) options.tableoptions.modeloptions = {};
