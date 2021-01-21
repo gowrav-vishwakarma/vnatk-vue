@@ -1,8 +1,10 @@
 <template>
   <v-data-table
-    :headers="headers"
+    :headers="headers.filter((h) => h.hide !== false)"
     :items="data"
-    :items-per-page="options.pageSize ? options.pageSize : 5"
+    :loading="loading"
+    :options.sync="optionssynced"
+    :server-items-length="totalRecordsCount"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -16,7 +18,7 @@
         {{ err }}
       </v-alert>
       <v-toolbar flat>
-        <v-toolbar-title>{{ options.dataheading }}</v-toolbar-title>
+        <v-toolbar-title>{{ options.title }}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <span v-for="(action, index) in actionUIs.norecord" :key="index">
@@ -47,13 +49,22 @@
 
             <v-card-text>
               <v-container>
-                <v-form>
+                <v-form ref="currentActionUIForm">
                   <v-form-base
                     :model="currentActionUI.item"
                     :schema="currentActionUI.action.formschema"
                     :col="6"
                   />
                 </v-form>
+                <v-alert
+                  border="top"
+                  color="red lighten-2"
+                  dark
+                  v-for="(err, i) in currentActionUI.errors"
+                  :key="i"
+                >
+                  {{ err }}
+                </v-alert>
               </v-container>
             </v-card-text>
             <v-card-actions>
@@ -132,10 +143,13 @@ export default {
   },
   data() {
     return {
+      loading: true,
       serveroptions: {}, // Mandatory options for backend to be send every communication
       errors: [],
       headers: [],
       data: [],
+      optionssynced: {},
+      totalRecordsCount: -1, // -1 for client side pagination and record count for server side SORT AND paginations
       actions: [],
       buttonGroupActions: [], //single record actions
       dropDownActions: [], //single record actions
@@ -152,16 +166,32 @@ export default {
         action: {},
         item: {},
         autocompletesUnWacthers: [],
+        errors: [],
       },
     };
   },
 
   mounted() {
-    this.crudInit();
+    this.crudInit(true);
+    this.loading = false;
+  },
+
+  watch: {
+    optionssynced: {
+      handler(newVal, oldVal) {
+        if (!oldVal.page) return; // its just initial update, skip this to handle
+        if (this.options.tableoptions.serversidepagination === true)
+          this.crudInit();
+      },
+      deep: true,
+    },
   },
 
   methods: {
-    crudInit() {
+    crudInit(initialCall = false) {
+      if (initialCall) {
+        this.optionssynced = this.overrideOptionSynced();
+      }
       // check for mandatory options and fill missing default values in options in case user didn't provided
       var err = this.checkOptions(this.options);
       if (err !== true) {
@@ -170,7 +200,8 @@ export default {
       }
 
       // filter options that are needed for client side only
-      this.serveroptions = this.filterOptionsForServer(this.options);
+
+      this.serveroptions = this.filterOptionsForServer();
 
       // call initialization from server
       this.options.service
@@ -187,11 +218,14 @@ export default {
           //   handle data
           if (this.options.data !== false) {
             this.data = response.data.data ? response.data.data : [];
+            if (this.options.tableoptions.serversidepagination)
+              this.totalRecordsCount = response.data.datacount;
           }
 
           // handle actions
           if (response.data.actions) {
-            this.actions = this.handleActionsOverrides(
+            this.resetActions();
+            this.actions = this.handleActionsOverridesAndValidations(
               response.data.actions,
               this.options.actionsoverrides
             );
@@ -205,67 +239,103 @@ export default {
       metaData["arg_item"] = item;
 
       //   Create Form if Action has formschema and not submitting
-      if (action.formschema && !submit) {
-        this.currentActionUI.action = action;
-        this.currentActionUI.item = {};
+      if (action.formschema) {
+        // remove all error messages to get fresh errors if still persists
+        action.formschema = JSON.parse(
+          JSON.stringify(action.formschema, (k, v) =>
+            k === "error-messages" ? undefined : v
+          )
+        );
 
-        var editing_record = false;
-        // For Row based actions set current item to work on
-        if (action.type == "single".toLowerCase()) {
-          this.currentActionUI.item = Object.assign({}, item);
-          editing_record = true;
-        }
+        if (!submit) {
+          this.currentActionUI.action = JSON.parse(JSON.stringify(action));
 
-        // lets loop through all fields in formschemas
-        var formschema_fields = _.keys(action.formschema);
-        for (let i = 0; i < formschema_fields.length; i++) {
-          const fld = formschema_fields[i];
-          // load default values for non-loaded fields in case of not editing
+          this.currentActionUI.item = {};
+
+          var editing_record = false;
+          // For Row based actions set current item to work on
           if (
-            !editing_record &&
-            action.formschema[fld].defaultValue &&
-            this.currentActionUI.item[fld] == undefined
+            action.type == "single".toLowerCase() &&
+            action.name != "vnatk_delete"
           ) {
-            this.currentActionUI.item[fld] =
-              action.formschema[fld].defaultValue;
+            this.currentActionUI.item = Object.assign({}, item);
+            editing_record = true;
           }
 
-          // setup prefiled values for autocomplete value:text in case of editing
-          if (action.formschema[fld].type == "autocomplete") {
-            if (editing_record) {
-              if (item[fld]) {
-                action.formschema[fld].items = [
-                  {
-                    text: _.has(action.formschema[fld], "titlefield")
-                      ? _.get(item, action.formschema[fld].titlefield)
-                      : item[action.formschema[fld].association.name.singular] //Consider Model.name ie City.name as titlefiel by default
-                          .name
-                      ? item[action.formschema[fld].association.name.singular]
-                          .name
-                      : "" + item[fld],
-                    value: item[fld],
-                  },
-                ];
-              }
+          // lets loop through all fields in formschemas
+          var formschema_fields = _.keys(action.formschema);
+          for (let i = 0; i < formschema_fields.length; i++) {
+            const fld = formschema_fields[i];
+            // remove primary and system fields if not defined explicitly in modeloptions->attributes
+            if (
+              (this.currentActionUI.action.formschema[fld].primaryKey ||
+                this.currentActionUI.action.formschema[fld].isSystem) &&
+              !_.get(
+                this.options,
+                "tableoptions.modeloptions.attributes",
+                []
+              ).includes(fld)
+            ) {
+              delete this.currentActionUI.action.formschema[fld];
+              continue;
+            }
+            // load default values for non-loaded fields in case of not editing
+            if (
+              !editing_record &&
+              action.formschema[fld].defaultValue &&
+              this.currentActionUI.item[fld] == undefined
+            ) {
+              this.currentActionUI.item[fld] =
+                action.formschema[fld].defaultValue;
             }
 
-            var unwatch = this.$watch(
-              "currentActionUI.action.formschema." + fld + ".searchInput",
-              this.handleAutoCompletes
-            );
-            this.currentActionUI.autocompletesUnWacthers.push(unwatch);
+            // setup prefiled values for autocomplete value:text in case of editing
+            if (action.formschema[fld].type == "autocomplete") {
+              if (editing_record) {
+                if (item[fld]) {
+                  var fieldtext = _.has(item, action.formschema[fld])
+                    ? _.get(item, action.formschema[fld].titlefield)
+                    : false;
+                  fieldtext =
+                    fieldtext ||
+                    (_.has(
+                      item[action.formschema[fld].association.name.singular],
+                      "name"
+                    )
+                      ? item[action.formschema[fld].association.name.singular]
+                          .name
+                      : false);
+                  fieldtext = fieldtext || "" + item[fld];
+                  action.formschema[fld].items = [
+                    {
+                      text: fieldtext,
+                      value: item[fld],
+                    },
+                  ];
+                }
+              }
+
+              var unwatch = this.$watch(
+                "currentActionUI.action.formschema." + fld + ".searchInput",
+                this.handleAutoCompletes
+              );
+              this.currentActionUI.autocompletesUnWacthers.push(unwatch);
+            }
           }
+          this.currentActionUI.open = true;
+          // Just keep yourself to show form .... do not go further... thats execute action code
+          return;
+        } else {
+          // Form is being submitted
+          metaData["formdata"] = this.currentActionUI.item;
         }
-        this.currentActionUI.open = true;
-        // Just keep yourself to show form .... do not go further... thats execute action code
-        return;
       }
 
       if (action.isClientAction) {
         return action.execute(item);
       }
 
-      this.options.service
+      return this.options.service
         .post(this.options.basepath + "/executeaction", metaData)
         .then((response) => {
           const currentIndex = this.data.findIndex((p) => p.id === item.id);
@@ -276,6 +346,40 @@ export default {
           else {
             this.data.splice(currentIndex, 1);
           }
+
+          return true;
+        })
+        .catch((error) => {
+          if (error.response.status == 422) {
+            for (let i = 0; i < error.response.data.errors.length; i++) {
+              const err = error.response.data.errors[i];
+              if (_.has(this.currentActionUI.action.formschema, err.path)) {
+                this.$set(
+                  this.currentActionUI.action.formschema[err.path],
+                  "error-messages",
+                  err.message
+                );
+              } else {
+                // NO FIELD FOUND, JUST PUSH ERROR IN COMMOON ERROR AREA
+                this.currentActionUI.errors.push(
+                  err.path + " : " + err.message
+                );
+              }
+            }
+          }
+
+          // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
+          if (
+            error.response.status == 500 &&
+            _.has(error.response.data, "name")
+          ) {
+            this.currentActionUI.errors.push(
+              error.response.data.original.code +
+                " : " +
+                error.response.data.original.sqlMessage
+            );
+          }
+          return false;
         });
     },
 
@@ -326,12 +430,15 @@ export default {
         action: {},
         item: {},
         autocompletesUnWacthers: [],
+        errors: [],
       };
     },
 
-    actionUIExecute(action, item) {
-      this.executeAction(action, item, true);
-      this.actionUIClose(action, item);
+    async actionUIExecute(action, item) {
+      var response = await this.executeAction(action, item, true);
+      if (response) {
+        this.actionUIClose(action, item);
+      }
     },
 
     actionApplicable(action, item) {
