@@ -49,13 +49,22 @@
 
             <v-card-text>
               <v-container>
-                <v-form>
+                <v-form ref="currentActionUIForm">
                   <v-form-base
                     :model="currentActionUI.item"
                     :schema="currentActionUI.action.formschema"
                     :col="6"
                   />
                 </v-form>
+                <v-alert
+                  border="top"
+                  color="red lighten-2"
+                  dark
+                  v-for="(err, i) in currentActionUI.errors"
+                  :key="i"
+                >
+                  {{ err }}
+                </v-alert>
               </v-container>
             </v-card-text>
             <v-card-actions>
@@ -157,6 +166,7 @@ export default {
         action: {},
         item: {},
         autocompletesUnWacthers: [],
+        errors: [],
       },
     };
   },
@@ -215,7 +225,7 @@ export default {
           // handle actions
           if (response.data.actions) {
             this.resetActions();
-            this.actions = this.handleActionsOverrides(
+            this.actions = this.handleActionsOverridesAndValidations(
               response.data.actions,
               this.options.actionsoverrides
             );
@@ -229,84 +239,93 @@ export default {
       metaData["arg_item"] = item;
 
       //   Create Form if Action has formschema and not submitting
-      if (action.formschema && !submit) {
-        this.currentActionUI.action = Object.assign({}, action);
-        this.currentActionUI.item = {};
+      if (action.formschema) {
+        // remove all error messages to get fresh errors if still persists
+        action.formschema = JSON.parse(
+          JSON.stringify(action.formschema, (k, v) =>
+            k === "error-messages" ? undefined : v
+          )
+        );
 
-        var editing_record = false;
-        // For Row based actions set current item to work on
-        if (
-          action.type == "single".toLowerCase() &&
-          action.name != "vnatk_delete"
-        ) {
-          this.currentActionUI.item = Object.assign({}, item);
-          editing_record = true;
-        }
+        if (!submit) {
+          this.currentActionUI.action = JSON.parse(JSON.stringify(action));
 
-        // lets loop through all fields in formschemas
-        var formschema_fields = _.keys(action.formschema);
-        for (let i = 0; i < formschema_fields.length; i++) {
-          const fld = formschema_fields[i];
-          // remove primary and system fields if not defined explicitly in modeloptions->attributes
+          this.currentActionUI.item = {};
+
+          var editing_record = false;
+          // For Row based actions set current item to work on
           if (
-            (this.currentActionUI.action.formschema[fld].primaryKey ||
-              this.currentActionUI.action.formschema[fld].isSystem) &&
-            !_.get(
-              this.options,
-              "tableoptions.modeloptions.attributes",
-              []
-            ).includes(fld)
+            action.type == "single".toLowerCase() &&
+            action.name != "vnatk_delete"
           ) {
-            delete this.currentActionUI.action.formschema[fld];
-            continue;
-          }
-          // load default values for non-loaded fields in case of not editing
-          if (
-            !editing_record &&
-            action.formschema[fld].defaultValue &&
-            this.currentActionUI.item[fld] == undefined
-          ) {
-            console.log("setDefaultValue");
-            this.currentActionUI.item[fld] =
-              action.formschema[fld].defaultValue;
+            this.currentActionUI.item = Object.assign({}, item);
+            editing_record = true;
           }
 
-          // setup prefiled values for autocomplete value:text in case of editing
-          if (action.formschema[fld].type == "autocomplete") {
-            if (editing_record) {
-              if (item[fld]) {
-                var fieldtext = _.has(item, action.formschema[fld])
-                  ? _.get(item, action.formschema[fld].titlefield)
-                  : false;
-                fieldtext =
-                  fieldtext ||
-                  (_.has(
-                    item[action.formschema[fld].association.name.singular],
-                    "name"
-                  )
-                    ? item[action.formschema[fld].association.name.singular]
-                        .name
-                    : false);
-                fieldtext = fieldtext || "" + item[fld];
-                action.formschema[fld].items = [
-                  {
-                    text: fieldtext,
-                    value: item[fld],
-                  },
-                ];
-              }
+          // lets loop through all fields in formschemas
+          var formschema_fields = _.keys(action.formschema);
+          for (let i = 0; i < formschema_fields.length; i++) {
+            const fld = formschema_fields[i];
+            // remove primary and system fields if not defined explicitly in modeloptions->attributes
+            if (
+              (this.currentActionUI.action.formschema[fld].primaryKey ||
+                this.currentActionUI.action.formschema[fld].isSystem) &&
+              !_.get(
+                this.options,
+                "tableoptions.modeloptions.attributes",
+                []
+              ).includes(fld)
+            ) {
+              delete this.currentActionUI.action.formschema[fld];
+              continue;
+            }
+            // load default values for non-loaded fields in case of not editing
+            if (
+              !editing_record &&
+              action.formschema[fld].defaultValue &&
+              this.currentActionUI.item[fld] == undefined
+            ) {
+              this.currentActionUI.item[fld] =
+                action.formschema[fld].defaultValue;
             }
 
-            var unwatch = this.$watch(
-              "currentActionUI.action.formschema." + fld + ".searchInput",
-              this.handleAutoCompletes
-            );
-            this.currentActionUI.autocompletesUnWacthers.push(unwatch);
+            // setup prefiled values for autocomplete value:text in case of editing
+            if (action.formschema[fld].type == "autocomplete") {
+              if (editing_record) {
+                if (item[fld]) {
+                  var fieldtext = _.has(item, action.formschema[fld])
+                    ? _.get(item, action.formschema[fld].titlefield)
+                    : false;
+                  fieldtext =
+                    fieldtext ||
+                    (_.has(
+                      item[action.formschema[fld].association.name.singular],
+                      "name"
+                    )
+                      ? item[action.formschema[fld].association.name.singular]
+                          .name
+                      : false);
+                  fieldtext = fieldtext || "" + item[fld];
+                  action.formschema[fld].items = [
+                    {
+                      text: fieldtext,
+                      value: item[fld],
+                    },
+                  ];
+                }
+              }
+
+              var unwatch = this.$watch(
+                "currentActionUI.action.formschema." + fld + ".searchInput",
+                this.handleAutoCompletes
+              );
+              this.currentActionUI.autocompletesUnWacthers.push(unwatch);
+            }
           }
+          this.currentActionUI.open = true;
+          // Just keep yourself to show form .... do not go further... thats execute action code
+          return;
         }
-        this.currentActionUI.open = true;
-        // Just keep yourself to show form .... do not go further... thats execute action code
-        return;
       }
 
       if (action.isClientAction) {
@@ -331,12 +350,31 @@ export default {
           if (error.response.status == 422) {
             for (let i = 0; i < error.response.data.errors.length; i++) {
               const err = error.response.data.errors[i];
-              this.$set(
-                this.currentActionUI.action.formschema[err.path],
-                "error-messages",
-                err.message
-              );
+              if (_.has(this.currentActionUI.action.formschema, err.path)) {
+                this.$set(
+                  this.currentActionUI.action.formschema[err.path],
+                  "error-messages",
+                  err.message
+                );
+              } else {
+                // NO FIELD FOUND, JUST PUSH ERROR IN COMMOON ERROR AREA
+                this.currentActionUI.errors.push(
+                  err.path + " : " + err.message
+                );
+              }
             }
+          }
+
+          // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
+          if (
+            error.response.status == 500 &&
+            _.has(error.response.data, "name")
+          ) {
+            this.currentActionUI.errors.push(
+              error.response.data.original.code +
+                " : " +
+                error.response.data.original.sqlMessage
+            );
           }
           return false;
         });
@@ -389,12 +427,12 @@ export default {
         action: {},
         item: {},
         autocompletesUnWacthers: [],
+        errors: [],
       };
     },
 
     async actionUIExecute(action, item) {
       var response = await this.executeAction(action, item, true);
-      console.log("returned", response);
       if (response) {
         this.actionUIClose(action, item);
       }

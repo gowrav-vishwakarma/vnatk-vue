@@ -2,6 +2,7 @@ import Vue from "vue";
 
 import _ from "lodash";
 
+
 export default {
     methods: {
         checkOptions: function (options) {
@@ -64,7 +65,10 @@ export default {
             return finalHeaders;
         },
 
-        handleActionsOverrides(serveractions, overrideactions) {
+
+
+        handleActionsOverridesAndValidations(serveractions, overrideactions) {
+            // TODO Convert serverside validations to client side 
             if (!overrideactions) return serveractions;
             var finalActions = [...serveractions];
 

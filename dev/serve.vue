@@ -146,7 +146,7 @@ export default Vue.extend({
             // use this to merge formschema options
             formschemaoverrides: {
               mobile: {
-                lable: "Mobile Number",
+                label: "Mobile Number",
               },
               city_id: {
                 // titlefield - only used if field is reference/association type
