@@ -1,6 +1,6 @@
 <template>
   <v-data-table
-    :headers="headers.filter((h) => h.hide !== false)"
+    :headers="headers.filter((h) => !h.hide)"
     :items="data"
     :loading="loading"
     :options.sync="optionssynced"
