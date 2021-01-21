@@ -25,7 +25,7 @@
 import { VnatkCrud } from "@/entry";
 import customer from "./services/customer";
 
-export default Vue.extend({
+export default {
   name: "ServeDev",
   components: {
     VnatkCrud,
@@ -228,5 +228,5 @@ export default Vue.extend({
       console.log("CLIENT FUNCTION CALLED with item", item);
     },
   },
-});
+};
 </script>
