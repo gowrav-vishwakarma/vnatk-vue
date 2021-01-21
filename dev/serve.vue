@@ -1,17 +1,22 @@
 <template>
   <v-app>
-    <simple-example />
+    <h1>Example 1</h1>
+    <example1 />
+    <h1>Example 2</h1>
+    <example2 />
   </v-app>
 </template>
 
 <script>
 import Vue from "vue";
-import SimpleExample from "./simple-example.vue";
+import Example1 from "./example1.vue";
+import Example2 from "./example2.vue";
 
 export default Vue.extend({
   name: "ServeDev",
   components: {
-    SimpleExample,
+    Example1,
+    Example2,
   },
 });
 </script>
