@@ -48,23 +48,23 @@ lets create express app (Server/service) from scratch, you are welcome to use an
 #install express-generator globally, its easy to do setup with this
 $yourProjectRoot> npm install -g express-generator
 ...
-$yourProjectRoot>express server --no-view
+$yourProjectRoot> express server --no-view
 ...
 #lets check if a folder with server name created or not
-$yourProjectRoot>ls
+$yourProjectRoot> ls
 server
 
 #a default structure is also created in this folder
-$yourProjectRoot>ls server
+$yourProjectRoot> ls server
 app.js       package.json routes    bin          public
 
-$yourProjectRoot>cd server
+$yourProjectRoot> cd server
 
 #lets install basic things setup by express-generator
-$yourProjectRoot>npm install
+$yourProjectRoot/server> npm install
 
 #install our dependencies now
-$yourProjectRoot>npm install --save bcrypt body-parser cookie-parser express-handlebars jsonwebtoken morgan cors dotenv lodash mysql2 sequelize vnatk-express-sequelize
+$yourProjectRoot/server> npm install --save bcrypt body-parser cookie-parser express-handlebars jsonwebtoken morgan cors dotenv lodash mysql2 sequelize vnatk-express-sequelize
 
 ### If required vnatk-express-sequelize can be installed in existing express seuelize setup also with very ease
 
@@ -112,6 +112,7 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       // define association here
+      // THAT FILE'S CODE IS NOT PASTED HERE. 
       User.belongsTo(models.City, { foreignKey: 'city_id' });
       User.belongsTo(models.State, { foreignKey: 'state_id' });
 
@@ -262,7 +263,121 @@ module.exports = (sequelize, DataTypes) => {
 
 Pretimuch thats it... let's setup Vue frontend now
 
-## Step2: setup Vuetify app
+## Step 2: setup Vuetify app
+
+You can add the system in existing Vue app also as long as you are already using ```Vuetify```
+
+Considering we are in "Your Project Root Folder"
+
+lets create express app (Server/service) from scratch, you are welcome to use any other way or manual if you know what you are doing
+
+```bash
+# just be sure you are in root of your project
+$yourProjectRoot> ls
+server
+
+#install vue-cli globally if not installed 
+$yourProjectRoot> npm install -g @vue/cli
+$yourProjectRoot> vue create client
+#follow wizard, I preferred default for beginners
+
+$yourProjectRoot> ls
+client  server
+
+$yourProjectRoot> cd client
+$yourProjectRoot/client> vue add vuetify
+# I prefer defaults for now
+
+#to make better use of views etc just add router
+$yourProjectRoot/client> vue add router
+
+$yourProjectRoot/client> npm install --save material-design-icons-iconfont axios vuetify-form-base vnatk-vue
+```
+
+### Step 2.1: setup VNATK-VUE
+
+We are all set to use our system with defined model as in Back
+
+First we need to update ```plugins/vuetify.js``` file as per given code
+
+```javascript
+import Vue from 'vue';
+// import Vuetify from 'vuetify/lib/framework';
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import 'vuetify/dist/vuetify.min.css'
+import Vuetify from "vuetify";
+// import { Ripple, Intersect, Touch, Resize } from "vuetify/lib/directives";
+
+Vue.use(Vuetify, {
+    iconfont: 'md',
+});
+
+export default new Vuetify({
+});
+```
+
+Also the default setup does not usage ```v-app``` from vuetify but just a div in ```src/App.vue```. Lets edit that file also like following
+
+```vue
+<template>
+<!-- this below v-app was div in starting -->
+  <v-app id="app"> 
+    <div id="nav">
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </div>
+    <router-view />
+  </v-app>
+</template>
+
+```
+### Step2.2: setup services
 
 
+To connect our service/server lets create a folder ```services``` in your project ```src``` folder. Considering server/service we created in express is for customers lets create afile ```customer.js``` in services folder and place the following code there
 
+```js
+import axios from "axios";
+// import store from "../store";
+//import mock_api from "@/services/mock_customer";
+
+const api = axios.create({
+  baseURL: process.env.VUE_APP_BASE_URL_CUSTOMER || "http://localhost:3000"
+});
+
+export default api;
+```
+
+### Step2.2: Create Vue Views
+Our system is ready to rock, now we will just create ```models```, ```methods``` and ```views/page```, The rest logic is well done by itself
+
+for now open ```views/Home.vue``` file and place the following content to see the magic
+
+```vue
+<template>
+  <vnatk-crud :options="crudoptions"> </vnatk-crud>
+</template>
+
+<script>
+import { VnatkCrud } from "vnatk-vue";
+import customer from "../services/customer";
+
+export default {
+  name: "SampleCRUD",
+  components: {
+    VnatkCrud,
+  },
+  data() {
+    return {
+      crudoptions: {
+        service: customer,
+        model: "User",
+        title: "Users",
+      },
+    };
+  },
+};
+</script>
+```
+
+And your crus will be there with all avilable other actions also like the image below
