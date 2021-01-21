@@ -325,6 +325,9 @@ export default {
           this.currentActionUI.open = true;
           // Just keep yourself to show form .... do not go further... thats execute action code
           return;
+        } else {
+          // Form is being submitted
+          metaData["formdata"] = this.currentActionUI.item;
         }
       }
 
