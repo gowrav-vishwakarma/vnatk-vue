@@ -10,6 +10,7 @@
     "Gowrav Vishwakarma <gowravvishwakarma@gmail.com>"
   ],
   "license": "MIT",
+  "repository": "gowrav-vishwakarma/vnatk-vue",
   "keywords": [
     "vue",
     "vuetify",
