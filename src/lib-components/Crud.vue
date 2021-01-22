@@ -129,12 +129,12 @@
 <script>
 import _ from "lodash";
 import VFormBase from "vuetify-form-base";
-import VNATKHelpers from "../lib-mixins/vnatkhelpers";
+import VNATKCrud from "../lib-mixins/VNATKCrud";
 
 export default {
   name: "VnatkCrud",
   extends: "vDataTable",
-  mixins: [VNATKHelpers],
+  mixins: [VNATKCrud],
   components: {
     VFormBase,
   },
@@ -144,7 +144,7 @@ export default {
   data() {
     return {
       loading: true,
-      serveroptions: {}, // Mandatory options for backend to be send every communication
+      crudcontext: {}, // Mandatory options for backend to be send every communication
       errors: [],
       headers: [],
       data: [],
@@ -180,8 +180,7 @@ export default {
     optionssynced: {
       handler(newVal, oldVal) {
         if (!oldVal.page) return; // its just initial update, skip this to handle
-        if (this.options.tableoptions.serversidepagination === true)
-          this.crudInit();
+        if (this.options.retrive.serversidepagination === true) this.crudInit();
       },
       deep: true,
     },
@@ -190,35 +189,40 @@ export default {
   methods: {
     crudInit(initialCall = false) {
       if (initialCall) {
-        this.optionssynced = this.overrideOptionSynced();
-      }
-      // check for mandatory options and fill missing default values in options in case user didn't provided
-      var err = this.checkOptions(this.options);
-      if (err !== true) {
-        this.errors = err;
-        return;
+        if (!this.checkOptionsAndSetDefaults()) return;
+
+        // Override v-data-table option synced with user defined values for data-table
+        this.optionssynced = _.merge(
+          this.optionssynced,
+          this.options.retrive.uioptions
+        );
+
+        // set always sending options with all API calls as options, we say this crudcontext
+        // leave ui and override values as these are only useful for frontend
+        this.crudcontext = _.omit(JSON.parse(JSON.stringify(this.options)), [
+          "ui",
+          "override",
+        ]);
       }
 
-      // filter options that are needed for client side only
-
-      this.serveroptions = this.filterOptionsForServer();
+      this.crudcontext.retrive.uioptions = this.optionssynced;
 
       // call initialization from server
       this.options.service
-        .post(this.options.basepath + "/init", this.serveroptions)
+        .post(this.options.basepath + "/crud", this.crudcontext)
         .then((response) => {
           // Handle headers
           if (response.data.headers) {
             this.headers = this.handleHeaderOverrides(
               response.data.headers,
-              this.options.tableoptions.headersoverrides
+              this.options.override.headers
             );
           }
 
           //   handle data
           if (this.options.data !== false) {
             this.data = response.data.data ? response.data.data : [];
-            if (this.options.tableoptions.serversidepagination)
+            if (this.options.retrive.serversidepagination)
               this.totalRecordsCount = response.data.datacount;
           }
 
@@ -227,12 +231,15 @@ export default {
             this.resetActions();
             this.actions = this.handleActionsOverridesAndValidations(
               response.data.actions,
-              this.options.actionsoverrides
+              this.options.override.actions
             );
             this.filterActions();
           }
         })
         .catch((error) => {
+          if (!error.response) {
+            throw error;
+          }
           if (
             error.response.status == 500 &&
             _.has(error.response.data, "name")
@@ -254,7 +261,7 @@ export default {
         });
     },
     executeAction(action, item, submit = false) {
-      var metaData = this.serveroptions;
+      var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
       metaData["arg_item"] = item;
 
@@ -292,7 +299,7 @@ export default {
                 this.currentActionUI.action.formschema[fld].isSystem) &&
               !_.get(
                 this.options,
-                "tableoptions.modeloptions.attributes",
+                "retrive.modeloptions.attributes",
                 []
               ).includes(fld)
             ) {
@@ -326,12 +333,16 @@ export default {
                           .name
                       : false);
                   fieldtext = fieldtext || "" + item[fld];
-                  action.formschema[fld].items = [
-                    {
-                      text: fieldtext,
-                      value: item[fld],
-                    },
-                  ];
+                  this.$set(
+                    this.currentActionUI.action.formschema[fld],
+                    "items",
+                    [
+                      {
+                        text: fieldtext,
+                        value: item[fld],
+                      },
+                    ]
+                  );
                 }
               }
 
@@ -419,17 +430,17 @@ export default {
         newValue
       );
       // get its serviceoptionsoverrides
-      var serviceoptions = this.getAutoCompleteServiceOptions(
+      var crudcontext = this.getAutoCompleteServiceOptions(
         schema,
         newValue,
-        this.serveroptions
+        this.crudcontext
       );
 
       // call service
-      serviceoptions.service
-        .post(serviceoptions.basepath + "/list", serviceoptions)
+      this.options.service
+        .post(crudcontext.basepath + "/crud", crudcontext)
         .then((response) => {
-          schema.items = response.data.map(function (o) {
+          schema.items = response.data.data.map(function (o) {
             return Object.assign(
               {
                 value: o.id,
