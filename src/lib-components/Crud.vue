@@ -231,6 +231,26 @@ export default {
             );
             this.filterActions();
           }
+        })
+        .catch((error) => {
+          if (
+            error.response.status == 500 &&
+            _.has(error.response.data, "name")
+          ) {
+            if (_.isEmpty(this.currentActionUI.action)) {
+              this.errors.push(
+                error.response.data.original.code +
+                  " : " +
+                  error.response.data.original.sqlMessage
+              );
+            } else {
+              this.currentActionUI.errors.push(
+                error.response.data.original.code +
+                  " : " +
+                  error.response.data.original.sqlMessage
+              );
+            }
+          }
         });
     },
     executeAction(action, item, submit = false) {
@@ -373,11 +393,19 @@ export default {
             error.response.status == 500 &&
             _.has(error.response.data, "name")
           ) {
-            this.currentActionUI.errors.push(
-              error.response.data.original.code +
-                " : " +
-                error.response.data.original.sqlMessage
-            );
+            if (_.isEmpty(this.currentActionUI.action)) {
+              this.errors.push(
+                error.response.data.original.code +
+                  " : " +
+                  error.response.data.original.sqlMessage
+              );
+            } else {
+              this.currentActionUI.errors.push(
+                error.response.data.original.code +
+                  " : " +
+                  error.response.data.original.sqlMessage
+              );
+            }
           }
           return false;
         });
