@@ -149,6 +149,41 @@ export default {
 
         },
 
+        setLimitAndSort() {
+            // Limit and Offset
+            if (this.crudcontext.retrive.serversidepagination === true) {
+                this.crudcontext.retrive.modeloptions.limit = this.optionssynced.itemsPerPage;
+                this.crudcontext.retrive.modeloptions.offset =
+                    (this.optionssynced.page - 1) * this.optionssynced.itemsPerPage;
+            }
+
+            // SortBy
+            // sortBy: ["City.name", "State.name","mobile"], sortDesc: [false, false]
+            var returnValue = { order: false, group: false }
+            if (this.optionssynced.sortBy && this.optionssynced.sortBy.length) { // ["City.name", "State.name"]
+                returnValue.order = [];
+                for (let i = 0; i < this.optionssynced.sortBy.length; i++) {
+                    var sortArray = [];
+                    const sortBY = this.optionssynced.sortBy[i]; // "City.name", "State.name"
+                    var t_sortBy = sortBY.split(".").reverse(); // ['name','City']
+                    var fieldDone = false;
+                    for (let j = 0; j < t_sortBy.length; j++) {
+                        const stringPart = t_sortBy[j]; // "name", "City"
+                        if (!fieldDone) {
+                            if (this.optionssynced.sortDesc[i]) sortArray.push("DESC"); // Equivalent sortDesc
+                            sortArray.push(stringPart); // name done... rest should be model relations path only
+                            fieldDone = true;
+                        } else {
+                            sortArray.push({ model: stringPart }) // {model: 'City'}
+                        }
+                    }
+                    returnValue.order.push(sortArray.reverse());
+                }
+            }
+            if (returnValue.order) this.crudcontext.retrive.modeloptions.order = returnValue.order;
+
+        },
+
         resetActions() {
             this.actions = [];
             this.buttonGroupActions = [];

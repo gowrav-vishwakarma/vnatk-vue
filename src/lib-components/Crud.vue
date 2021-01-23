@@ -194,7 +194,7 @@ export default {
         // Override v-data-table option synced with user defined values for data-table
         this.optionssynced = _.merge(
           this.optionssynced,
-          this.options.retrive.uioptions
+          this.options.retrive.datatableoptions
         );
 
         // set always sending options with all API calls as options, we say this crudcontext
@@ -205,7 +205,7 @@ export default {
         ]);
       }
 
-      this.crudcontext.retrive.uioptions = this.optionssynced;
+      this.setLimitAndSort();
 
       // call initialization from server
       this.options.service
@@ -281,10 +281,7 @@ export default {
 
           var editing_record = false;
           // For Row based actions set current item to work on
-          if (
-            action.type == "single".toLowerCase() &&
-            action.name != "vnatk_delete"
-          ) {
+          if (action.type == "single".toLowerCase()) {
             this.currentActionUI.item = Object.assign({}, item);
             editing_record = true;
           }
@@ -308,7 +305,7 @@ export default {
             }
             // load default values for non-loaded fields in case of not editing
             if (
-              !editing_record &&
+              (!editing_record || action.name === "vnatk_delete") &&
               action.formschema[fld].defaultValue &&
               this.currentActionUI.item[fld] == undefined
             ) {

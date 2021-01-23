@@ -51,15 +51,9 @@ export default {
           autoderef: true,
           headers: true,
           serversidepagination: true, // Skip to fetch all records and do pagination and sorting on client side
-          uioptions: {
-            // groupBY: [],
-            // groupDesc: [],
-            itemsPerPage: 5,
-            multiSort: false,
+          datatableoptions: {
+            multiSort: true,
             mustSort: false,
-            page: 1,
-            // sortBy: [],
-            // sortDesc: [],
           },
         },
         update: {
