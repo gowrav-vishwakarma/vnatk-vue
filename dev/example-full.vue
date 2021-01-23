@@ -1,6 +1,10 @@
 <template>
-  <!-- <vnatk-crud :options="crudoptions2"> </vnatk-crud> -->
-  <vnatk-crud :options="crudoptions"> </vnatk-crud>
+  <vnatk-crud :options="crudoptions">
+    <template v-slot:item.City.name="{ item }">
+      City: {{ item.City.name }}<br />
+      City Status : {{ item.City.status }}
+    </template>
+  </vnatk-crud>
 </template>
 
 <script>

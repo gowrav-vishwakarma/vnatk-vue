@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <!-- <h1>Example 1</h1>
-    <example1 />
-    <h1>Example 2</h1>
+    <!-- <h1>Example 1</h1> -->
+    <!-- <example1 /> -->
+    <!-- <h1>Example 2</h1>
     <example2 /> -->
     <h1>Example Full</h1>
     <example-full />

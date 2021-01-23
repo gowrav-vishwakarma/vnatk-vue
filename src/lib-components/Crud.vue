@@ -215,7 +215,9 @@ export default {
           if (response.data.headers) {
             this.headers = this.handleHeaderOverrides(
               response.data.headers,
-              this.options.override.headers
+              this.options.override && this.options.override.headers
+                ? this.options.override.headers
+                : []
             );
           }
 
@@ -231,7 +233,9 @@ export default {
             this.resetActions();
             this.actions = this.handleActionsOverridesAndValidations(
               response.data.actions,
-              this.options.override.actions
+              this.options.override && this.options.override.actions
+                ? this.options.override.actions
+                : []
             );
             this.filterActions();
           }

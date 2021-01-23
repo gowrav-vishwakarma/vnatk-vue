@@ -32,6 +32,7 @@ export default {
             if (this.options.retrive.autoderef !== false) this.options.retrive.autoderef = true;
             if (!this.options.retrive.modeloptions) this.options.retrive.modeloptions = {};
             if (this.options.retrive.headers !== false) this.options.retrive.headers = true;
+            if (this.options.retrive.autoderef !== false) this.options.retrive.autoderef = true;
             if (!_.has(this.options, 'actions')) this.options.actions = true;
             if (!_.has(this.options, 'create')) this.options.create = true;
             if (!_.has(this.options, 'update')) this.options.update = true;
@@ -151,7 +152,7 @@ export default {
 
         setLimitAndSort() {
             // Limit and Offset
-            if (this.crudcontext.retrive.serversidepagination === true) {
+            if (this.crudcontext.retrive.serversidepagination === true && this.optionssynced.itemsPerPage > -1) {
                 this.crudcontext.retrive.modeloptions.limit = this.optionssynced.itemsPerPage;
                 this.crudcontext.retrive.modeloptions.offset =
                     (this.optionssynced.page - 1) * this.optionssynced.itemsPerPage;
