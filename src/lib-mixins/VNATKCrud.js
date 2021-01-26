@@ -18,6 +18,11 @@ export default {
                 if (!this.options.service) err.push('"service" option not defined in crud options, service must be axios instance');
             }
 
+            if (this.options.response !== undefined) {
+                if (this.options.response.idfield === undefined) err.push('In case of Array based data please pass "idfield" property also');
+                if (this.options.response.headers === undefined) err.push('Please define "headers" in response headers:[{text,value},{text,value}]');
+            }
+
             if (err.length) {
                 this.errors = err;
                 return false;
@@ -48,6 +53,12 @@ export default {
         },
 
         handleHeaderOverrides(serverheaders, overrideheaders) {
+            // Add action column for client side data
+            if (this.options.response) {
+                if (this.options.response.actions && this.options.response.headers.findIndex((h) => { return h.value == 'vnatk_actions' }) == -1) {
+                    this.options.response.headers.push({ text: 'Actions', value: 'vnatk_actions' });
+                }
+            }
             if (!overrideheaders) return serverheaders;
             const debug = false;
             // look for server sending hide 
@@ -82,6 +93,34 @@ export default {
 
         handleActionsOverridesAndValidations(serveractions, overrideactions) {
             // TODO Convert serverside validations to client side 
+
+            // add crud actions by default for Array based data provided for crud
+            if (this.options.response) {
+                if (typeof serveractions === 'boolean') serveractions = [];
+                serveractions.push(
+                    {
+                        name: "Add",
+                        type: "NoRecord",
+                        isClientAction: true,
+                        execute: this.addArrayCrudData,
+
+                    });
+                serveractions.push(
+                    {
+                        name: "Edit",
+                        type: "single",
+                        isClientAction: true,
+                        execute: this.editArrayCrudData,
+                    });
+                serveractions.push(
+                    {
+                        name: "Delete",
+                        type: "single",
+                        isClientAction: true,
+                        execute: this.deleteArrayCrudData,
+                    })
+            }
+
             if (!overrideactions) return serveractions;
             var finalActions = [...serveractions];
 
@@ -150,7 +189,7 @@ export default {
 
         setLimitAndSort() {
             // Limit and Offset
-            if (this.crudcontext.retrive.serversidepagination === true && this.optionssynced.itemsPerPage > -1) {
+            if (this.crudcontext.retrive && this.crudcontext.retrive.serversidepagination === true && this.optionssynced.itemsPerPage > -1) {
                 this.crudcontext.retrive.modeloptions.limit = this.optionssynced.itemsPerPage;
                 this.crudcontext.retrive.modeloptions.offset =
                     (this.optionssynced.page - 1) * this.optionssynced.itemsPerPage;
@@ -194,6 +233,23 @@ export default {
                 multirecords: [],
                 single: [],
             };
-        }
+        },
+
+        addArrayCrudData(rowData) {
+            this.data.push(rowData);
+            return true;
+        },
+        editArrayCrudData(rowData) {
+            var index = this.data.findIndex(a => a[this.options.response.idfield] === rowData[this.options.response.idfield])
+            delete this.data[index];
+            this.data.splice(index, 0, rowData);
+            return true;
+        },
+        deleteArrayCrudData(rowData) {
+            if (confirm('Really delete row?')) {
+                return this.data.splice(this.data.findIndex(a => a[this.options.response.idfield] === rowData[this.options.response.idfield]), 1)
+            }
+        },
+
     }
 }

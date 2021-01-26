@@ -17,7 +17,7 @@
           v-for="(m, name) in modelsData"
           :key="name"
           link
-          @click="setModelFields(name)"
+          @click="setCurrentModel(name)"
         >
           <v-list-item-icon>
             <v-icon>mdi-cogs</v-icon>
@@ -32,22 +32,36 @@
     <v-main>
       <v-container v-if="currentSelecetdModelName"
         ><v-system-bar height="30" dark color="primary">
-          {{ currentModel.name }}
+          <b>{{ currentModel.name }}</b>
+          <span class="pl-4"
+            >[table:
+            <i
+              ><b>{{ currentModel.tableName }} </b></i
+            >
+            ]
+          </span>
           <v-spacer></v-spacer>
-          Table: {{ currentModel.tableName }}
         </v-system-bar>
         <v-row>
           <v-col cols="8">
             <vnatk-crud :options="currentModel.fieldsCrud" dense>
-              <template v-slot:item.fieldName="{ item }">
-                {{ item.fieldName }}<br />
-                <v-subheader>DB Field: {{ item.dbField }}</v-subheader>
+              <template v-slot:item.fieldName="{ item }" felx>
+                {{ item.fieldName }}
+                <v-subheader
+                  v-if="item.fieldName != item.dbField"
+                  class="d-inline"
+                >
+                  {{ item.dbField }}
+                </v-subheader>
               </template>
             </vnatk-crud>
           </v-col>
           <v-col cols="4">
             <v-list flat subheader three-line>
-              <v-subheader>BelongsTo</v-subheader>
+              <vnatk-crud
+                :options="currentModel.belongsToCrud"
+                dense
+              ></vnatk-crud>
             </v-list>
             <v-list flat subheader three-line>
               <v-subheader>HasMany</v-subheader>
@@ -91,6 +105,7 @@ export default {
         this.modelsData = response.data.models;
         for (const [modelName, obj] of Object.entries(this.modelsData)) {
           this.setFieldsCrud(modelName);
+          this.setBelongsToCrud(modelName);
         }
       });
   },
@@ -100,7 +115,7 @@ export default {
     },
   },
   methods: {
-    setModelFields(modelName) {
+    setCurrentModel(modelName) {
       this.currentSelecetdModelName = modelName;
     },
   },
