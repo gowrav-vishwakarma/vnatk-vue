@@ -4,9 +4,9 @@
     <!-- <example1 /> -->
     <!-- <h1>Example 2</h1>
     <example2 /> -->
-    <!-- <h1>Example Full</h1>
-    <example-full /> -->
     <model-designer-example />
+    <h1>Example Full</h1>
+    <example-full />
   </v-app>
 </template>
 
@@ -14,7 +14,7 @@
 import Vue from "vue";
 // import Example1 from "./example1.vue";
 // import Example2 from "./example2.vue";
-// import ExampleFull from "./example-full.vue";
+import ExampleFull from "./example-full.vue";
 import modelDesignerExample from "./modelDeginerExample.vue";
 
 export default Vue.extend({
@@ -22,7 +22,7 @@ export default Vue.extend({
   components: {
     // Example1,
     // Example2,
-    // ExampleFull,,
+    ExampleFull,
     modelDesignerExample,
   },
 });

@@ -1,8 +1,4 @@
-import Vue from "vue";
-
 import _ from "lodash";
-
-
 export default {
     methods: {
         deepRemoveKey: function (obj, key) {
@@ -17,8 +13,10 @@ export default {
 
             var err = [];
             // check for mandatory options
-            if (!this.options.model) err.push('"model" option not defined in crud options');
-            if (!this.options.service) err.push('"service" option not defined in crud options, service must be axios instance');
+            if (!this.options.response && this.options.data !== false) {
+                if (!this.options.model) err.push('"model" option not defined in crud options');
+                if (!this.options.service) err.push('"service" option not defined in crud options, service must be axios instance');
+            }
 
             if (err.length) {
                 this.errors = err;
