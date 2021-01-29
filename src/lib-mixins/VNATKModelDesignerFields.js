@@ -76,7 +76,7 @@ export default {
                 title: "BelongsTo",
                 defaultActionPlacement: 'buttonGroup',
                 response: {
-                    idfield: 'model',
+                    idfield: 'id',
                     data: belongsToArray,
                     headers: [
                         {
@@ -113,6 +113,260 @@ export default {
             };
             this.modelsData[modelName].belongsToCrud = belongsToCrud;
         },
+        setHasManyToCrud(modelName) {
+            if (_.has(this.modelsData[modelName], 'HasMany')) {
+                return this.modelsData[modelName].HasMany;
+            }
+            var HasManyArray = [];
+            for (let index = 0; index < this.modelsData[modelName]['associations'].length; index++) {
+                const assos = this.modelsData[modelName]['associations'][index];
+                if (assos.associationType !== 'HasMany') continue;
+                HasManyArray.push({
+                    id: index,
+                    model: assos.name.singular,
+                    foreignField: assos.foreignKey
+                })
+            }
+
+            var HasManyCrud = {
+                title: "HasMany",
+                defaultActionPlacement: 'buttonGroup',
+                response: {
+                    idfield: 'id',
+                    data: HasManyArray,
+                    headers: [
+                        {
+                            text: "Id",
+                            value: "id",
+                            hide: true
+                        },
+                        {
+                            text: "Model",
+                            value: "model",
+                        },
+                        {
+                            text: "Field",
+                            value: "foreignField",
+                        }
+                    ],
+                    actions: true,
+                },
+                override: {
+                    actions: [
+                        {
+                            name: 'Add',
+                            value: 'vnatk_add',
+                            formschema: this.getHasManySchemas()
+                        },
+                        {
+                            name: 'Edit',
+                            value: 'vnatk_edit',
+                            formschema: this.getHasManySchemas()
+                        }
+                    ]
+                },
+                create: true,
+            };
+            this.modelsData[modelName].HasManyCrud = HasManyCrud;
+        },
+
+        setBelongsToManyToCrud(modelName) {
+            if (_.has(this.modelsData[modelName], 'BelongsToMany')) {
+                return this.modelsData[modelName].BelongsToMany;
+            }
+            var BelongsToManyArray = [];
+            for (let index = 0; index < this.modelsData[modelName]['associations'].length; index++) {
+                const assos = this.modelsData[modelName]['associations'][index];
+                if (assos.associationType !== 'BelongsToMany') continue;
+                BelongsToManyArray.push({
+                    id: index,
+                    model: assos.model,
+                    through: assos.through.model,
+                    foreignField: assos.foreignKey
+                })
+            }
+
+            var BelongsToManyCrud = {
+                title: "BelongsToMany",
+                defaultActionPlacement: 'buttonGroup',
+                response: {
+                    idfield: 'id',
+                    data: BelongsToManyArray,
+                    headers: [
+                        {
+                            text: "Id",
+                            value: "id",
+                            hide: true
+                        },
+                        {
+                            text: "Model",
+                            value: "model",
+                        },
+                        {
+                            text: "Through",
+                            value: "through",
+                        },
+                        {
+                            text: "Field",
+                            value: "foreignField",
+                        }
+                    ],
+                    actions: true,
+                },
+                override: {
+                    actions: [
+                        {
+                            name: 'Add',
+                            value: 'vnatk_add',
+                            formschema: this.getBelongsToManySchemas()
+                        },
+                        {
+                            name: 'Edit',
+                            value: 'vnatk_edit',
+                            formschema: this.getBelongsToManySchemas()
+                        }
+                    ]
+                },
+                create: true,
+            };
+            this.modelsData[modelName].BelongsToManyCrud = BelongsToManyCrud;
+        },
+
+        setScopesCrud(modelName) {
+
+            var ScopesArray = [];
+            ScopesArray.push({
+                id: 0,
+                scope: 'defaultScope',
+                code: JSON.stringify(this.modelsData[modelName].scopes.defaultScope, undefined, 4),
+            })
+            var i = 1;
+            for (const [scopeName, scopeCode] of Object.entries(this.modelsData[modelName].scopes.scopes)) {
+                ScopesArray.push({
+                    id: i++,
+                    scope: scopeName,
+                    code: JSON.stringify(scopeCode, undefined, 4),
+                })
+            }
+
+            var scopesCrud = {
+                title: "Scopes",
+                defaultActionPlacement: 'buttonGroup',
+                response: {
+                    idfield: 'id',
+                    data: ScopesArray,
+                    headers: [
+                        {
+                            text: "Scope",
+                            value: "scope",
+                        },
+                        {
+                            text: "Code",
+                            value: "code",
+                        },
+                    ],
+                    actions: true,
+                },
+                override: {
+                    actions: [
+                        {
+                            name: 'Add',
+                            value: 'vnatk_add',
+                            formschema: this.getScopesSchemas()
+                        },
+                        {
+                            name: 'Edit',
+                            value: 'vnatk_edit',
+                            formschema: this.getScopesSchemas()
+                        }
+                    ]
+                },
+                create: true,
+            };
+            this.modelsData[modelName].scopesCrud = scopesCrud;
+        },
+
+        setActionsCrud(modelName) {
+
+            var ActionsArray = [];
+            if (_.has(this.modelsData[modelName], 'actions')) {
+                for (let index = 0; index < this.modelsData[modelName]['actions'].length; index++) {
+                    const action = this.modelsData[modelName]['actions'][index];
+                    ActionsArray.push({
+                        id: index,
+                        name: action.name,
+                        type: action.type,
+                        where: JSON.stringify(action.where),
+                        execute: action.execute,
+                        code: action.code,
+                        formschema: JSON.stringify(action.formschema, undefined, 4),
+                    });
+                }
+            }
+
+
+            var actionsCrud = {
+                title: "Actions",
+                defaultActionPlacement: 'buttonGroup',
+                response: {
+                    idfield: 'id',
+                    data: ActionsArray,
+                    headers: [
+                        {
+                            text: "Action",
+                            value: "name",
+                        },
+                        {
+                            text: "Type",
+                            value: "type",
+                        },
+                        {
+                            text: "Where",
+                            value: "where",
+                        },
+                        {
+                            text: "Execute",
+                            value: "execute",
+                        },
+                    ],
+                    actions: true,
+                },
+                override: {
+                    actions: [
+                        {
+                            name: 'Add',
+                            value: 'vnatk_add',
+                            formschema: this.getActionsSchemas()
+                        },
+                        {
+                            name: 'Edit',
+                            value: 'vnatk_edit',
+                            formschema: this.getActionsSchemas()
+                        }
+                    ]
+                },
+                create: true,
+            };
+            this.modelsData[modelName].actionsCrud = actionsCrud;
+        },
+
+        getActionsSchemas() {
+            return {
+                name: { type: 'text', label: 'Action name' },
+                type: { type: 'select', label: 'Type', items: ['NoRecord', 'single', 'MultiRecord'] },
+                code: { type: 'textarea', label: 'Code' },
+                where: { type: 'textarea', label: 'Where (JSON)' },
+                formschema: { type: 'textarea', label: 'Form Schema' },
+                execute: { type: 'text', label: 'Execute Method' },
+            }
+        },
+
+        getScopesSchemas() {
+            return {
+                scope: { type: 'text', label: 'ScopeName' },
+                code: { type: 'textarea', label: 'Code' },
+            }
+        },
 
         getFieldsSchemas() {
             return {
@@ -123,29 +377,24 @@ export default {
         },
         getBelongsToSchemas() {
             return {
-                // id: { type: 'number', label: 'ID' },
-                model: { type: 'text', label: 'Model' },
+                model: { type: 'select', label: 'Model', items: _.keys(this.modelsData) },
                 foreignField: { type: 'text', label: 'Field' }
             }
         },
-        // addField(fields) {
-        //     console.log(fields);
-        //     this.modelsData[this.currentSelecetdModelName].fieldsCrud.response.data.push(fields);
-        //     return true;
-        // },
-        // editField(fields) {
-        //     var data = this.modelsData[this.currentSelecetdModelName].fieldsCrud.response.data;
-        //     var index = data.findIndex(a => a.fieldName === fields.fieldName)
-        //     delete this.modelsData[this.currentSelecetdModelName].fieldsCrud.response.data[index]
-        //     this.modelsData[this.currentSelecetdModelName].fieldsCrud.response.data.splice(index, 0, fields);
-        //     return true;
-        // },
-        // deleteField(fields) {
-        //     if (confirm('Really delete Field')) {
-        //         var data = this.modelsData[this.currentSelecetdModelName].fieldsCrud.response.data;
-        //         return data.splice(data.findIndex(a => a.fieldName === fields.fieldName), 1)
-        //     }
-        // },
+        getHasManySchemas() {
+            return {
+                model: { type: 'select', label: 'Model', items: _.keys(this.modelsData) },
+                foreignField: { type: 'text', label: 'Field' }
+            }
+        },
+        getBelongsToManySchemas() {
+            return {
+                model: { type: 'select', label: 'Model', items: _.keys(this.modelsData) },
+                through: { type: 'select', label: 'Through', items: _.keys(this.modelsData) },
+                foreignField: { type: 'text', label: 'Field' }
+            }
+        },
+
         getFieldSequelizeTypes() {
             return ['STRING', 'TEXT', 'BOOLEAN', 'INTEGER', 'BIGINT', 'FLOAT', 'REAL', 'DOUBLE', 'DECIMAL', 'DATE', 'DATEONLY', 'UUID', '']
         }

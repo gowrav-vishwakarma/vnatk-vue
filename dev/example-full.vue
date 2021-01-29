@@ -47,10 +47,12 @@ export default {
               {
                 model: "City",
                 attributes: ["name", "status"],
+                required: false,
               },
               {
                 model: "State",
                 attributes: ["name", "status", "gst_code"],
+                required: false,
               },
             ],
           },

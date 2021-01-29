@@ -44,7 +44,7 @@ export default {
         },
 
         filterOptionsForServer: function () {
-            var opt = Object.assign({}, this.options);
+            var opt = Object.assign({}, this.options); // a.b = Object
             if (opt.actionsoverrides) delete opt.actionsoverrides;
             if (opt.tableoptions !== undefined && opt.tableoptions.headersoverrides !== undefined) delete opt.tableoptions.headeroverrides;
             // merge back datatable optionssynced back to this
@@ -236,13 +236,14 @@ export default {
         },
 
         addArrayCrudData(rowData) {
+            if (!rowData[this.options.response.idfield]) rowData[this.options.response.idfield] = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2)
             this.data.push(rowData);
             return true;
         },
         editArrayCrudData(rowData) {
             var index = this.data.findIndex(a => a[this.options.response.idfield] === rowData[this.options.response.idfield])
             delete this.data[index];
-            this.data.splice(index, 0, rowData);
+            this.data.splice(index, 1, rowData);
             return true;
         },
         deleteArrayCrudData(rowData) {
