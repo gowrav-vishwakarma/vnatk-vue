@@ -15,6 +15,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-divider></v-divider>
+      <v-btn color="success" @click="newModel">Add New Model</v-btn>
       <v-list dense nav>
         <v-list-item
           v-for="(m, name) in modelsData"
@@ -56,6 +57,7 @@
               'BelongsToMany',
               'Scopes',
               'Actions',
+              'Extra'
             ]"
             :key="item"
           >
@@ -130,6 +132,19 @@
               </v-card-text>
             </v-card>
           </v-tab-item>
+          <v-tab-item key="Extra" :transition="false">
+            <v-card flat>
+              <v-card-text>
+                <v-form >
+                  <v-form-base
+                    :model="currentModel"
+                    :schema="setextraFormSchema(this.currentSelecetdModelName)"
+                    :col="6"
+                  />
+                </v-form>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
         </v-tabs-items>
       </v-container>
     </v-main>
@@ -140,10 +155,11 @@
 import _ from "lodash";
 import VnatkCrud from "./Crud.vue";
 import VNATKModelDesignerFields from "../lib-mixins/VNATKModelDesignerFields";
+import VFormBase from "vuetify-form-base";
 
 export default {
   name: "ModelDesigner",
-  components: { VnatkCrud },
+  components: { VnatkCrud, VFormBase },
   props: {
     service: [Object],
   },
@@ -154,6 +170,11 @@ export default {
       tab: "Fields",
       modelsData: {},
       currentSelecetdModelName: null,
+      rules: {
+        age: [(val) => val < 10 || `I don't believe you!`],
+        animal: [(val) => (val || "").length > 0 || "This field is required"],
+        name: [(val) => (val || "").length > 0 || "This field is required"],
+      },
     };
   },
 
@@ -178,6 +199,9 @@ export default {
     },
   },
   methods: {
+    validate(force, value) {
+      console.log(force, value);
+    },
     setCurrentModel(modelName) {
       this.currentSelecetdModelName = modelName;
     },
@@ -189,6 +213,28 @@ export default {
         .then((response) => {
           console.log(response.data);
         });
+    },
+    newModel() {
+      var name = prompt("Model Name ?");
+
+      var newModelData = {
+        actions: [],
+        associations: [],
+        name: name,
+        rawAttributes: {},
+        scopes: { scopes: {} },
+        response: {
+          data: [],
+        },
+      };
+      this.$set(this.modelsData, name, newModelData);
+
+      this.setFieldsCrud(name);
+      this.setBelongsToCrud(name);
+      this.setHasManyToCrud(name);
+      this.setBelongsToManyToCrud(name);
+      this.setScopesCrud(name);
+      this.setActionsCrud(name);
     },
   },
 };

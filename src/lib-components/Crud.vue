@@ -50,7 +50,7 @@
 
             <v-card-text>
               <v-container>
-                <v-form ref="currentActionUIForm">
+                <v-form ref="currentActionUIForm" lazy-validation>
                   <v-form-base
                     :model="currentActionUI.item"
                     :schema="currentActionUI.action.formschema"

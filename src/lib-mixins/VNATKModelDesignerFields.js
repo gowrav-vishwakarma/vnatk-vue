@@ -1,4 +1,20 @@
 import _ from "lodash";
+
+// Helper & Partial Functions
+const minLen = l => v => (v && v.length >= l) || `min. ${l} Characters`
+const maxLen = l => v => (v && v.length <= l) || `max. ${l} Characters`
+const required = msg => v => !!v || msg
+const requiredArray = msg => v => (Array.isArray(v) && v.length > 1) || msg
+// Rules
+const rules = {
+    requiredEmail: required('E-mail is required'),
+    requiredSel: required('Selection is required'),
+    requiredSelMult: requiredArray('2 Selections are required'),
+    max12: maxLen(12),
+    min6: minLen(6),
+    validEmail: v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
+}
+
 export default {
     methods: {
         setFieldsCrud(modelName) {
@@ -6,12 +22,17 @@ export default {
                 return this.modelsData[modelName].fieldsCrud;
             }
             var fieldsArray = [];
+            var i = 0;
             for (const [field, props] of Object.entries(this.modelsData[modelName].rawAttributes)) {
                 if (props.primaryKey || props.references) continue;
                 fieldsArray.push({
+                    id: i++,
                     fieldName: props.fieldName,
                     type: props.type.key,
-                    dbField: props.field
+                    dbField: props.field,
+                    caption: props.caption,
+                    validate: JSON.stringify(props.validate),
+                    defaultValue: props.defaultValue,
                 })
             }
 
@@ -19,7 +40,7 @@ export default {
                 title: "Fields",
                 defaultActionPlacement: 'buttonGroup',
                 response: {
-                    idfield: 'fieldName',
+                    idfield: 'id',
                     data: fieldsArray,
                     headers: [
                         {
@@ -350,6 +371,12 @@ export default {
             this.modelsData[modelName].actionsCrud = actionsCrud;
         },
 
+        setextraFormSchema(modelName) {
+            return {
+                tableName: { type: 'text', label: 'Table Name' }
+            }
+        },
+
         getActionsSchemas() {
             return {
                 name: { type: 'text', label: 'Action name' },
@@ -367,12 +394,18 @@ export default {
                 code: { type: 'textarea', label: 'Code' },
             }
         },
-
+        required() {
+            return (v) => !!v || 'This field is required'
+        },
         getFieldsSchemas() {
+
             return {
-                fieldName: { type: 'text', label: 'FieldName' },
-                dbField: { type: 'text', label: 'DB Field' },
-                type: { type: 'combobox', label: 'Type', items: this.getFieldSequelizeTypes() }
+                fieldName: { type: 'text', label: 'FieldName', color: 'red' },
+                dbField: { type: 'text', label: 'DB Field', hint: "If DB field is different then Field, or leave empty" },
+                type: { type: 'combobox', label: 'Type', items: this.getFieldSequelizeTypes() },
+                caption: { type: 'text', label: 'Caption' },
+                validate: { type: 'textarea', label: 'Validate (JSON)' },
+                defaultValue: { type: 'text', label: 'Default Value' },
             }
         },
         getBelongsToSchemas() {
