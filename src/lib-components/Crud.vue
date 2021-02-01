@@ -6,6 +6,7 @@
     :options.sync="optionssynced"
     :server-items-length="totalRecordsCount"
     class="elevation-1"
+    v-bind="$attrs"
   >
     <template v-slot:top>
       <v-alert
@@ -49,7 +50,7 @@
 
             <v-card-text>
               <v-container>
-                <v-form ref="currentActionUIForm">
+                <v-form ref="currentActionUIForm" lazy-validation>
                   <v-form-base
                     :model="currentActionUI.item"
                     :schema="currentActionUI.action.formschema"
@@ -101,7 +102,7 @@
           {{ action.caption ? action.caption : action.name }}
         </v-btn>
       </span>
-      <v-menu bottom left>
+      <v-menu bottom left v-if="dropDownActions.length">
         <template v-slot:activator="{ on, attrs }">
           <v-btn icon v-bind="attrs" v-on="on">
             <v-icon>mdi-dots-vertical</v-icon>
@@ -184,10 +185,15 @@ export default {
       },
       deep: true,
     },
+    options: {
+      handler() {
+        this.crudInit();
+      },
+    },
   },
 
   methods: {
-    crudInit(initialCall = false) {
+    async crudInit(initialCall = false) {
       if (initialCall) {
         if (!this.checkOptionsAndSetDefaults()) return;
 
@@ -207,71 +213,80 @@ export default {
 
       this.setLimitAndSort();
 
-      // call initialization from server
-      this.options.service
-        .post(this.options.basepath + "/crud", this.crudcontext)
-        .then((response) => {
-          // Handle headers
-          if (response.data.headers) {
-            this.headers = this.handleHeaderOverrides(
-              response.data.headers,
-              this.options.override && this.options.override.headers
-                ? this.options.override.headers
-                : []
-            );
-          }
+      var response = { data: {} };
 
-          //   handle data
-          if (this.options.data !== false) {
-            this.data = response.data.data ? response.data.data : [];
-            if (this.options.retrive.serversidepagination)
-              this.totalRecordsCount = response.data.datacount;
-          }
-
-          // handle actions
-          if (response.data.actions) {
-            this.resetActions();
-            this.actions = this.handleActionsOverridesAndValidations(
-              response.data.actions,
-              this.options.override && this.options.override.actions
-                ? this.options.override.actions
-                : []
-            );
-            this.filterActions();
-          }
-        })
-        .catch((error) => {
-          if (!error.response) {
-            throw error;
-          }
-          if (
-            error.response.status == 500 &&
-            _.has(error.response.data, "name")
-          ) {
-            if (_.isEmpty(this.currentActionUI.action)) {
-              this.errors.push(
-                error.response.data.original.code +
-                  " : " +
-                  error.response.data.original.sqlMessage
-              );
-            } else {
-              this.currentActionUI.errors.push(
-                error.response.data.original.code +
-                  " : " +
-                  error.response.data.original.sqlMessage
-              );
+      if (this.options.response == undefined) {
+        // call initialization from server
+        response = await this.options.service
+          .post(this.options.basepath + "/crud", this.crudcontext)
+          .catch((error) => {
+            if (!error.response) {
+              throw error;
             }
-          }
-        });
+            if (
+              error.response.status == 500 &&
+              _.has(error.response.data, "name")
+            ) {
+              if (_.isEmpty(this.currentActionUI.action)) {
+                this.errors.push(
+                  error.response.data.original.code +
+                    " : " +
+                    error.response.data.original.sqlMessage
+                );
+              } else {
+                this.currentActionUI.errors.push(
+                  error.response.data.original.code +
+                    " : " +
+                    error.response.data.original.sqlMessage
+                );
+              }
+            }
+          });
+      } else {
+        response.data = this.options.response;
+      }
+
+      if (response.data.headers) {
+        this.headers = this.handleHeaderOverrides(
+          response.data.headers,
+          this.options.override && this.options.override.headers
+            ? this.options.override.headers
+            : []
+        );
+      }
+
+      //   handle data
+      if (this.options.data !== false) {
+        this.data = this.options.data
+          ? this.options.data
+          : response.data.data
+          ? response.data.data
+          : [];
+        if (this.options.retrive && this.options.retrive.serversidepagination)
+          this.totalRecordsCount = response.data.datacount;
+      }
+
+      // handle actions
+      if (response.data.actions) {
+        this.resetActions();
+        this.actions = this.handleActionsOverridesAndValidations(
+          response.data.actions,
+          this.options.override && this.options.override.actions
+            ? this.options.override.actions
+            : []
+        );
+        this.filterActions();
+      }
     },
+
     executeAction(action, item, submit = false) {
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
       metaData["arg_item"] = item;
-
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
+
         action.formschema = JSON.parse(
           JSON.stringify(action.formschema, (k, v) =>
             k === "error-messages" ? undefined : v
@@ -279,7 +294,7 @@ export default {
         );
 
         if (!submit) {
-          this.currentActionUI.action = JSON.parse(JSON.stringify(action));
+          this.currentActionUI.action = action; //JSON.parse(JSON.stringify(action));
 
           this.currentActionUI.item = {};
 
@@ -307,6 +322,7 @@ export default {
               delete this.currentActionUI.action.formschema[fld];
               continue;
             }
+
             // load default values for non-loaded fields in case of not editing
             if (
               (!editing_record || action.name === "vnatk_delete") &&
@@ -356,6 +372,7 @@ export default {
           }
           this.currentActionUI.open = true;
           // Just keep yourself to show form .... do not go further... thats execute action code
+
           return;
         } else {
           // Form is being submitted
@@ -378,7 +395,6 @@ export default {
           else {
             this.data.splice(currentIndex, 1);
           }
-
           return true;
         })
         .catch((error) => {

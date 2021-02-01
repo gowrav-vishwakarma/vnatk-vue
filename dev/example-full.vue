@@ -1,8 +1,10 @@
 <template>
   <vnatk-crud :options="crudoptions">
     <template v-slot:item.City.name="{ item }">
-      City: {{ item.City.name }}<br />
-      City Status : {{ item.City.status }}
+      <div v-if="item.City">
+        City: {{ item.City.name }}<br />
+        City Status : {{ item.City.status }}
+      </div>
     </template>
   </vnatk-crud>
 </template>
@@ -21,6 +23,7 @@ export default {
       crudoptions: {
         service: customer,
         model: "User",
+        // response: {idfield:'no', data:[{no:1,name:'x',age:20},{no:2,name:'y',age:20}],headers:[{text:'ID',value:'no',hide:true},{text,value},{}],actions:[{name,cation,type,formschema},{},{}]} // Provide data to skip service calling and managing Array dased data crud
         title: "Users",
         basepath: "/vnatk",
         create: {
@@ -44,10 +47,12 @@ export default {
               {
                 model: "City",
                 attributes: ["name", "status"],
+                required: false,
               },
               {
                 model: "State",
                 attributes: ["name", "status", "gst_code"],
+                required: false,
               },
             ],
           },
