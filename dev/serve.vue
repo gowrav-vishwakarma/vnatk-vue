@@ -5,8 +5,8 @@
     <!-- <h1>Example 2</h1>
     <example2 /> -->
     <model-designer-example />
-    <h1>Example Full</h1>
-    <example-full />
+    <!-- <h1>Example Full</h1>
+    <example-full /> -->
   </v-app>
 </template>
 
