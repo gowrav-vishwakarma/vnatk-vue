@@ -32,6 +32,7 @@ export default {
             if (!this.options.basepath) this.options.basepath = '/vnatk';
             if (!_.has(this.options, 'retrive')) this.options.retrive = {};
             if (!this.options.title) this.options.title = this.options.model;
+            if (!this.options.ui) this.options.ui = { defaultActionPlacement: 'DropDown' };
             if (this.options.retrive.autoderef !== false) this.options.retrive.autoderef = true;
             if (!this.options.retrive.modeloptions) this.options.retrive.modeloptions = {};
             if (this.options.retrive.headers !== false) this.options.retrive.headers = true;

@@ -82,6 +82,23 @@ export default {
         actions: true,
         ui: {
           defaultActionPlacement: "DropDown",
+          // Skip headeres received from server and use these as base to mix with override later
+          headers: [
+            {
+              text: "Identifier",
+              value: "identifier",
+            },
+            {
+              text: "Attribute Group",
+              value: "AttributeGroup.name",
+            },
+            {
+              // Don't forget to add actions column manually in case of heaers defined in ui and
+              // actions: true (default)
+              text: "Actions",
+              value: "vnatk_actions",
+            },
+          ],
         },
         override: {
           actions: [

@@ -248,7 +248,9 @@ export default {
 
       if (response.data.headers) {
         this.headers = this.handleHeaderOverrides(
-          response.data.headers,
+          this.options.ui && this.options.ui.headers
+            ? this.options.ui.headers
+            : response.data.headers,
           this.options.override && this.options.override.headers
             ? this.options.override.headers
             : []
@@ -304,7 +306,7 @@ export default {
             this.currentActionUI.item = Object.assign({}, item);
             editing_record = true;
           }
-
+          console.log("action.formschema", action.formschema);
           // lets loop through all fields in formschemas
           var formschema_fields = _.keys(action.formschema);
           for (let i = 0; i < formschema_fields.length; i++) {
@@ -313,11 +315,11 @@ export default {
             if (
               (this.currentActionUI.action.formschema[fld].primaryKey ||
                 this.currentActionUI.action.formschema[fld].isSystem) &&
-              !_.get(
-                this.options,
-                "retrive.modeloptions.attributes",
+              _.get(
+                this.options.retrive.modeloptions,
+                "attributes",
                 []
-              ).includes(fld)
+              ).includes(fld) == false
             ) {
               delete this.currentActionUI.action.formschema[fld];
               continue;
@@ -383,7 +385,6 @@ export default {
       if (action.isClientAction) {
         return action.execute(item);
       }
-
       return this.options.service
         .post(this.options.basepath + "/executeaction", metaData)
         .then((response) => {
@@ -418,7 +419,7 @@ export default {
 
           // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
           if (
-            error.response.status == 500 &&
+            (error.response.status == 500 || error.response.status == 500) &&
             _.has(error.response.data, "name")
           ) {
             if (_.isEmpty(this.currentActionUI.action)) {
@@ -520,10 +521,9 @@ export default {
     filterActions() {
       var finalActions = this.actions;
 
-      var defaultActionPlacement = this.options.defaultActionPlacement
-        ? this.options.defaultActionPlacement
+      var defaultActionPlacement = this.options.ui.defaultActionPlacement
+        ? this.options.ui.defaultActionPlacement
         : "DropDown";
-
       for (let i = 0; i < finalActions.length; i++) {
         const element = finalActions[i];
         if (element.type == undefined) element.type = "single";
