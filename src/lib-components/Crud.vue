@@ -147,6 +147,7 @@ export default {
       loading: true,
       crudcontext: {}, // Mandatory options for backend to be send every communication
       errors: [],
+      serverheaders: [],
       headers: [],
       data: [],
       optionssynced: {},
@@ -251,6 +252,7 @@ export default {
       }
 
       if (response.data.headers) {
+        this.serverheaders = response.data.headers;
         this.headers = this.handleHeaderOverrides(
           this.options.ui && this.options.ui.headers
             ? this.options.ui.headers
@@ -288,6 +290,7 @@ export default {
     executeAction(action, item, submit = false) {
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
+      metaData["arg_item"] = item;
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
@@ -380,9 +383,9 @@ export default {
           return;
         } else {
           // Form is being submitted
-          var primaryKey = this.options.headers.find(
-            (o) => o.primaryKey == true
-          )["text"];
+          var primaryKey = this.serverheaders.find((o) => o.primaryKey == true)[
+            "text"
+          ];
           metaData["arg_item"] = metaData["formdata"] = _.pick(
             this.currentActionUI.item,
             [..._.keys(this.currentActionUI.action.formschema), ...[primaryKey]]
