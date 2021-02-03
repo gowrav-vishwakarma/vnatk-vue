@@ -7,6 +7,7 @@
     :server-items-length="totalRecordsCount"
     class="elevation-1"
     v-bind="$attrs"
+    v-on="$listeners"
   >
     <template v-slot:top>
       <v-alert
