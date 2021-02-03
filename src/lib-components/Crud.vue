@@ -240,6 +240,10 @@ export default {
                     error.response.data.original.sqlMessage
                 );
               }
+            } else {
+              this.currentActionUI.errors.push(
+                JSON.stringify(error.response.data)
+              );
             }
           });
       } else {
@@ -284,7 +288,6 @@ export default {
     executeAction(action, item, submit = false) {
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
-      metaData["arg_item"] = item;
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
@@ -306,7 +309,6 @@ export default {
             this.currentActionUI.item = Object.assign({}, item);
             editing_record = true;
           }
-          console.log("action.formschema", action.formschema);
           // lets loop through all fields in formschemas
           var formschema_fields = _.keys(action.formschema);
           for (let i = 0; i < formschema_fields.length; i++) {
@@ -378,7 +380,13 @@ export default {
           return;
         } else {
           // Form is being submitted
-          metaData["formdata"] = this.currentActionUI.item;
+          var primaryKey = this.options.headers.find(
+            (o) => o.primaryKey == true
+          )["text"];
+          metaData["arg_item"] = metaData["formdata"] = _.pick(
+            this.currentActionUI.item,
+            [..._.keys(this.currentActionUI.action.formschema), ...[primaryKey]]
+          );
         }
       }
 
@@ -410,16 +418,14 @@ export default {
                 );
               } else {
                 // NO FIELD FOUND, JUST PUSH ERROR IN COMMOON ERROR AREA
-                this.currentActionUI.errors.push(
-                  err.path + " : " + err.message
-                );
+                this.currentActionUI.errors.push(JSON.stringify(error));
               }
             }
           }
 
           // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
           if (
-            (error.response.status == 500 || error.response.status == 500) &&
+            (error.response.status == 500 || error.response.status == 512) &&
             _.has(error.response.data, "name")
           ) {
             if (_.isEmpty(this.currentActionUI.action)) {
@@ -430,11 +436,11 @@ export default {
               );
             } else {
               this.currentActionUI.errors.push(
-                error.response.data.original.code +
-                  " : " +
-                  error.response.data.original.sqlMessage
+                JSON.stringify(error.response.data)
               );
             }
+          } else {
+            this.currentActionUI.errors.push(error.response.data);
           }
           return false;
         });

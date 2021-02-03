@@ -1,33 +1,38 @@
 <template>
-  <vnatk-crud :options="crudoptions">
-    <template v-slot:item.itemX="{ item }"> Newss: {{ item.name }} </template>
-  </vnatk-crud>
+  <div class="home">
+    <vnatk-crud :options="crudoptions">
+      <template v-slot:item.identifier="{ item }">
+        Name: {{ item.identifier }}<br />
+        <div v-if="item.ParentCategory">
+          ({{ item.ParentCategory.identifier }})
+        </div>
+      </template>
+      <template v-slot:item.thumbnailImageAbsolutePath="{ item }">
+        <img :src="item.thumbnailImageAbsolutePath" />
+      </template>
+    </vnatk-crud>
+  </div>
 </template>
 
 <script>
+// @ is an alias to /src
 import { VnatkCrud } from "@/entry";
-import customer from "./services/customer";
+import catalog from "./services/customer";
 
 export default {
-  name: "SampleCRUD",
-  components: {
-    VnatkCrud,
-  },
+  name: "Home",
+  components: { VnatkCrud },
   data() {
     return {
       crudoptions: {
-        service: customer,
+        service: catalog,
         basepath: "/admin/vnatk",
-        model: "Banner",
-        create: {
-          modeloptions: {
-            attributes: ["name", "heading", "status", "isShareable"],
-          },
-        },
+        model: "Category",
         retrive: {
           modeloptions: {
-            // attributes: ["name", "heading", "status", "isShareable"],
             include: [
+              "ParentCategory",
+              "AttributeGroup",
               {
                 model: "CatalogEmployee",
                 as: "CreatedBy",
@@ -43,43 +48,45 @@ export default {
                 as: "DeletedBy",
                 required: false,
               },
-              {
-                model: "Lang",
-                attributes: ["name"],
-                required: false,
-              },
             ],
+            // attributes: [
+            //   "id",
+            //   "parentId",
+            // ],
           },
+          serversidepagination: true,
+          modelscope: false,
         },
-        update: {
-          modeloptions: {
-            attributes: ["name", "heading", "status", "isShareable"],
-          },
-        },
-        defaultActionPlacement: "buttonGroup",
         override: {
-          headers: {
-            itemX: {
-              text: "NEW...",
-              value: "itemX",
-              moveTo: -1,
+          actions: [],
+        },
+        ui: {
+          headers: [
+            {
+              text: "Identifier",
+              value: "identifier",
             },
-          },
-          //   actions: [
-          //     {
-          //       name: "vnatk_edit",
-          //       formschemaoverrides: {
-          //         isShareable: {
-          //           lable: "Can you Share?",
-          //           "false-value": "false",
-          //           hint: "On whatsapp",
-          //         },
-          //       },
-          //     },
-          //   ],
+            {
+              text: "Attribute Group",
+              value: "AttributeGroup.name",
+            },
+            {
+              text: "Status",
+              value: "status",
+            },
+            {
+              text: "EDIT/REMOVE",
+              value: "vnatk_actions",
+            },
+          ],
         },
       },
     };
+  },
+  methods: {
+    clientFunctionCallBack(formData) {
+      console.log(formData);
+    },
   },
 };
 </script>
