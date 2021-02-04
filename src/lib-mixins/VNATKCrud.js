@@ -181,7 +181,7 @@ export default {
             serviceoptions.retrive = {}
             serviceoptions.retrive.modeloptions = {};
             serviceoptions.retrive.modeloptions['where'] = {};
-            serviceoptions.retrive.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", "name"];
+            serviceoptions.retrive.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'];
             serviceoptions.retrive.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'] = { $like: "%" + q + "%" };
             serviceoptions.retrive.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             return serviceoptions;
