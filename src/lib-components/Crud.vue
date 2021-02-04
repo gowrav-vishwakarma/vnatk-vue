@@ -348,6 +348,11 @@ export default {
             if (action.formschema[fld].type == "autocomplete") {
               if (editing_record) {
                 if (item[fld]) {
+                  console.log("item", item);
+                  console.log("fld", fld);
+                  console.log("item[fld]", item[fld]);
+                  console.log("action.formschema[fld]", action.formschema[fld]);
+
                   var fieldtext = _.has(item, action.formschema[fld])
                     ? _.get(item, action.formschema[fld].titlefield)
                     : false;
@@ -355,10 +360,15 @@ export default {
                     fieldtext ||
                     (_.has(
                       item[action.formschema[fld].association.name.singular],
-                      "name"
+                      action.formschema[fld].titlefield
+                        ? action.formschema[fld].titlefield
+                        : "name"
                     )
-                      ? item[action.formschema[fld].association.name.singular]
-                          .name
+                      ? item[action.formschema[fld].association.name.singular][
+                          action.formschema[fld].titlefield
+                            ? action.formschema[fld].titlefield
+                            : "name"
+                        ]
                       : false);
                   fieldtext = fieldtext || "" + item[fld];
                   this.$set(

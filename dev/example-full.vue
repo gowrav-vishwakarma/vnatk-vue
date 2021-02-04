@@ -113,14 +113,14 @@ export default {
                 city_id: {
                   // titlefield - only used if field is reference/association type
                   // default titlefield is considered as name
-                  titlefield: "City.name",
+                  titlefield: "City.name", // autocomplete text field from recived data
                   label: "Your City",
                   serviceoptions: {
                     service: customer,
                     basepath: "/vnatk",
                     model: "City",
                     modelattributes: ["id", "name"],
-                    searchfield: ["name"],
+                    searchfield: "name", // autocomplete search q for like in the field
                     limit: 10,
                   },
                 },
