@@ -16,6 +16,7 @@
         dark
         v-for="(err, i) in errors"
         :key="i"
+        dismissible
       >
         {{ err }}
       </v-alert>
@@ -191,6 +192,7 @@ export default {
       handler() {
         this.crudInit();
       },
+      deep: true,
     },
   },
 
@@ -319,7 +321,8 @@ export default {
             const fld = formschema_fields[i];
             // remove primary and system fields if not defined explicitly in modeloptions->attributes
             if (
-              (this.currentActionUI.action.formschema[fld].primaryKey ||
+              ((!this.currentActionUI.action.formschema[fld].association &&
+                this.currentActionUI.action.formschema[fld].primaryKey) ||
                 this.currentActionUI.action.formschema[fld].isSystem) &&
               _.get(
                 this.options.retrive.modeloptions,
@@ -327,7 +330,7 @@ export default {
                 []
               ).includes(fld) == false
             ) {
-              delete this.currentActionUI.action.formschema[fld];
+              // delete this.currentActionUI.action.formschema[fld];
               continue;
             }
 
@@ -384,9 +387,9 @@ export default {
           return;
         } else {
           // Form is being submitted
-          var primaryKey = this.serverheaders.find((o) => o.primaryKey == true)[
-            "text"
-          ];
+          var primaryKey = this.serverheaders.find((o) => o.primaryKey == true);
+          if (primaryKey) primaryKey = primaryKey["text"];
+
           metaData["arg_item"] = metaData["formdata"] = _.pick(
             this.currentActionUI.item,
             [..._.keys(this.currentActionUI.action.formschema), ...[primaryKey]]
@@ -472,9 +475,20 @@ export default {
             return Object.assign(
               {
                 value: o.id,
-                text: o.name,
+                text:
+                  o[
+                    schema.serviceoptions.searchfield
+                      ? schema.serviceoptions.searchfield
+                      : "name"
+                  ],
               },
-              _.omit(o, "id", "name")
+              _.omit(
+                o,
+                "id",
+                schema.serviceoptions.searchfield
+                  ? schema.serviceoptions.searchfield
+                  : "name"
+              )
             );
           });
         });
