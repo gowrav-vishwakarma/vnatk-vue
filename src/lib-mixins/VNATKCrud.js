@@ -9,6 +9,7 @@ export default {
                 )
             )
         },
+
         checkOptionsAndSetDefaults: function () {
 
             var err = [];
@@ -41,6 +42,12 @@ export default {
             if (!_.has(this.options, 'create')) this.options.create = true;
             if (!_.has(this.options, 'update')) this.options.update = true;
             if (!_.has(this.options, 'delete')) this.options.delete = true;
+
+            // if (_.has(this.options.retrive.modeloptions, 'attributes')) {
+            //     if (typeof this.options.update === 'object') {
+            //     }
+            // }
+
             return true;
         },
 
@@ -184,6 +191,7 @@ export default {
             serviceoptions.retrive.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'];
             serviceoptions.retrive.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'] = { $like: "%" + q + "%" };
             serviceoptions.retrive.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
+            if (overrideserviceoption.modelscope !== undefined) serviceoptions.retrive.modelscope = overrideserviceoption.modelscope;
             return serviceoptions;
 
         },
