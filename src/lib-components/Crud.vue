@@ -348,10 +348,10 @@ export default {
             if (action.formschema[fld].type == "autocomplete") {
               if (editing_record) {
                 if (item[fld]) {
-                  console.log("item", item);
-                  console.log("fld", fld);
-                  console.log("item[fld]", item[fld]);
-                  console.log("action.formschema[fld]", action.formschema[fld]);
+                  // console.log("item", item);
+                  // console.log("fld", fld);
+                  // console.log("item[fld]", item[fld]);
+                  // console.log("action.formschema[fld]", action.formschema[fld]);
 
                   var fieldtext = _.has(item, action.formschema[fld])
                     ? _.get(item, action.formschema[fld].titlefield)
@@ -371,16 +371,17 @@ export default {
                         ]
                       : false);
                   fieldtext = fieldtext || "" + item[fld];
-                  this.$set(
-                    this.currentActionUI.action.formschema[fld],
-                    "items",
-                    [
-                      {
-                        text: fieldtext,
-                        value: item[fld],
-                      },
-                    ]
-                  );
+                  // console.log("fieldtext", fieldtext);
+                  var existingSelect = [
+                    {
+                      text: fieldtext,
+                      value: item[fld],
+                    },
+                  ];
+
+                  this.currentActionUI.action.formschema[
+                    fld
+                  ].items = existingSelect;
                 }
               }
 

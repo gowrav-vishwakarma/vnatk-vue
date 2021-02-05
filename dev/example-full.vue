@@ -48,6 +48,7 @@ export default {
                 model: "City",
                 attributes: ["name", "status"],
                 required: false,
+                scope: false, // or text (since we define Models as string, scope can be passed as property here)
               },
               {
                 model: "State",
