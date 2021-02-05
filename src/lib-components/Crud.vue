@@ -299,7 +299,7 @@ export default {
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
-
+        console.log("yes action has formschema");
         action.formschema = JSON.parse(
           JSON.stringify(action.formschema, (k, v) =>
             k === "error-messages" ? undefined : v
@@ -320,10 +320,9 @@ export default {
           var formschema_fields = _.keys(action.formschema);
           for (let i = 0; i < formschema_fields.length; i++) {
             const fld = formschema_fields[i];
-            // remove primary and system fields if not defined explicitly in modeloptions->attributes
+            // remove idField and system fields if not defined explicitly in modeloptions->attributes
             if (
-              ((!this.currentActionUI.action.formschema[fld].association &&
-                this.currentActionUI.action.formschema[fld].isIdField) ||
+              (this.currentActionUI.action.formschema[fld].isIdField ||
                 this.currentActionUI.action.formschema[fld].isSystem) &&
               _.get(
                 this.options.retrive.modeloptions,
@@ -452,13 +451,11 @@ export default {
                 this.currentActionUI.errors.push(JSON.stringify(error));
               }
             }
-          }
-
-          // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
-          if (
+          } else if (
             (error.response.status == 500 || error.response.status == 512) &&
             _.has(error.response.data, "name")
           ) {
+            // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
             if (_.isEmpty(this.currentActionUI.action)) {
               this.errors.push(
                 error.response.data.original.code +
