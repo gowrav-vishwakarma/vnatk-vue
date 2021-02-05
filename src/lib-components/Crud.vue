@@ -16,6 +16,7 @@
         dark
         v-for="(err, i) in errors"
         :key="i"
+        dismissible
       >
         {{ err }}
       </v-alert>
@@ -191,6 +192,7 @@ export default {
       handler() {
         this.crudInit();
       },
+      deep: true,
     },
   },
 
@@ -319,7 +321,8 @@ export default {
             const fld = formschema_fields[i];
             // remove primary and system fields if not defined explicitly in modeloptions->attributes
             if (
-              (this.currentActionUI.action.formschema[fld].primaryKey ||
+              ((!this.currentActionUI.action.formschema[fld].association &&
+                this.currentActionUI.action.formschema[fld].primaryKey) ||
                 this.currentActionUI.action.formschema[fld].isSystem) &&
               _.get(
                 this.options.retrive.modeloptions,
@@ -327,7 +330,7 @@ export default {
                 []
               ).includes(fld) == false
             ) {
-              delete this.currentActionUI.action.formschema[fld];
+              // delete this.currentActionUI.action.formschema[fld];
               continue;
             }
 
@@ -345,6 +348,11 @@ export default {
             if (action.formschema[fld].type == "autocomplete") {
               if (editing_record) {
                 if (item[fld]) {
+                  // console.log("item", item);
+                  // console.log("fld", fld);
+                  // console.log("item[fld]", item[fld]);
+                  // console.log("action.formschema[fld]", action.formschema[fld]);
+
                   var fieldtext = _.has(item, action.formschema[fld])
                     ? _.get(item, action.formschema[fld].titlefield)
                     : false;
@@ -352,22 +360,28 @@ export default {
                     fieldtext ||
                     (_.has(
                       item[action.formschema[fld].association.name.singular],
-                      "name"
+                      action.formschema[fld].titlefield
+                        ? action.formschema[fld].titlefield
+                        : "name"
                     )
-                      ? item[action.formschema[fld].association.name.singular]
-                          .name
+                      ? item[action.formschema[fld].association.name.singular][
+                          action.formschema[fld].titlefield
+                            ? action.formschema[fld].titlefield
+                            : "name"
+                        ]
                       : false);
                   fieldtext = fieldtext || "" + item[fld];
-                  this.$set(
-                    this.currentActionUI.action.formschema[fld],
-                    "items",
-                    [
-                      {
-                        text: fieldtext,
-                        value: item[fld],
-                      },
-                    ]
-                  );
+                  // console.log("fieldtext", fieldtext);
+                  var existingSelect = [
+                    {
+                      text: fieldtext,
+                      value: item[fld],
+                    },
+                  ];
+
+                  this.currentActionUI.action.formschema[
+                    fld
+                  ].items = existingSelect;
                 }
               }
 
@@ -384,9 +398,9 @@ export default {
           return;
         } else {
           // Form is being submitted
-          var primaryKey = this.serverheaders.find((o) => o.primaryKey == true)[
-            "text"
-          ];
+          var primaryKey = this.serverheaders.find((o) => o.primaryKey == true);
+          if (primaryKey) primaryKey = primaryKey["text"];
+
           metaData["arg_item"] = metaData["formdata"] = _.pick(
             this.currentActionUI.item,
             [..._.keys(this.currentActionUI.action.formschema), ...[primaryKey]]
@@ -472,9 +486,20 @@ export default {
             return Object.assign(
               {
                 value: o.id,
-                text: o.name,
+                text:
+                  o[
+                    schema.serviceoptions.searchfield
+                      ? schema.serviceoptions.searchfield
+                      : "name"
+                  ],
               },
-              _.omit(o, "id", "name")
+              _.omit(
+                o,
+                "id",
+                schema.serviceoptions.searchfield
+                  ? schema.serviceoptions.searchfield
+                  : "name"
+              )
             );
           });
         });
