@@ -413,8 +413,10 @@ export default {
         } else {
           // Form is being submitted
 
-          if (!this.currentActionUI.item[idField]) {
-            this.currentActionUI.errors.push("ID Field not ");
+          if (editing_record && !this.currentActionUI.item[idField]) {
+            this.currentActionUI.errors.push(
+              "ID Field(" + idField + ") value not found "
+            );
           }
 
           metaData["arg_item"] = metaData["formdata"] = _.pick(
@@ -428,23 +430,23 @@ export default {
         return action.execute(item);
       }
 
-      if (!this.currentActionUI.item[idField]) {
-        let ErrObj = this.errors;
-        if (action.formschema) ErrObj = this.currentActionUI.errors;
+      // if (!this.currentActionUI.item[idField]) {
+      //   let ErrObj = this.errors;
+      //   if (action.formschema) ErrObj = this.currentActionUI.errors;
 
-        ErrObj.push(
-          "Current Row/Item does not contains idField(" +
-            idField +
-            ") value, action cannot be performed"
-        );
-        ErrObj.push(
-          "Please add " +
-            idField +
-            " in your model or add in modeloptions->attributes"
-        );
+      //   ErrObj.push(
+      //     "Current Row/Item does not contains idField(" +
+      //       idField +
+      //       ") value, action cannot be performed"
+      //   );
+      //   ErrObj.push(
+      //     "Please add " +
+      //       idField +
+      //       " in your model or add in modeloptions->attributes"
+      //   );
 
-        return;
-      }
+      //   return;
+      // }
 
       return this.options.service
         .post(this.options.basepath + "/executeaction", metaData)
@@ -522,7 +524,7 @@ export default {
                 value: o.id,
                 text:
                   o[
-                    schema.serviceoptions.searchfield
+                    schema.serviceoptions && schema.serviceoptions.searchfield
                       ? schema.serviceoptions.searchfield
                       : "name"
                   ],
@@ -530,7 +532,7 @@ export default {
               _.omit(
                 o,
                 "id",
-                schema.serviceoptions.searchfield
+                schema.serviceoptions && schema.serviceoptions.searchfield
                   ? schema.serviceoptions.searchfield
                   : "name"
               )

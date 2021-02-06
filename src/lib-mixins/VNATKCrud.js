@@ -46,8 +46,10 @@ export default {
             if (_.has(this.options.retrive.modeloptions, 'attributes')) {
                 if (typeof this.options.update === 'object' && this.options.update.modeloptions && this.options.update.modeloptions.attributes) {
                     var fieldsNotinRetrive = _.difference(this.options.update.modeloptions.attributes, this.options.retrive.modeloptions.attributes);
-                    this.errors.push(fieldsNotinRetrive.join(', ') + ' Are required in edit but you are not retriving their values, include them in retrive and hide if not needed');
-                    return false;
+                    if (fieldsNotinRetrive.length) {
+                        this.errors.push(fieldsNotinRetrive.join(', ') + ' Are required in edit but you are not retriving their values, include them in retrive and hide if not needed');
+                        return false;
+                    }
                 }
                 else if (this.options.update === true) {
                     this.options.update = { modeloptions: { attributes: JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes)) } };
@@ -178,6 +180,7 @@ export default {
         },
 
         findActionFormSchemabySearchInputValue(action, val) {
+            console.log(action, val);
             if (!_.has(action, "formschema")) return;
             for (const [field, schema] of Object.entries(action.formschema)) {
                 if (schema.searchInput == val) return action.formschema[field];
