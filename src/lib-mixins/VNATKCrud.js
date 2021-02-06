@@ -9,6 +9,7 @@ export default {
                 )
             )
         },
+
         checkOptionsAndSetDefaults: function () {
 
             var err = [];
@@ -41,6 +42,24 @@ export default {
             if (!_.has(this.options, 'create')) this.options.create = true;
             if (!_.has(this.options, 'update')) this.options.update = true;
             if (!_.has(this.options, 'delete')) this.options.delete = true;
+
+            if (_.has(this.options.retrive.modeloptions, 'attributes')) {
+                if (typeof this.options.update === 'object' && this.options.update.modeloptions && this.options.update.modeloptions.attributes) {
+                    var fieldsNotinRetrive = _.difference(this.options.update.modeloptions.attributes, this.options.retrive.modeloptions.attributes);
+                    if (fieldsNotinRetrive.length) {
+                        this.errors.push(fieldsNotinRetrive.join(', ') + ' Are required in edit but you are not retriving their values, include them in retrive and hide if not needed');
+                        return false;
+                    }
+                }
+                else if (this.options.update === true) {
+                    this.options.update = { modeloptions: { attributes: JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes)) } };
+                } else if (typeof this.options.update === 'object' && !this.options.update.modeloptions) {
+                    this.options.update.modeloptions = { attributes: JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes)) };
+                } else if (typeof this.options.update === 'object' && this.options.update.modeloptions && !this.options.update.modeloptions.attributes) {
+                    this.options.update.modeloptions.attributes = JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes));
+                }
+            }
+
             return true;
         },
 
@@ -161,6 +180,7 @@ export default {
         },
 
         findActionFormSchemabySearchInputValue(action, val) {
+            console.log(action, val);
             if (!_.has(action, "formschema")) return;
             for (const [field, schema] of Object.entries(action.formschema)) {
                 if (schema.searchInput == val) return action.formschema[field];
@@ -184,6 +204,7 @@ export default {
             serviceoptions.retrive.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'];
             serviceoptions.retrive.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'] = { $like: "%" + q + "%" };
             serviceoptions.retrive.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
+            if (overrideserviceoption.modelscope !== undefined) serviceoptions.retrive.modelscope = overrideserviceoption.modelscope;
             return serviceoptions;
 
         },

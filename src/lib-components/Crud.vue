@@ -65,6 +65,7 @@
                   dark
                   v-for="(err, i) in currentActionUI.errors"
                   :key="i"
+                  dismissible
                 >
                   {{ err }}
                 </v-alert>
@@ -280,6 +281,7 @@ export default {
       // handle actions
       if (response.data.actions) {
         this.resetActions();
+        // console.log("response.data.actions", response.data.actions);
         this.actions = this.handleActionsOverridesAndValidations(
           response.data.actions,
           this.options.override && this.options.override.actions
@@ -294,10 +296,14 @@ export default {
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
       metaData["arg_item"] = item;
+
+      var idField = this.serverheaders.find((o) => o.isIdField === true);
+      if (idField) idField = idField["text"];
+
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
-
+        console.log("yes action has formschema");
         action.formschema = JSON.parse(
           JSON.stringify(action.formschema, (k, v) =>
             k === "error-messages" ? undefined : v
@@ -306,7 +312,6 @@ export default {
 
         if (!submit) {
           this.currentActionUI.action = action; //JSON.parse(JSON.stringify(action));
-
           this.currentActionUI.item = {};
 
           var editing_record = false;
@@ -319,10 +324,9 @@ export default {
           var formschema_fields = _.keys(action.formschema);
           for (let i = 0; i < formschema_fields.length; i++) {
             const fld = formschema_fields[i];
-            // remove primary and system fields if not defined explicitly in modeloptions->attributes
+            // remove idField and system fields if not defined explicitly in modeloptions->attributes
             if (
-              ((!this.currentActionUI.action.formschema[fld].association &&
-                this.currentActionUI.action.formschema[fld].primaryKey) ||
+              (this.currentActionUI.action.formschema[fld].isIdField ||
                 this.currentActionUI.action.formschema[fld].isSystem) &&
               _.get(
                 this.options.retrive.modeloptions,
@@ -330,7 +334,7 @@ export default {
                 []
               ).includes(fld) == false
             ) {
-              // delete this.currentActionUI.action.formschema[fld];
+              delete this.currentActionUI.action.formschema[fld];
               continue;
             }
 
@@ -348,11 +352,6 @@ export default {
             if (action.formschema[fld].type == "autocomplete") {
               if (editing_record) {
                 if (item[fld]) {
-                  // console.log("item", item);
-                  // console.log("fld", fld);
-                  // console.log("item[fld]", item[fld]);
-                  // console.log("action.formschema[fld]", action.formschema[fld]);
-
                   var fieldtext = _.has(item, action.formschema[fld])
                     ? _.get(item, action.formschema[fld].titlefield)
                     : false;
@@ -371,7 +370,6 @@ export default {
                         ]
                       : false);
                   fieldtext = fieldtext || "" + item[fld];
-                  // console.log("fieldtext", fieldtext);
                   var existingSelect = [
                     {
                       text: fieldtext,
@@ -382,9 +380,25 @@ export default {
                   this.currentActionUI.action.formschema[
                     fld
                   ].items = existingSelect;
+                  this.currentActionUI.action.formschema[
+                    fld
+                  ].searchInput = fieldtext;
+                }
+              } else {
+                // mostly adding or other action
+                if (
+                  this.currentActionUI.action.name === "vnatk_add" &&
+                  _.has(this.currentActionUI.action.formschema[fld], "items")
+                ) {
+                  this.currentActionUI.action.formschema[
+                    fld
+                  ].searchInput = this.currentActionUI.action.formschema[
+                    fld
+                  ].items[0].text;
                 }
               }
 
+              //with this we skip the first change
               var unwatch = this.$watch(
                 "currentActionUI.action.formschema." + fld + ".searchInput",
                 this.handleAutoCompletes
@@ -398,12 +412,16 @@ export default {
           return;
         } else {
           // Form is being submitted
-          var primaryKey = this.serverheaders.find((o) => o.primaryKey == true);
-          if (primaryKey) primaryKey = primaryKey["text"];
+
+          if (editing_record && !this.currentActionUI.item[idField]) {
+            this.currentActionUI.errors.push(
+              "ID Field(" + idField + ") value not found "
+            );
+          }
 
           metaData["arg_item"] = metaData["formdata"] = _.pick(
             this.currentActionUI.item,
-            [..._.keys(this.currentActionUI.action.formschema), ...[primaryKey]]
+            [..._.keys(this.currentActionUI.action.formschema), ...[idField]]
           );
         }
       }
@@ -411,6 +429,25 @@ export default {
       if (action.isClientAction) {
         return action.execute(item);
       }
+
+      // if (!this.currentActionUI.item[idField]) {
+      //   let ErrObj = this.errors;
+      //   if (action.formschema) ErrObj = this.currentActionUI.errors;
+
+      //   ErrObj.push(
+      //     "Current Row/Item does not contains idField(" +
+      //       idField +
+      //       ") value, action cannot be performed"
+      //   );
+      //   ErrObj.push(
+      //     "Please add " +
+      //       idField +
+      //       " in your model or add in modeloptions->attributes"
+      //   );
+
+      //   return;
+      // }
+
       return this.options.service
         .post(this.options.basepath + "/executeaction", metaData)
         .then((response) => {
@@ -439,13 +476,11 @@ export default {
                 this.currentActionUI.errors.push(JSON.stringify(error));
               }
             }
-          }
-
-          // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
-          if (
+          } else if (
             (error.response.status == 500 || error.response.status == 512) &&
             _.has(error.response.data, "name")
           ) {
+            // IF ITS A WELL DEFINED ERROR FORMAT FROM SEQUELIZE
             if (_.isEmpty(this.currentActionUI.action)) {
               this.errors.push(
                 error.response.data.original.code +
@@ -471,6 +506,7 @@ export default {
         this.currentActionUI.action,
         newValue
       );
+
       // get its serviceoptionsoverrides
       var crudcontext = this.getAutoCompleteServiceOptions(
         schema,
@@ -488,7 +524,7 @@ export default {
                 value: o.id,
                 text:
                   o[
-                    schema.serviceoptions.searchfield
+                    schema.serviceoptions && schema.serviceoptions.searchfield
                       ? schema.serviceoptions.searchfield
                       : "name"
                   ],
@@ -496,7 +532,7 @@ export default {
               _.omit(
                 o,
                 "id",
-                schema.serviceoptions.searchfield
+                schema.serviceoptions && schema.serviceoptions.searchfield
                   ? schema.serviceoptions.searchfield
                   : "name"
               )
