@@ -296,6 +296,10 @@ export default {
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
       metaData["arg_item"] = item;
+
+      var idField = this.serverheaders.find((o) => o.isIdField === true);
+      if (idField) idField = idField["text"];
+
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
@@ -408,10 +412,10 @@ export default {
           return;
         } else {
           // Form is being submitted
-          var idField = this.serverheaders.find((o) => o.isIdField === true);
-          if (idField) idField = idField["text"];
-          console.log(idField);
-          console.log(this.currentActionUI.item);
+
+          if (!this.currentActionUI.item[idField]) {
+            this.currentActionUI.errors.push("ID Field not ");
+          }
 
           metaData["arg_item"] = metaData["formdata"] = _.pick(
             this.currentActionUI.item,
@@ -423,6 +427,25 @@ export default {
       if (action.isClientAction) {
         return action.execute(item);
       }
+
+      if (!this.currentActionUI.item[idField]) {
+        let ErrObj = this.errors;
+        if (action.formschema) ErrObj = this.currentActionUI.errors;
+
+        ErrObj.push(
+          "Current Row/Item does not contains idField(" +
+            idField +
+            ") value, action cannot be performed"
+        );
+        ErrObj.push(
+          "Please add " +
+            idField +
+            " in your model or add in modeloptions->attributes"
+        );
+
+        return;
+      }
+
       return this.options.service
         .post(this.options.basepath + "/executeaction", metaData)
         .then((response) => {

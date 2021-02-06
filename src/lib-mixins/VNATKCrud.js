@@ -43,10 +43,20 @@ export default {
             if (!_.has(this.options, 'update')) this.options.update = true;
             if (!_.has(this.options, 'delete')) this.options.delete = true;
 
-            // if (_.has(this.options.retrive.modeloptions, 'attributes')) {
-            //     if (typeof this.options.update === 'object') {
-            //     }
-            // }
+            if (_.has(this.options.retrive.modeloptions, 'attributes')) {
+                if (typeof this.options.update === 'object' && this.options.update.modeloptions && this.options.update.modeloptions.attributes) {
+                    var fieldsNotinRetrive = _.difference(this.options.update.modeloptions.attributes, this.options.retrive.modeloptions.attributes);
+                    this.errors.push(fieldsNotinRetrive.join(', ') + ' Are required in edit but you are not retriving their values, include them in retrive and hide if not needed');
+                    return false;
+                }
+                else if (this.options.update === true) {
+                    this.options.update = { modeloptions: { attributes: JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes)) } };
+                } else if (typeof this.options.update === 'object' && !this.options.update.modeloptions) {
+                    this.options.update.modeloptions = { attributes: JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes)) };
+                } else if (typeof this.options.update === 'object' && this.options.update.modeloptions && !this.options.update.modeloptions.attributes) {
+                    this.options.update.modeloptions.attributes = JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes));
+                }
+            }
 
             return true;
         },
