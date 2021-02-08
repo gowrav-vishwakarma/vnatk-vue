@@ -79,6 +79,13 @@ export default {
             ],
           },
         },
+        import: {
+          service: catalog,
+          basepath: "/admin/vnatk",
+          model: "Category",
+          execute: "vnatk_import",
+          success: this.reloadPage,
+        },
         delete: true,
         actions: true,
         ui: {
@@ -201,6 +208,12 @@ export default {
   methods: {
     clientFunctionCallBack(item) {
       console.log("CLIENT FUNCTION CALLED with item", item);
+    },
+
+    reloadPage(response) {
+      console.log(response);
+      // this.$router.push('.');
+      window.location.reload();
     },
   },
 };

@@ -9,10 +9,10 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async config => {
-    // var token = store.state.User.token;
-    // if (token) {
-    //   config.headers.Authorization = "Bearer " + token;
-    // }
+    var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlN1cGVyQWRtaW5OYW1lIiwidHlwZSI6IkFkbWluIiwiaWF0IjoxNjEyNzY0NjQyLCJleHAiOjE2NDQzMDA2NDJ9.GIEAUVUMdFNiW_lCW---J1Qz5ABWTx8MC67I5SXRiZw";
+    if (token) {
+      config.headers.Authorization = "Bearer " + token;
+    }
     if (!config.params) {
       config.params = {};
     }

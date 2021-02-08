@@ -548,6 +548,12 @@ REMEMBER WE ARE STILL 0.0.x ;)
 import { VnatkCrud } from "@/entry";
 import customer from "./services/customer";
 
+// Required for import functioanlity, Use VuePapaParse globally, if you use import with most of CRUDS
+import Vue from "vue";
+import VuePapaParse from "vue-papa-parse";
+Vue.use(VuePapaParse);
+
+
 export default {
   name: "ServeDev",
   components: {
@@ -612,6 +618,13 @@ export default {
         },
         delete: true, // OPTIONAL, default ture, set false to remove delete action
         actions: true, // OPTIONAL, default true, st false to hide all actions including add/edit and delete
+        import: { // OPTIONAL, default undefined/false
+          service: catalog,
+          basepath: "/admin/vnatk",
+          model: "Category",
+          execute: "vnatk_import", // Class level function defined in defined model
+          success: this.reloadPage, //callback with passed response from model function
+        },
         ui: { // OPTIONAL, 
           defaultActionPlacement: "DropDown", // "DropDown" or "buttonGroup". Where you want your default actions in row dropdown menu or as button in action columns for direct access
         },
