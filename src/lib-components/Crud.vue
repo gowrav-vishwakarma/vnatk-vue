@@ -25,15 +25,16 @@
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <span v-for="(action, index) in actionUIs.norecord" :key="index">
-          <v-btn
-            color="primary"
-            dark
-            class="mb-2"
-            @click="executeAction(action)"
-          >
+          <v-btn color="primary" dark @click="executeAction(action)">
             {{ action.caption ? action.caption : action.name }}
           </v-btn>
         </span>
+        <span
+          ><vnatk-import
+            :options="options.import"
+            v-if="options.import"
+          ></vnatk-import
+        ></span>
         <v-dialog
           v-model="currentActionUI.open"
           style="max-width: 80%"
@@ -134,6 +135,7 @@
 import _ from "lodash";
 import VFormBase from "vuetify-form-base";
 import VNATKCrud from "../lib-mixins/VNATKCrud";
+import VnatkImport from "./Import.vue";
 
 export default {
   name: "VnatkCrud",
@@ -141,6 +143,7 @@ export default {
   mixins: [VNATKCrud],
   components: {
     VFormBase,
+    VnatkImport,
   },
   props: {
     options: [Object],

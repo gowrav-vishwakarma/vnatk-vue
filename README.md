@@ -612,6 +612,13 @@ export default {
         },
         delete: true, // OPTIONAL, default ture, set false to remove delete action
         actions: true, // OPTIONAL, default true, st false to hide all actions including add/edit and delete
+        import: { // OPTIONAL, default undefined/false
+          service: catalog,
+          basepath: "/admin/vnatk",
+          model: "Category",
+          execute: "vnatk_import", // Class level function defined in defined model
+          success: this.reloadPage, //callback with passed response from model function
+        },
         ui: { // OPTIONAL, 
           defaultActionPlacement: "DropDown", // "DropDown" or "buttonGroup". Where you want your default actions in row dropdown menu or as button in action columns for direct access
         },
