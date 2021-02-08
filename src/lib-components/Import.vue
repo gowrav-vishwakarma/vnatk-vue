@@ -46,10 +46,6 @@
 </template>
 
 <script>
-import Vue from "vue";
-import VuePapaParse from "vue-papa-parse";
-Vue.use(VuePapaParse);
-
 export default {
   props: {
     options: [Object, Boolean],

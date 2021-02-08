@@ -548,6 +548,12 @@ REMEMBER WE ARE STILL 0.0.x ;)
 import { VnatkCrud } from "@/entry";
 import customer from "./services/customer";
 
+// Required for import functioanlity, Use VuePapaParse globally, if you use import with most of CRUDS
+import Vue from "vue";
+import VuePapaParse from "vue-papa-parse";
+Vue.use(VuePapaParse);
+
+
 export default {
   name: "ServeDev",
   components: {
