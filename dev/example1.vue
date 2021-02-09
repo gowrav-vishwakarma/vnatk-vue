@@ -33,7 +33,7 @@ export default {
             attributes: ["identifier", "isShareable"],
           },
         },
-        retrive: {
+        read: {
           modeloptions: {
             include: [
               {
