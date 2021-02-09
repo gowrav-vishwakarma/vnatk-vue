@@ -1,6 +1,5 @@
-# BETA
+## ALPHA/BETA - Under heavy development and not for production use
 ---
-
 
 ## VNATK
 
@@ -14,15 +13,17 @@ Link to [VUEATK-VUE] (https://github.com/gowrav-vishwakarma/vnatk-vue)
 
 Link to [VUEATK-EXPRESS-SEQUELIZE] (https://github.com/gowrav-vishwakarma/vnatk-express-sequelize) 
 
+
 # VNATK-EXPRESS-SEQULIZE (Backend with Express and Squelize)
 ---
 
-equipped with a few endpoints that gives you all power with SequalizedSQL (pronounced `sec-QL`) developed by this project.
+Equipped with a few endpoints that gives you all power with Sequalize-QL developed by this project.
 
 This express middleware will give all the fule required from server to VNATK Frontend Frameworks. 
 
 
-Dependencies: body-parser, debug, dotenv,lodash, mysql2, sequelize
+Please setup Express server setup equipped with VNATK-EXPRESS-SEQULIZE first as per information given here
+https://github.com/gowrav-vishwakarma/vnatk-express-sequelize
 
 
 # VNATK-VUE (FrontEnd with Vue, Vuetify)
@@ -34,8 +35,13 @@ VNATKVUE is Frontend part of VNATK (Vue Node AgileTool Kit). Making app developm
 Dependencies: Vue (2.\*), Vuetify(2.\*), vue-form-base, lodash, dotenv
 
 
-
 ## Getting started
+
+Please setup Express server setup equipped with VNATK-EXPRESS-SEQULIZE first as per information given here
+
+VUEATK-EXPRESS-SEQUELIZE 
+https://github.com/gowrav-vishwakarma/vnatk-express-sequelize
+
 
 For simplicity we have our project folder structure as follows
 
@@ -57,144 +63,15 @@ Your Project Root Folder
 ```
 
 # Step 1.0: setup express app
-Considering we are in "Your Project Root Folder"
 
-lets create express app (Server/service) from scratch, you are welcome to use any other way or manual if you know what you are doing
+Please setup Express server setup equipped with VNATK-EXPRESS-SEQULIZE first as per information given here
 
-```bash
-### FOR NEW SERVICE SETUP
+VUEATK-EXPRESS-SEQUELIZE 
+https://github.com/gowrav-vishwakarma/vnatk-express-sequelize
 
-#install express-generator globally, its easy to do setup with this
-$yourProjectRoot> npm install -g express-generator
-...
-$yourProjectRoot> express server --no-view
-...
-#lets check if a folder with server name created or not
-$yourProjectRoot> ls
-server
+### Step 1.1: setup Models
 
-#a default structure is also created in this folder
-$yourProjectRoot> ls server
-app.js       package.json routes    bin          public
-
-$yourProjectRoot> cd server
-
-#lets install basic things setup by express-generator
-$yourProjectRoot/server> npm install
-
-#install our dependencies now
-$yourProjectRoot/server> npm install --save bcrypt body-parser cookie-parser express-handlebars jsonwebtoken morgan cors dotenv lodash mysql2 sequelize vnatk-express-sequelize
-
-### If required vnatk-express-sequelize can be installed in existing express seuelize setup also with very ease
-
-#install sequelize cli for easy sequlize setup
-$yourProjectRoot/server> npm install --save-dev sequelize-cli
-$yourProjectRoot/server> sequelize init
-
-```
-## Step 1.1: express app configurations
-
-sequlize init creates ```config/config.json``` file but we need env access to config also rename ```config/config.json``` to ```config/config.js```
-
-and REPLACE the follwoing content in `config/config.js` file (Complete content copy paste)
-
-```js
-require('dotenv').config();
-const sequelize = require('sequelize')
-const Op = sequelize.Op
-
-module.exports = {
-    "development": {
-        "username": process.env.DB_USER_NAME || "root",
-        "password": process.env.DB_PASSWORD || null",
-        "database": process.env.DB_DATABASE || "your_awasome_db_name",
-        "host": process.env.DB_HOST || "127.0.0.1",
-        "dialect": "mysql",
-        operatorsAliases: { $lt: Op.lt, $gt: Op.gt, $like: Op.like },
-        "dialectOptions": {
-            "dateStrings": true,
-            "typeCast": true
-        },
-        "timezone": '+05:30'
-    },
-    "test": {
-        "username": "root",
-        "password": null,
-        "database": "database_test",
-        "host": "127.0.0.1",
-        "dialect": "mysql",
-        "operatorsAliases": false,
-        "dialectOptions": {
-            "useUTC": false, //for reading from database
-            "dateStrings": true,
-            "typeCast": true
-        },
-        "timezone": '+05:30'
-    },
-    "production": {
-        "username": process.env.DB_USER_NAME || "root",
-        "password": process.env.DB_PASSWORD || null,
-        "database": process.env.DB_DATABASE || null,
-        "host": process.env.DB_HOST || "127.0.0.1",
-        "port": process.env.DB_PORT || "3306",
-        "dialect": "mysql",
-        "operatorsAliases": false,
-        "dialectOptions": {
-            "useUTC": false, //for reading from database
-            "dateStrings": true,
-            "typeCast": true
-        },
-        "timezone": '+05:30'
-    }
-}
-```
-since we changed json file to js, sequlize's default ```model/index.js``` file needs a change too, open this file and change 
-
-```js
-# some where at top replace config const declaration with the below line, look at 'json' removed
-
-const config = require(__dirname + '/../config/config')[env];
-
-```
-
-sometimes sequelize have issues in reading models from file like this specially if your sequlize cli is old and you are  using seulize v6, in case of that, you may get sequelize import method error.
-
-replace following line in that case
-
-```js
-// replace following line 
-const model = sequelize['import'](path.join(__dirname, file));
-//  to this line
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes)
-```
-
-## Step 1.2: configure and use vnatk-express-sequelize
-
-Please add the following code in your `app.js` file. (DON'T COPY PASTE WHOLE FILE) 
-
-```javascript
-// somewhere on the top after 
-// var express = require('express'); <= after this line
-var cors = require('cors');
-const bodyParser = require('body-parser');
-const vnatk = require('vnatk-express-sequelize');
-...
-...
-// You can already have body-parser added, no need to add again
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true }));
-
-// add cors is a good way and mostly you might need this also
-app.use(cors()); // Use this after the variable declaration
-
-
-const Models = require('./models');
-app.use('/vnatk', vnatk({ // "/vnatk" will be your base path where the system will hit for its APIs
-    Models: Models,
-    router: express.Router()
-}));
-```
-### Step 1.3: setup Models
+This section describes what extra features you can introduce in Sequlize models to get best of VNATK-VUE from frontend, on the other hand, vnatk-express-sequelize will handle all the features describe here.
 
 Create models in ```models``` folder. For more about Models in sequlize please follow sequlize documentations.
 
@@ -622,7 +499,7 @@ export default {
           service: catalog,
           basepath: "/admin/vnatk",
           model: "Category",
-          execute: "vnatk_import", // Class level function defined in defined model
+          execute: "vnatk_import", // Class level function defined in model
           success: this.reloadPage, //callback with passed response from model function
         },
         ui: { // OPTIONAL, 
