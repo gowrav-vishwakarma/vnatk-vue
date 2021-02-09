@@ -32,7 +32,7 @@ export default {
             attributes: ["name", "email", "status", "city_id", "password"],
           },
         },
-        retrive: {
+        read: {
           modeloptions: {
             attributes: [
               "name",

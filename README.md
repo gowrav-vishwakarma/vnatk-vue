@@ -503,11 +503,11 @@ data() {
         service: customer,
         model: "User",
         title: "Users",
-        // Use response or retrive, response to work on Array based data crud and retrive for API based data fetch
+        // Use response or read, response to work on Array based data crud and read for API based data fetch
         // response: {idfield:'no', data:[{no:1,name:'x',age:20},{no:2,name:'y',age:20}],headers:[{text:'ID',value:'no',hide:true},{text,value},{}],actions:[{name,cation,type,formschema},{},{}]} // Provide data to skip service calling and managing Array dased data crud
 
-        //retrive defines all options to define data retrive ie R IN CRUD
-        retrive: {
+        //read defines all options to define data read ie R IN CRUD
+        read: {
           // model options are for your sequlize models, all same (for Operators you need to do a small trick here)
           modeloptions: {
             attributes: ["name", "email", "state_id", "city_id", "status"],
@@ -572,7 +572,7 @@ export default {
             attributes: ["name", "email", "status", "city_id", "password"],
           },
         },
-        retrive: { // OPTIONAL, default to true, set true to retrive all fields, headers and actions
+        read: { // OPTIONAL, default to true, set true to read all fields, headers and actions
           modeloptions: { // Sequalize model options
             attributes: [
               "name",
@@ -709,7 +709,7 @@ export default {
               value: "City.name", // Value does not have effect as alrady overrided column by slot in template above
               // moveto: 2,
             },
-            "State.gst_code": { // ADD a new column showing User.State.gst_code, look at how we included gst_code in retrive options model's include.
+            "State.gst_code": { // ADD a new column showing User.State.gst_code, look at how we included gst_code in read options model's include.
               text: "State GST Code",
               value: "State.gst_code",
               sortable: true,

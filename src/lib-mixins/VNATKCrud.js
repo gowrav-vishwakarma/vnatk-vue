@@ -31,32 +31,32 @@ export default {
             // put default mendatory options
 
             if (!this.options.basepath) this.options.basepath = '/vnatk';
-            if (!_.has(this.options, 'retrive')) this.options.retrive = {};
+            if (!_.has(this.options, 'read')) this.options.read = {};
             if (!this.options.title) this.options.title = this.options.model;
             if (!this.options.ui) this.options.ui = { defaultActionPlacement: 'DropDown' };
-            if (this.options.retrive.autoderef !== false) this.options.retrive.autoderef = true;
-            if (!this.options.retrive.modeloptions) this.options.retrive.modeloptions = {};
-            if (this.options.retrive.headers !== false) this.options.retrive.headers = true;
-            if (this.options.retrive.autoderef !== false) this.options.retrive.autoderef = true;
+            if (this.options.read.autoderef !== false) this.options.read.autoderef = true;
+            if (!this.options.read.modeloptions) this.options.read.modeloptions = {};
+            if (this.options.read.headers !== false) this.options.read.headers = true;
+            if (this.options.read.autoderef !== false) this.options.read.autoderef = true;
             if (!_.has(this.options, 'actions')) this.options.actions = true;
             if (!_.has(this.options, 'create')) this.options.create = true;
             if (!_.has(this.options, 'update')) this.options.update = true;
             if (!_.has(this.options, 'delete')) this.options.delete = true;
 
-            if (_.has(this.options.retrive.modeloptions, 'attributes')) {
+            if (_.has(this.options.read.modeloptions, 'attributes')) {
                 if (typeof this.options.update === 'object' && this.options.update.modeloptions && this.options.update.modeloptions.attributes) {
-                    var fieldsNotinRetrive = _.difference(this.options.update.modeloptions.attributes, this.options.retrive.modeloptions.attributes);
-                    if (fieldsNotinRetrive.length) {
-                        this.errors.push(fieldsNotinRetrive.join(', ') + ' Are required in edit but you are not retriving their values, include them in retrive and hide if not needed');
+                    var fieldsNotinread = _.difference(this.options.update.modeloptions.attributes, this.options.read.modeloptions.attributes);
+                    if (fieldsNotinread.length) {
+                        this.errors.push(fieldsNotinread.join(', ') + ' Are required in edit but you are not retriving their values, include them in read and hide if not needed');
                         return false;
                     }
                 }
                 else if (this.options.update === true) {
-                    this.options.update = { modeloptions: { attributes: JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes)) } };
+                    this.options.update = { modeloptions: { attributes: JSON.parse(JSON.stringify(this.options.read.modeloptions.attributes)) } };
                 } else if (typeof this.options.update === 'object' && !this.options.update.modeloptions) {
-                    this.options.update.modeloptions = { attributes: JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes)) };
+                    this.options.update.modeloptions = { attributes: JSON.parse(JSON.stringify(this.options.read.modeloptions.attributes)) };
                 } else if (typeof this.options.update === 'object' && this.options.update.modeloptions && !this.options.update.modeloptions.attributes) {
-                    this.options.update.modeloptions.attributes = JSON.parse(JSON.stringify(this.options.retrive.modeloptions.attributes));
+                    this.options.update.modeloptions.attributes = JSON.parse(JSON.stringify(this.options.read.modeloptions.attributes));
                 }
             }
 
@@ -198,22 +198,22 @@ export default {
             serviceoptions.service = overrideserviceoption.service ? overrideserviceoption.service : serveroptions.service;
             serviceoptions.basepath = overrideserviceoption.basepath ? overrideserviceoption.basepath : serveroptions.basepath;
             serviceoptions.model = overrideserviceoption.model ? overrideserviceoption.model : schema.association.name.singular;
-            serviceoptions.retrive = {}
-            serviceoptions.retrive.modeloptions = {};
-            serviceoptions.retrive.modeloptions['where'] = {};
-            serviceoptions.retrive.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'];
-            serviceoptions.retrive.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'] = { $like: "%" + q + "%" };
-            serviceoptions.retrive.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
-            if (overrideserviceoption.modelscope !== undefined) serviceoptions.retrive.modelscope = overrideserviceoption.modelscope;
+            serviceoptions.read = {}
+            serviceoptions.read.modeloptions = {};
+            serviceoptions.read.modeloptions['where'] = {};
+            serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'];
+            serviceoptions.read.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'] = { $like: "%" + q + "%" };
+            serviceoptions.read.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
+            if (overrideserviceoption.modelscope !== undefined) serviceoptions.read.modelscope = overrideserviceoption.modelscope;
             return serviceoptions;
 
         },
 
         setLimitAndSort() {
             // Limit and Offset
-            if (this.crudcontext.retrive && this.crudcontext.retrive.serversidepagination === true && this.optionssynced.itemsPerPage > -1) {
-                this.crudcontext.retrive.modeloptions.limit = this.optionssynced.itemsPerPage;
-                this.crudcontext.retrive.modeloptions.offset =
+            if (this.crudcontext.read && this.crudcontext.read.serversidepagination === true && this.optionssynced.itemsPerPage > -1) {
+                this.crudcontext.read.modeloptions.limit = this.optionssynced.itemsPerPage;
+                this.crudcontext.read.modeloptions.offset =
                     (this.optionssynced.page - 1) * this.optionssynced.itemsPerPage;
             }
 
@@ -240,7 +240,7 @@ export default {
                     returnValue.order.push(sortArray.reverse());
                 }
             }
-            if (returnValue.order) this.crudcontext.retrive.modeloptions.order = returnValue.order;
+            if (returnValue.order) this.crudcontext.read.modeloptions.order = returnValue.order;
 
         },
 
