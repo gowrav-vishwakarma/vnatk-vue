@@ -48,6 +48,7 @@ export default {
                 model: "City",
                 attributes: ["name", "status"],
                 required: false,
+                scope: false, // or text (since we define Models as string, scope can be passed as property here)
               },
               {
                 model: "State",
@@ -77,6 +78,13 @@ export default {
               "mobile",
             ],
           },
+        },
+        import: {
+          service: catalog,
+          basepath: "/admin/vnatk",
+          model: "Category",
+          execute: "vnatk_import",
+          success: this.reloadPage,
         },
         delete: true,
         actions: true,
@@ -113,14 +121,14 @@ export default {
                 city_id: {
                   // titlefield - only used if field is reference/association type
                   // default titlefield is considered as name
-                  titlefield: "City.name",
+                  titlefield: "City.name", // autocomplete text field from recived data
                   label: "Your City",
                   serviceoptions: {
                     service: customer,
                     basepath: "/vnatk",
                     model: "City",
                     modelattributes: ["id", "name"],
-                    searchfield: ["name"],
+                    searchfield: "name", // autocomplete search q for like in the field
                     limit: 10,
                   },
                 },
@@ -200,6 +208,12 @@ export default {
   methods: {
     clientFunctionCallBack(item) {
       console.log("CLIENT FUNCTION CALLED with item", item);
+    },
+
+    reloadPage(response) {
+      console.log(response);
+      // this.$router.push('.');
+      window.location.reload();
     },
   },
 };

@@ -1,13 +1,13 @@
 <template>
   <div class="home">
     <vnatk-crud :options="crudoptions">
-      <template v-slot:item.identifier="{ item }">
-        Name: {{ item.identifier }}<br />
-        <div v-if="item.ParentCategory">
-          ({{ item.ParentCategory.identifier }})
-        </div>
+      <template v-slot:[`item.identifier`]="{ item }">
+        {{ item.identifier }}<br />
+        <small class="text--disabled"
+          >({{ item.ParentCategory.identifier }})</small
+        >
       </template>
-      <template v-slot:item.thumbnailImageAbsolutePath="{ item }">
+      <template v-slot:[`item.thumbnailImageAbsolutePath`]="{ item }">
         <img :src="item.thumbnailImageAbsolutePath" />
       </template>
     </vnatk-crud>
@@ -17,7 +17,7 @@
 <script>
 // @ is an alias to /src
 import { VnatkCrud } from "@/entry";
-import catalog from "./services/customer";
+import catalog from "./services/catalog";
 
 export default {
   name: "Home",
@@ -28,11 +28,14 @@ export default {
         service: catalog,
         basepath: "/admin/vnatk",
         model: "Category",
+        update: {
+          modeloptions: {
+            attributes: ["identifier", "isShareable"],
+          },
+        },
         retrive: {
           modeloptions: {
             include: [
-              "ParentCategory",
-              "AttributeGroup",
               {
                 model: "CatalogEmployee",
                 as: "CreatedBy",
@@ -56,6 +59,13 @@ export default {
           },
           serversidepagination: true,
           modelscope: false,
+        },
+        import: {
+          service: catalog,
+          basepath: "/admin/vnatk",
+          model: "Category",
+          execute: "vnatk_import",
+          success: this.reloadPage,
         },
         override: {
           actions: [],
@@ -86,6 +96,10 @@ export default {
   methods: {
     clientFunctionCallBack(formData) {
       console.log(formData);
+    },
+    reloadPage(response) {
+      alert("Import successful");
+      window.location.reload();
     },
   },
 };
