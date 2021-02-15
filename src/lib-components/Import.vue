@@ -104,7 +104,7 @@ export default {
       };
 
       if (this.options.autoimport === true) {
-        postVars.action_to_execute = "vnatk_autoimport";
+        postVars.action_to_execute = {execute: "vnatk_autoimport", name:"vnatk_autoimport"};
       }
 
       this.options.service
@@ -123,7 +123,7 @@ export default {
           if (error.response) this.errors.push(error.response.data);
           else this.errors.push(error);
         });
-      console.log(this.options);
+      // console.log(this.options);
     },
   },
 };

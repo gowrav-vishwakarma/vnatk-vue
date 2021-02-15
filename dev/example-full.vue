@@ -88,7 +88,7 @@ export default {
           transaction: "file", // defaults to 'file' / or 'row'. In 'file' mode, data will rollback for all rows in case of error in any row, in 'row' mode, rows that are not imported are only rolled back and errored rows are reported back on import dialog.
           rowformatter: function (item) {
             item.$vnatk_data_handle = "alwaysCreate"; // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate', (For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
-            item.$vnatk_find_modeloptions = {}; // if not provided, finding will be based on all fields and values defined above
+            item.$vnatk_find_options = {}; // if not provided, finding will be based on all fields and values defined above
             item.$vnatk_cache_records = true; // default to true, set false to find each time even if same condition is already found previously
             item.$vnatk_update_data = {}; // update only fields and their values defined here (if found), if this option is not provided, all fields defined above will be updated.
 
@@ -96,8 +96,12 @@ export default {
               //Data to create or Update (if not defined vnatk_update_data)
               name: item.city_name,
               status: item.city_status,
+
               $vnatk_data_handle: "alwaysCreate", // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate',(For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
-              $vnatk_find_modeloptions: {}, // if not provided, finding will be based on all fields and values defined above
+              $vnatk_find_options: {
+                modeloptions: {},
+                modescope: false,
+              }, // if not provided, finding will be based on all fields and values defined above
               $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
               $vnatk_update_data: {}, // update only fields and their values defined here (if found), if this option is not provided, all fields defined above will be updated.
             };
@@ -108,7 +112,7 @@ export default {
                 //Data to create or Update (if not defined vnatk_update_data)
                 name: item.fav_place_name_1,
                 $vnatk_data_handle: "alwaysCreate", // 'alwaysCreate' [default],'findToAssociate' [Produce error if not found],'findOrCreate','findAndUpdateOrCreate','associateIfFound' [Ignores if not found]
-                $vnatk_find_modeloptions: {},
+                $vnatk_find_options: {},
                 $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
                 $vnatk_update_data: {},
                 $set_fresh_relations: false, // default to false, if set true all data with this relation will be removed first
@@ -117,7 +121,7 @@ export default {
                 //Data to create or Update (if not defined vnatk_update_data)
                 name: item.fav_place_name_2,
                 $vnatk_data_handle: "alwaysCreate", // 'alwaysCreate' [default],'findToAssociate' [Produce error if not found],'findOrCreate','findAndUpdateOrCreate','associateIfFound' [Ignores if not found]
-                $vnatk_find_modeloptions: {},
+                $vnatk_find_options: {},
                 $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
                 $vnatk_update_data: {},
               },
@@ -125,7 +129,7 @@ export default {
                 //Data to create or Update (if not defined vnatk_update_data)
                 name: item.fav_place_name_3,
                 $vnatk_data_handle: "alwaysCreate", // 'alwaysCreate' [default],'findToAssociate' [Produce error if not found],'findOrCreate','findAndUpdateOrCreate','associateIfFound' [Ignores if not found]
-                $vnatk_find_modeloptions: {},
+                $vnatk_find_options: {},
                 $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
                 $vnatk_update_data: {},
               },

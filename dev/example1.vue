@@ -72,23 +72,6 @@ export default {
           success: this.reloadPage,
           autoimport: true,
           rowformatter: function (item) {
-            item.MRP = {
-              mrp: item.mrp,
-              price: item.price,
-            };
-
-            item.tax = {
-              igst: item.igst,
-              sgst: item.sgst,
-              cgst: item.cgst,
-            };
-
-            delete item.mrp;
-            delete item.price;
-            delete item.igst;
-            delete item.cgst;
-            delete item.sgst;
-
             return item;
           },
         },
