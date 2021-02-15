@@ -24,11 +24,10 @@ export default {
         model: "User",
         update: {
           modeloptions: {
-            attributes: ["firstName", "lastName", "email"],
+            attributes: ["firstName", "lastName", "email", "groupId"],
           },
         },
         read: {
-          modeloptions: {},
           serversidepagination: true,
           modelscope: false,
         },
@@ -51,7 +50,7 @@ export default {
             if (item.group) {
               item.Group = {
                 name: item.group,
-                $vnatk_data_handle: "findToAssociate",
+                $vnatk_data_handle: "findOrCreate",
               };
             }
 
@@ -71,6 +70,7 @@ export default {
               item.ProjectsOwned.push({
                 title: item.useradmin_project_1_title,
                 description: item.useradmin_project_1_description,
+                code: item.useradmin_project_1_code,
                 $vnatk_data_handle: "findAndUpdateOrCreate", // if found, update admin Id to this user id
                 $vnatk_find_options: {
                   modeloptions: {
@@ -84,6 +84,7 @@ export default {
               item.ProjectsOwned.push({
                 title: item.useradmin_project_2_title,
                 description: item.useradmin_project_2_description,
+                code: item.useradmin_project_2_code,
                 $vnatk_data_handle: "findAndUpdateOrCreate", // if found, update admin Id to this user id
                 $vnatk_find_options: {
                   modeloptions: {
@@ -102,6 +103,11 @@ export default {
                 Project: {
                   title: item.user_project_1,
                   $vnatk_data_handle: "findOrCreate",
+                  $vnatk_find_options: {
+                    modeloptions: {
+                      code: item.useradmin_project_1_code,
+                    },
+                  },
                 },
                 UserProjectRemarks: [],
               };
@@ -122,19 +128,24 @@ export default {
                 assignedOn: "1970-01-01",
                 isDone: false,
                 Project: {
-                  title: item.user_project_1,
+                  title: item.user_project_2,
                   $vnatk_data_handle: "findOrCreate",
+                  $vnatk_find_options: {
+                    modeloptions: {
+                      code: item.useradmin_project_2_code,
+                    },
+                  },
                 },
                 UserProjectRemarks: [],
               };
-              if (item.user_project_1_remark_1) {
+              if (item.user_project_2_remark_1) {
                 projects_2.UserProjectRemarks.push({
-                  remarks: item.user_project_1_remark_1,
+                  remarks: item.user_project_2_remark_1,
                 });
               }
-              if (item.user_project_1_remark_2) {
+              if (item.user_project_2_remark_2) {
                 projects_2.UserProjectRemarks.push({
-                  remarks: item.user_project_1_remark_2,
+                  remarks: item.user_project_2_remark_2,
                 });
               }
               item.Projects.push(projects_2);

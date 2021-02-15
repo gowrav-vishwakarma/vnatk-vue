@@ -62,6 +62,7 @@ export default {
   methods: {
     onComplete(results, file) {
       // Your logic here! functions or axios calls
+      this.datatableheaders = [];
       this.filedata = results;
       for (let index = 0; index < this.filedata.meta.fields.length; index++) {
         const field = this.filedata.meta.fields[index];
@@ -104,7 +105,10 @@ export default {
       };
 
       if (this.options.autoimport === true) {
-        postVars.action_to_execute = {execute: "vnatk_autoimport", name:"vnatk_autoimport"};
+        postVars.action_to_execute = {
+          execute: "vnatk_autoimport",
+          name: "vnatk_autoimport",
+        };
       }
 
       this.options.service
