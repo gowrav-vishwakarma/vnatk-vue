@@ -24,8 +24,8 @@
     >
       <v-card>
         <v-card-title primary-title> Import Preview </v-card-title>
-        <v-alert type="error" v-if="errors.length">
-          {{ errors.join('<br />') }}
+        <v-alert type="error" v-if="errors.length" dismissible>
+          {{ errors }}
         </v-alert>
         <v-card-text>
           <v-data-table

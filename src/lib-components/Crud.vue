@@ -58,6 +58,9 @@
                     :model="currentActionUI.item"
                     :schema="currentActionUI.action.formschema"
                     :col="6"
+                    @click="formEventClick"
+                    @input="formEventInput"
+                    @change="formEventChanged"
                   />
                 </v-form>
                 <v-alert
@@ -295,7 +298,9 @@ export default {
       }
     },
 
-    executeAction(action, item, submit = false) {
+    async executeAction(action, item, submit = false) {
+      if (submit) await this.emitPromise("before-action-execute", action, item);
+
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
       metaData["arg_item"] = item;
@@ -306,7 +311,6 @@ export default {
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
-        console.log("yes action has formschema");
         action.formschema = JSON.parse(
           JSON.stringify(action.formschema, (k, v) =>
             k === "error-messages" ? undefined : v
@@ -461,7 +465,7 @@ export default {
           else {
             this.data.splice(currentIndex, 1);
           }
-          this.$emit("form-submitted", metaData, response.data);
+          this.$emit("after-action-execute", metaData, response.data);
           return true;
         })
         .catch((error) => {
@@ -639,6 +643,25 @@ export default {
           this.actionUIs[element.type.toLowerCase()].push(element);
         }
       }
+    },
+    formEventClick(obj) {
+      this.$emit("formEventClick", obj);
+    },
+    formEventInput(obj) {
+      this.$emit("formEventInput", obj);
+    },
+    formEventChanged(obj) {
+      this.$emit("formEventChanged", obj);
+    },
+    async emitPromise(method, ...params) {
+      let listener =
+        this.$listeners[method] || this.$attrs[method] || this[method];
+      if (listener) {
+        //one can additionally wrap this in try/catch if needed and handle the error further
+        let res = await listener(...params);
+        return res === undefined || res;
+      }
+      return false;
     },
   },
 };
