@@ -331,11 +331,9 @@ export default {
             if (
               (this.currentActionUI.action.formschema[fld].isIdField ||
                 this.currentActionUI.action.formschema[fld].isSystem) &&
-              _.get(
-                this.options.read.modeloptions,
-                "attributes",
-                []
-              ).includes(fld) == false
+              _.get(this.options.read.modeloptions, "attributes", []).includes(
+                fld
+              ) == false
             ) {
               delete this.currentActionUI.action.formschema[fld];
               continue;
@@ -353,6 +351,7 @@ export default {
 
             // setup prefiled values for autocomplete value:text in case of editing
             if (action.formschema[fld].type == "autocomplete") {
+              action.formschema[fld].filter = (i) => i;
               if (editing_record) {
                 if (item[fld]) {
                   var fieldtext = _.has(item, action.formschema[fld])
@@ -462,6 +461,7 @@ export default {
           else {
             this.data.splice(currentIndex, 1);
           }
+          this.$emit("form-submitted", metaData, response.data);
           return true;
         })
         .catch((error) => {
