@@ -62,6 +62,7 @@ export default {
   methods: {
     onComplete(results, file) {
       // Your logic here! functions or axios calls
+      this.datatableheaders = [];
       this.filedata = results;
       for (let index = 0; index < this.filedata.meta.fields.length; index++) {
         const field = this.filedata.meta.fields[index];
@@ -83,15 +84,37 @@ export default {
       this.openpreviewdialog = false;
     },
     sendtoimport() {
+      var importdata = this.filedata.data;
+
+      if (
+        this.options.rowformatter &&
+        typeof this.options.rowformatter === "function"
+      ) {
+        importdata = this.filedata.data.map((i) =>
+          this.options.rowformatter(i)
+        );
+        console.log(importdata);
+      }
+
+      var endpoint = "/executeaction";
+      var postVars = {
+        action_to_execute: { execute: this.options.execute },
+        importdata: importdata,
+        model: this.options.model,
+        transaction: this.options.transaction === "row" ? "row" : "file",
+      };
+
+      if (this.options.autoimport === true) {
+        postVars.action_to_execute = {
+          execute: "vnatk_autoimport",
+          name: "vnatk_autoimport",
+        };
+      }
+
       this.options.service
         .post(
-          (this.options.basepath ? this.options.basepath : "/vnatk") +
-            "/executeaction",
-          {
-            action_to_execute: { execute: this.options.execute },
-            formdata: this.filedata.data,
-            model: this.options.model,
-          }
+          (this.options.basepath ? this.options.basepath : "/vnatk") + endpoint,
+          postVars
         )
         .then((response) => {
           if (typeof this.options.success === "function") {
@@ -104,7 +127,7 @@ export default {
           if (error.response) this.errors.push(error.response.data);
           else this.errors.push(error);
         });
-      console.log(this.options);
+      // console.log(this.options);
     },
   },
 };

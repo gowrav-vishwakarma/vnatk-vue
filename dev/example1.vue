@@ -19,6 +19,10 @@
 import { VnatkCrud } from "@/entry";
 import catalog from "./services/catalog";
 
+import Vue from "vue";
+import VuePapaParse from "vue-papa-parse";
+Vue.use(VuePapaParse);
+
 export default {
   name: "Home",
   components: { VnatkCrud },
@@ -33,7 +37,7 @@ export default {
             attributes: ["identifier", "isShareable"],
           },
         },
-        retrive: {
+        read: {
           modeloptions: {
             include: [
               {
@@ -66,6 +70,10 @@ export default {
           model: "Category",
           execute: "vnatk_import",
           success: this.reloadPage,
+          autoimport: true,
+          rowformatter: function (item) {
+            return item;
+          },
         },
         override: {
           actions: [],
@@ -99,7 +107,7 @@ export default {
     },
     reloadPage(response) {
       alert("Import successful");
-      window.location.reload();
+      // window.location.reload();
     },
   },
 };

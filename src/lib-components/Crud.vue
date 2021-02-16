@@ -188,7 +188,7 @@ export default {
     optionssynced: {
       handler(newVal, oldVal) {
         if (!oldVal.page) return; // its just initial update, skip this to handle
-        if (this.options.retrive.serversidepagination === true) this.crudInit();
+        if (this.options.read.serversidepagination === true) this.crudInit();
       },
       deep: true,
     },
@@ -208,7 +208,7 @@ export default {
         // Override v-data-table option synced with user defined values for data-table
         this.optionssynced = _.merge(
           this.optionssynced,
-          this.options.retrive.datatableoptions
+          this.options.read.datatableoptions
         );
 
         // set always sending options with all API calls as options, we say this crudcontext
@@ -277,7 +277,7 @@ export default {
           : response.data.data
           ? response.data.data
           : [];
-        if (this.options.retrive && this.options.retrive.serversidepagination)
+        if (this.options.read && this.options.read.serversidepagination)
           this.totalRecordsCount = response.data.datacount;
       }
 
@@ -332,7 +332,7 @@ export default {
               (this.currentActionUI.action.formschema[fld].isIdField ||
                 this.currentActionUI.action.formschema[fld].isSystem) &&
               _.get(
-                this.options.retrive.modeloptions,
+                this.options.read.modeloptions,
                 "attributes",
                 []
               ).includes(fld) == false
