@@ -25,7 +25,13 @@ export default {
         model: "User",
         update: {
           modeloptions: {
-            attributes: ["firstName", "lastName", "email", "groupId"],
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+            ],
           },
         },
         read: {
@@ -157,6 +163,8 @@ export default {
                     },
                   },
                 },
+                $vnatk_data_handle: "findOrCreate",
+
                 UserProjectRemarks: [],
               };
               if (item.user_project_2_remark_1) {
@@ -176,7 +184,17 @@ export default {
           },
         },
         override: {
-          actions: [],
+          actions: [
+            {
+              name: "vnatk_edit",
+              formschemaoverrides: {
+                profilepic: {
+                  type: "file",
+                  "@change": this.uploadToAWS,
+                },
+              },
+            },
+          ],
         },
         // ui: {
         //   headers: [
@@ -209,6 +227,9 @@ export default {
       alert("Import successful");
       this.crudkey = this.crudkey + 1;
       // window.location.reload();
+    },
+    uploadToAWS(e, files) {
+      console.log(e, files);
     },
   },
 };

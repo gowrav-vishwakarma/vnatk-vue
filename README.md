@@ -412,7 +412,7 @@ REMEMBER WE ARE STILL 0.0.x ;)
 
 ```html
 <template>
-  <vnatk-crud :options="crudoptions">
+  <vnatk-crud :options="crudoptions" @form-submitted="eventHandlerFunction">
   <!-- You can override any column and give it your own format -->
     <template v-slot:item.City.name="{ item }">
       City: {{ item.City.name }}<br />
@@ -606,6 +606,9 @@ export default {
     clientFunctionCallBack(item) {
       console.log("CLIENT FUNCTION CALLED with item", item);
     },
+    eventHandlerFunction(dataSent,DataReceived){
+      // Do something here
+    }
   },
 };
 </script>

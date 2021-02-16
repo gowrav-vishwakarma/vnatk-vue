@@ -120,6 +120,7 @@ export default {
           if (typeof this.options.success === "function") {
             this.options.success(response.data);
           }
+          this.$emit("import-finished", postVars, response.data);
           this.closedialog();
         })
         .catch((error) => {
