@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <vnatk-crud :options="crudoptions"> </vnatk-crud>
+    <vnatk-crud :options="crudoptions" :key="crudkey"> </vnatk-crud>
   </div>
 </template>
 
@@ -18,6 +18,7 @@ export default {
   components: { VnatkCrud },
   data() {
     return {
+      crudkey: 1,
       crudoptions: {
         service: catalog,
         basepath: "/vnatk",
@@ -38,13 +39,18 @@ export default {
           // execute: "vnatk_import",
           success: this.reloadPage,
           autoimport: true,
+          // transaction:'row',
           rowformatter: function (item) {
             item.$vnatk_data_handle = "findOrCreate"; // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate', (For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
-            item.$vnatk_find_modeloptions = {
-              // if not provided, finding will be based on all fields and values defined above
-              email: item.email,
+            item.$vnatk_find_options = {
+              modeloptions: {
+                // if not provided, finding will be based on all fields and values defined above
+                email: item.email,
+                // groupId: true, // based on belongs to relation also ?
+              },
+              modelscope: false,
             };
-            item.$vnatk_cache_records = true; // default to true, set false to find each time even if same condition is already found previously
+            item.$vnatk_cache_records = true; // ::: NOT IMPLEMENTED NOW ::: default to true, set false to find each time even if same condition is already found previously
             item.$vnatk_update_data = {}; // update only fields and their values defined here (if found), if this option is not provided, all fields defined above will be updated.
 
             if (item.group) {
@@ -54,13 +60,19 @@ export default {
               };
             }
 
-            item.Skills = []; //hasMany, always create
+            item.Skills = []; //hasMany,
             if (item.skill_1) {
-              item.Skills.push({ name: item.skill_1 });
+              item.Skills.push({
+                name: item.skill_1,
+                $vnatk_data_handle: "findOrCreate",
+              });
               delete item.skill_1;
             }
             if (item.skill_2) {
-              item.Skills.push({ name: item.skill_2 });
+              item.Skills.push({
+                name: item.skill_2,
+                $vnatk_data_handle: "findOrCreate",
+              });
               delete item.skill_2;
             }
 
@@ -98,17 +110,26 @@ export default {
             item.Projects = []; //belongsToMany
             if (item.user_project_1) {
               var projects_1 = {
-                assignedOn: "1970-01-01",
+                assignedOn: "1970-01-01", // fields in through table
                 isDone: false,
                 Project: {
+                  // through model belongsTo Project is defined here
                   title: item.user_project_1,
                   $vnatk_data_handle: "findOrCreate",
                   $vnatk_find_options: {
                     modeloptions: {
-                      code: item.useradmin_project_1_code,
+                      code: item.user_project_1,
                     },
                   },
                 },
+                // $set_fresh_relations: true, // TODO remove all other relations
+                $vnatk_data_handle: "findOrCreate",
+                // $vnatk_find_options: {
+                //   modeloptions: {
+                //     productId: false, // Skip testing the relational field for findOne condition
+                //     userId: false, // Skip testing the relational field for findOne condition
+                //   },
+                // },
                 UserProjectRemarks: [],
               };
               if (item.user_project_1_remark_1) {
@@ -132,7 +153,7 @@ export default {
                   $vnatk_data_handle: "findOrCreate",
                   $vnatk_find_options: {
                     modeloptions: {
-                      code: item.useradmin_project_2_code,
+                      code: item.user_project_2,
                     },
                   },
                 },
@@ -186,6 +207,7 @@ export default {
     },
     reloadPage(response) {
       alert("Import successful");
+      this.crudkey = this.crudkey + 1;
       // window.location.reload();
     },
   },
