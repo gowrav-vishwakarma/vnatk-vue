@@ -55,7 +55,26 @@ export default {
                 attributes: ["name", "status", "gst_code"],
                 required: false,
               },
+              {
+                // No relations and wrong models but just to write somewhere till we create proper documentation
+                model: "Project",
+                as: "ProjectsOwned",
+                attributes: [{ fn: "count", col: "*", as: "ProjAdminCount" }],
+              },
+              {
+                model: "Project",
+                as: "Projects",
+                attributes: [
+                  {
+                    fn: "count",
+                    col: "*",
+                    as: "ProjectPartOf",
+                    through: { attributes: [] },
+                  },
+                ],
+              },
             ],
+            group: ["User.id"],
           },
           modelscope: false, // String for scope name and Boolean for default(true) and unscoped(false)
           autoderef: true,
