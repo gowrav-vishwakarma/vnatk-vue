@@ -54,7 +54,8 @@ const external = [
   // eg. 'jquery'
   'vue',
   'vuetify',
-  'vuetify-form-base'
+  'vuetify-form-base',
+  'lodash'
 ];
 
 // UMD/IIFE shared settings: output.globals

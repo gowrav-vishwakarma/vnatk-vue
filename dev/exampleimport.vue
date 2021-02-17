@@ -34,7 +34,49 @@ export default {
             ],
           },
         },
+        create: {
+          modeloptions: {
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+            ],
+          },
+        },
         read: {
+          modeloptions: {
+            subQuery: false,
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+              // { fn: "sum", col: "Projects.id", as: "ProjAdminCount" },
+            ],
+            include: [
+              {
+                model: "Project",
+                as: "ProjectsOwned",
+                attributes: [{ fn: "count", col: "*", as: "ProjAdminCount" }],
+              },
+              {
+                model: "Project",
+                as: "Projects",
+                attributes: [
+                  {
+                    fn: "count",
+                    col: "*",
+                    as: "ProjectPartOf",
+                    through: { attributes: [] },
+                  },
+                ],
+              },
+            ],
+            group: ["User.id"],
+          },
           serversidepagination: true,
           modelscope: false,
         },
@@ -61,7 +103,7 @@ export default {
 
             if (item.group) {
               item.Group = {
-                name: item.group,
+                identifier: item.group,
                 $vnatk_data_handle: "findOrCreate",
               };
             }
@@ -195,6 +237,18 @@ export default {
               },
             },
           ],
+          headers: {
+            prjCount: {
+              text: "Project Admins Of",
+              value: "ProjectsOwned[0].ProjAdminCount",
+              moveto: 3,
+            },
+            prjPartOfCount: {
+              text: "Project Part Of",
+              value: "Projects[0].ProjectPartOf",
+              moveto: 4,
+            },
+          },
         },
         // ui: {
         //   headers: [

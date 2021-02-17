@@ -24,8 +24,8 @@
     >
       <v-card>
         <v-card-title primary-title> Import Preview </v-card-title>
-        <v-alert type="error" v-if="errors.length">
-          {{ errors.join('<br />') }}
+        <v-alert type="error" v-if="errors.length" dismissible>
+          {{ errors }}
         </v-alert>
         <v-card-text>
           <v-data-table
@@ -93,7 +93,7 @@ export default {
         importdata = this.filedata.data.map((i) =>
           this.options.rowformatter(i)
         );
-        console.log(importdata);
+        // console.log(importdata);
       }
 
       var endpoint = "/executeaction";
