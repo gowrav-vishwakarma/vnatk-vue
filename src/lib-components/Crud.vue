@@ -361,21 +361,25 @@ export default {
                   var fieldtext = _.has(item, action.formschema[fld])
                     ? _.get(item, action.formschema[fld].titlefield)
                     : false;
-                  fieldtext =
-                    fieldtext ||
-                    (_.has(
-                      item[action.formschema[fld].association.name.singular],
-                      action.formschema[fld].titlefield
-                        ? action.formschema[fld].titlefield
-                        : "name"
-                    )
-                      ? item[action.formschema[fld].association.name.singular][
-                          action.formschema[fld].titlefield
-                            ? action.formschema[fld].titlefield
-                            : "name"
-                        ]
-                      : false);
-                  fieldtext = fieldtext || "" + item[fld];
+                  if (!fieldtext) {
+                    fieldtext =
+                      fieldtext ||
+                      (_.has(
+                        item[action.formschema[fld].association.name.singular],
+                        action.formschema[fld].titlefield
+                          ? action.formschema[fld].titlefield
+                          : "name"
+                      )
+                        ? item[
+                            action.formschema[fld].association.name.singular
+                          ][
+                            action.formschema[fld].titlefield
+                              ? action.formschema[fld].titlefield
+                              : "name"
+                          ]
+                        : false);
+                  }
+                  if (!fieldtext) fieldtext = fieldtext || "" + item[fld];
                   var existingSelect = [
                     {
                       text: fieldtext,
@@ -533,6 +537,8 @@ export default {
                   o[
                     schema.serviceoptions && schema.serviceoptions.searchfield
                       ? schema.serviceoptions.searchfield
+                      : schema.titlefield
+                      ? schema.titlefield
                       : "name"
                   ],
               },
@@ -541,6 +547,8 @@ export default {
                 "id",
                 schema.serviceoptions && schema.serviceoptions.searchfield
                   ? schema.serviceoptions.searchfield
+                  : schema.titlefield
+                  ? schema.titlefield
                   : "name"
               )
             );

@@ -34,7 +34,35 @@ export default {
             ],
           },
         },
+        create: {
+          modeloptions: {
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+            ],
+          },
+        },
         read: {
+          modeloptions: {
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+            ],
+            include: [
+              {
+                model: "Project",
+                as: "ProjectsOwned",
+                // attributes: [{ fn: "COUNT", col: "*", as: "ProAd" }],
+                attributes: ["id", "title", "code"],
+              },
+            ],
+          },
           serversidepagination: true,
           modelscope: false,
         },
@@ -61,7 +89,7 @@ export default {
 
             if (item.group) {
               item.Group = {
-                name: item.group,
+                identifier: item.group,
                 $vnatk_data_handle: "findOrCreate",
               };
             }

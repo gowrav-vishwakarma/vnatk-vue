@@ -200,10 +200,12 @@ export default {
             serviceoptions.read = {}
             serviceoptions.read.modeloptions = {};
             serviceoptions.read.modeloptions['where'] = {};
-            serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'];
-            serviceoptions.read.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'] = { $like: "%" + q + "%" };
+            serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name')];
+            serviceoptions.read.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name')] = { $like: "%" + q + "%" };
             serviceoptions.read.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             if (overrideserviceoption.modelscope !== undefined) serviceoptions.read.modelscope = overrideserviceoption.modelscope;
+            console.log(serviceoptions);
+
             return serviceoptions;
 
         },
