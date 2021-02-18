@@ -32,6 +32,7 @@ export default {
         service: catalog,
         basepath: "/admin/vnatk",
         model: "Category",
+        quickSearch: ["identifier"],
         update: {
           modeloptions: {
             attributes: ["identifier", "isShareable"],
@@ -56,6 +57,10 @@ export default {
                 required: false,
               },
             ],
+            where: {
+              status: "Active",
+              // $or: {},
+            },
             // attributes: [
             //   "id",
             //   "parentId",

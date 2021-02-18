@@ -8,6 +8,7 @@
     class="elevation-1"
     v-bind="$attrs"
     v-on="$listeners"
+    :key="crudkey"
   >
     <template v-slot:top>
       <v-alert
@@ -23,16 +24,26 @@
       <v-toolbar flat>
         <v-toolbar-title>{{ options.title }}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
-        <v-spacer></v-spacer>
         <span v-for="(action, index) in actionUIs.norecord" :key="index">
           <v-btn color="primary" dark @click="executeAction(action)">
             {{ action.caption ? action.caption : action.name }}
           </v-btn>
         </span>
+        <v-spacer></v-spacer>
+        <span>
+          <v-text-field
+            v-if="showQuickSearch"
+            v-model="quicksearchtext"
+            label="Quick Search"
+            class="ml-4 mr-4"
+            clearable
+            v-on:keyup.enter="quickSearchExecute"
+          ></v-text-field>
+        </span>
         <span
           ><vnatk-import
-            :options="options.import"
-            v-if="options.import"
+            :options="optionsprop.import"
+            v-if="optionsprop.import"
           ></vnatk-import
         ></span>
         <v-dialog
@@ -86,8 +97,9 @@
                 @click="
                   actionUIExecute(currentActionUI.action, currentActionUI.item)
                 "
+                :disabled="actionExecuting !== false"
               >
-                Save
+                {{ actionExecuting ? actionExecuting : "Proceed" }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -153,7 +165,9 @@ export default {
   },
   data() {
     return {
+      crudkey: 1,
       loading: true,
+      optionsprop: {},
       crudcontext: {}, // Mandatory options for backend to be send every communication
       errors: [],
       serverheaders: [],
@@ -179,7 +193,13 @@ export default {
         autocompletesUnWacthers: [],
         errors: [],
       },
+
+      actionExecuting: false,
+      quicksearchtext: "",
     };
+  },
+  created() {
+    this.optionsprop = this.options;
   },
 
   mounted() {
@@ -197,9 +217,22 @@ export default {
     },
     options: {
       handler() {
+        this.optionsprop = this.options;
         this.crudInit();
       },
       deep: true,
+    },
+    optionsprop: {
+      handler() {
+        this.crudInit();
+      },
+      deep: true,
+    },
+  },
+
+  computed: {
+    showQuickSearch: function () {
+      return this.optionsprop.quickSearch !== undefined;
     },
   },
 
@@ -211,25 +244,25 @@ export default {
         // Override v-data-table option synced with user defined values for data-table
         this.optionssynced = _.merge(
           this.optionssynced,
-          this.options.read.datatableoptions
+          this.optionsprop.read.datatableoptions
         );
 
         // set always sending options with all API calls as options, we say this crudcontext
         // leave ui and override values as these are only useful for frontend
-        this.crudcontext = _.omit(JSON.parse(JSON.stringify(this.options)), [
-          "ui",
-          "override",
-        ]);
       }
+      this.crudcontext = _.omit(JSON.parse(JSON.stringify(this.optionsprop)), [
+        "ui",
+        "override",
+      ]);
 
       this.setLimitAndSort();
 
       var response = { data: {} };
 
-      if (this.options.response == undefined) {
+      if (this.optionsprop.response == undefined) {
         // call initialization from server
-        response = await this.options.service
-          .post(this.options.basepath + "/crud", this.crudcontext)
+        response = await this.optionsprop.service
+          .post(this.optionsprop.basepath + "/crud", this.crudcontext)
           .catch((error) => {
             if (!error.response) {
               throw error;
@@ -258,29 +291,29 @@ export default {
             }
           });
       } else {
-        response.data = this.options.response;
+        response.data = this.optionsprop.response;
       }
 
       if (response.data.headers) {
         this.serverheaders = response.data.headers;
         this.headers = this.handleHeaderOverrides(
-          this.options.ui && this.options.ui.headers
-            ? this.options.ui.headers
+          this.optionsprop.ui && this.optionsprop.ui.headers
+            ? this.optionsprop.ui.headers
             : response.data.headers,
-          this.options.override && this.options.override.headers
-            ? this.options.override.headers
+          this.optionsprop.override && this.optionsprop.override.headers
+            ? this.optionsprop.override.headers
             : []
         );
       }
 
       //   handle data
-      if (this.options.data !== false) {
-        this.data = this.options.data
-          ? this.options.data
+      if (this.optionsprop.data !== false) {
+        this.data = this.optionsprop.data
+          ? this.optionsprop.data
           : response.data.data
           ? response.data.data
           : [];
-        if (this.options.read && this.options.read.serversidepagination)
+        if (this.optionsprop.read && this.optionsprop.read.serversidepagination)
           this.totalRecordsCount = response.data.datacount;
       }
 
@@ -290,8 +323,8 @@ export default {
         // console.log("response.data.actions", response.data.actions);
         this.actions = this.handleActionsOverridesAndValidations(
           response.data.actions,
-          this.options.override && this.options.override.actions
-            ? this.options.override.actions
+          this.optionsprop.override && this.optionsprop.override.actions
+            ? this.optionsprop.override.actions
             : []
         );
         this.filterActions();
@@ -299,7 +332,10 @@ export default {
     },
 
     async executeAction(action, item, submit = false) {
-      if (submit) await this.emitPromise("before-action-execute", action, item);
+      if (submit) {
+        this.actionExecuting = "Executing ....";
+        await this.emitPromise("before-action-execute", action, item);
+      }
 
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
@@ -458,8 +494,8 @@ export default {
       //   return;
       // }
 
-      return this.options.service
-        .post(this.options.basepath + "/executeaction", metaData)
+      return this.optionsprop.service
+        .post(this.optionsprop.basepath + "/executeaction", metaData)
         .then((response) => {
           const currentIndex = this.data.findIndex((p) => p.id === item.id);
           if (response.data.row_data)
@@ -470,6 +506,7 @@ export default {
             this.data.splice(currentIndex, 1);
           }
           this.$emit("after-action-execute", metaData, response.data);
+          this.actionExecuting = false;
           return true;
         })
         .catch((error) => {
@@ -506,6 +543,7 @@ export default {
           } else {
             this.currentActionUI.errors.push(error.response.data);
           }
+          this.actionExecuting = false;
           return false;
         });
     },
@@ -526,7 +564,7 @@ export default {
       );
 
       // call service
-      this.options.service
+      this.optionsprop.service
         .post(crudcontext.basepath + "/crud", crudcontext)
         .then((response) => {
           schema.items = response.data.data.map(function (o) {
@@ -607,7 +645,7 @@ export default {
     filterActions() {
       var finalActions = this.actions;
 
-      var defaultActionPlacement = this.options.ui.defaultActionPlacement
+      var defaultActionPlacement = this.optionsprop.ui.defaultActionPlacement
         ? this.options.ui.defaultActionPlacement
         : "DropDown";
       for (let i = 0; i < finalActions.length; i++) {
@@ -652,15 +690,19 @@ export default {
         }
       }
     },
+
     formEventClick(obj) {
       this.$emit("formEventClick", obj);
     },
+
     formEventInput(obj) {
       this.$emit("formEventInput", obj);
     },
+
     formEventChanged(obj) {
       this.$emit("formEventChanged", obj);
     },
+
     async emitPromise(method, ...params) {
       let listener =
         this.$listeners[method] || this.$attrs[method] || this[method];
@@ -670,6 +712,49 @@ export default {
         return res === undefined || res;
       }
       return false;
+    },
+
+    quickSearchExecute() {
+      var condition = {};
+      for (
+        let index = 0;
+        index < this.optionsprop.quickSearch.length;
+        index++
+      ) {
+        const fieldToSearch = this.optionsprop.quickSearch[index];
+        condition[fieldToSearch] = { $like: "%" + this.quicksearchtext + "%" };
+      }
+
+      // add structure if not added already
+      if (!this.optionsprop.read) this.optionsprop.read = {};
+      if (!this.optionsprop.read.modeloptions)
+        this.optionsprop.read.modeloptions = {};
+      if (!this.optionsprop.read.modeloptions.where)
+        this.optionsprop.read.modeloptions.where = {};
+
+      if (!this.optionsprop.read.modeloptions.where.$or)
+        this.optionsprop.read.modeloptions.where.$or = {};
+
+      if (this.quicksearchtext) {
+        console.log("quicksearchtext is there");
+        this.optionsprop.read.modeloptions.where.$or = condition;
+      } else {
+        for (
+          let index = 0;
+          index < this.optionsprop.quickSearch.length;
+          index++
+        ) {
+          console.log("removing ???");
+          const fieldToSearch = this.optionsprop.quickSearch[index];
+          if (this.optionsprop.read.modeloptions.where.$or[fieldToSearch])
+            delete this.optionsprop.read.modeloptions.where.$or[fieldToSearch];
+        }
+      }
+      if (_.isEmpty(this.optionsprop.read.modeloptions.where.$or)) {
+        delete this.optionsprop.read.modeloptions.where.$or;
+      }
+      this.crudkey = this.crudkey + 1;
+      console.log("changed");
     },
   },
 };

@@ -37,7 +37,12 @@
           ></v-data-table>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="success" @click="sendtoimport">Import</v-btn>
+          <v-btn
+            color="success"
+            @click="sendtoimport"
+            :disabled="isImporting !== false"
+            >{{ isImporting ? isImporting : "Import" }}</v-btn
+          >
           <v-btn color="warning" @click="closedialog">Cancel</v-btn>
         </v-card-actions>
       </v-card>
@@ -52,6 +57,7 @@ export default {
   },
   data() {
     return {
+      isImporting: false,
       errors: [],
       openpreviewdialog: false,
       datatableheaders: [],
@@ -73,6 +79,7 @@ export default {
 
     fileSelected(e) {
       /* return first object in FileList */
+      this.isImporting = false;
       var file = e.target.files[0];
       this.$papa.parse(file, {
         header: true,
@@ -84,6 +91,7 @@ export default {
       this.openpreviewdialog = false;
     },
     sendtoimport() {
+      this.isImporting = "Importing...";
       var importdata = this.filedata.data;
 
       if (
@@ -121,14 +129,15 @@ export default {
             this.options.success(response.data);
           }
           this.$emit("import-finished", postVars, response.data);
+          this.isImporting = false;
           this.closedialog();
         })
         .catch((error) => {
           console.log(error);
           if (error.response) this.errors.push(error.response.data);
           else this.errors.push(error);
+          this.isImporting = false;
         });
-      // console.log(this.options);
     },
   },
 };
