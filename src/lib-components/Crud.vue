@@ -38,6 +38,7 @@
             class="ml-4 mr-4"
             clearable
             v-on:keyup.enter="quickSearchExecute"
+            @click:clear="quickSearchExecute(true)"
           ></v-text-field>
         </span>
         <span
@@ -203,7 +204,7 @@ export default {
   },
 
   mounted() {
-    this.crudInit(true);
+    // this.crudInit(true);
     this.loading = false;
   },
 
@@ -218,13 +219,13 @@ export default {
     options: {
       handler() {
         this.optionsprop = this.options;
-        this.crudInit();
+        // this.crudInit();
       },
       deep: true,
     },
     optionsprop: {
       handler() {
-        this.crudInit();
+        this.crudInit(true);
       },
       deep: true,
     },
@@ -714,7 +715,15 @@ export default {
       return false;
     },
 
-    quickSearchExecute() {
+    quickSearchExecute(clear = false) {
+      if (typeof this.optionsprop.quickSearch == "function") {
+        return this.optionsprop.quickSearch(this.quicksearchtext);
+      }
+
+      if (clear === true) {
+        this.quicksearchtext = "";
+      }
+
       var condition = {};
       for (
         let index = 0;
@@ -736,7 +745,6 @@ export default {
         this.optionsprop.read.modeloptions.where.$or = {};
 
       if (this.quicksearchtext) {
-        console.log("quicksearchtext is there");
         this.optionsprop.read.modeloptions.where.$or = condition;
       } else {
         for (
@@ -744,7 +752,6 @@ export default {
           index < this.optionsprop.quickSearch.length;
           index++
         ) {
-          console.log("removing ???");
           const fieldToSearch = this.optionsprop.quickSearch[index];
           if (this.optionsprop.read.modeloptions.where.$or[fieldToSearch])
             delete this.optionsprop.read.modeloptions.where.$or[fieldToSearch];
@@ -754,7 +761,6 @@ export default {
         delete this.optionsprop.read.modeloptions.where.$or;
       }
       this.crudkey = this.crudkey + 1;
-      console.log("changed");
     },
   },
 };
