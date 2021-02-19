@@ -57,25 +57,26 @@ export default {
               // { fn: "sum", col: "Projects.id", as: "ProjAdminCount" },
             ],
             include: [
-              {
-                model: "Project",
-                as: "ProjectsOwned",
-                attributes: [{ fn: "count", col: "*", as: "ProjAdminCount" }],
-              },
+              // {
+              //   model: "Project",
+              //   as: "ProjectsOwned",
+              //   attributes: [{ fn: "count", col: "*", as: "ProjAdminCount" }],
+              // },
               {
                 model: "Project",
                 as: "Projects",
-                attributes: [
-                  {
-                    fn: "count",
-                    col: "*",
-                    as: "ProjectPartOf",
-                    through: { attributes: [] },
-                  },
-                ],
+                // attributes: [
+                // {
+                // fn: "count",
+                // col: "*",
+                // as: "ProjectPartOf",
+                // group: ["UserProjects.UserId"],
+                // },
+                // ],
+                through: { attributes: ["assignedOn"] },
               },
             ],
-            group: ["User.id"],
+            // group: ["User.id"],
           },
           serversidepagination: true,
           modelscope: false,
