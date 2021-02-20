@@ -180,7 +180,6 @@ export default {
         },
 
         findActionFormSchemabySearchInputValue(action, val) {
-            console.log(action, val);
             if (!_.has(action, "formschema")) return;
             for (const [field, schema] of Object.entries(action.formschema)) {
                 if (schema.searchInput == val) return action.formschema[field];
@@ -197,14 +196,16 @@ export default {
             var serviceoptions = {};
             serviceoptions.service = overrideserviceoption.service ? overrideserviceoption.service : serveroptions.service;
             serviceoptions.basepath = overrideserviceoption.basepath ? overrideserviceoption.basepath : serveroptions.basepath;
-            serviceoptions.model = overrideserviceoption.model ? overrideserviceoption.model : schema.association.name.singular;
+            serviceoptions.model = overrideserviceoption.model ? overrideserviceoption.model : schema.association.model;
             serviceoptions.read = {}
             serviceoptions.read.modeloptions = {};
             serviceoptions.read.modeloptions['where'] = {};
-            serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'];
-            serviceoptions.read.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : 'name'] = { $like: "%" + q + "%" };
+            serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name')];
+            serviceoptions.read.modeloptions['where'][overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name')] = { $like: "%" + q + "%" };
             serviceoptions.read.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             if (overrideserviceoption.modelscope !== undefined) serviceoptions.read.modelscope = overrideserviceoption.modelscope;
+            console.log(serviceoptions);
+
             return serviceoptions;
 
         },

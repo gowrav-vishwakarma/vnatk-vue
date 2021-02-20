@@ -88,7 +88,7 @@ export default {
                 if (assos.associationType !== 'BelongsTo') continue;
                 belongsToArray.push({
                     id: index,
-                    model: assos.name.singular,
+                    model: assos.model,
                     foreignField: assos.foreignKey
                 })
             }
@@ -144,7 +144,7 @@ export default {
                 if (assos.associationType !== 'HasMany') continue;
                 HasManyArray.push({
                     id: index,
-                    model: assos.name.singular,
+                    model: assos.model,
                     foreignField: assos.foreignKey
                 })
             }

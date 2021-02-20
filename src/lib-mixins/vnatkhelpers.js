@@ -124,7 +124,7 @@ export default {
             var serviceoptions = {};
             serviceoptions.service = overrideserviceoption.service ? overrideserviceoption.service : serveroptions.service;
             serviceoptions.basepath = overrideserviceoption.basepath ? overrideserviceoption.basepath : serveroptions.basepath;
-            serviceoptions.model = overrideserviceoption.model ? overrideserviceoption.model : schema.association.name.singular;
+            serviceoptions.model = overrideserviceoption.model ? overrideserviceoption.model : schema.association.model;
             serviceoptions.modeloptions = {};
             serviceoptions.modeloptions['where'] = {};
             serviceoptions.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", "name"];

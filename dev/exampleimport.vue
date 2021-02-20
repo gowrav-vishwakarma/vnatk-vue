@@ -25,10 +25,59 @@ export default {
         model: "User",
         update: {
           modeloptions: {
-            attributes: ["firstName", "lastName", "email", "groupId"],
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+            ],
+          },
+        },
+        create: {
+          modeloptions: {
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+            ],
           },
         },
         read: {
+          modeloptions: {
+            subQuery: false,
+            attributes: [
+              "firstName",
+              "lastName",
+              "email",
+              "profilepic",
+              "groupId",
+              // { fn: "sum", col: "Projects.id", as: "ProjAdminCount" },
+            ],
+            include: [
+              // {
+              //   model: "Project",
+              //   as: "ProjectsOwned",
+              //   attributes: [{ fn: "count", col: "*", as: "ProjAdminCount" }],
+              // },
+              {
+                model: "Project",
+                as: "Projects",
+                // attributes: [
+                // {
+                // fn: "count",
+                // col: "*",
+                // as: "ProjectPartOf",
+                // group: ["UserProjects.UserId"],
+                // },
+                // ],
+                through: { attributes: ["assignedOn"] },
+              },
+            ],
+            // group: ["User.id"],
+          },
           serversidepagination: true,
           modelscope: false,
         },
@@ -55,7 +104,7 @@ export default {
 
             if (item.group) {
               item.Group = {
-                name: item.group,
+                identifier: item.group,
                 $vnatk_data_handle: "findOrCreate",
               };
             }
@@ -157,6 +206,8 @@ export default {
                     },
                   },
                 },
+                $vnatk_data_handle: "findOrCreate",
+
                 UserProjectRemarks: [],
               };
               if (item.user_project_2_remark_1) {
@@ -176,7 +227,29 @@ export default {
           },
         },
         override: {
-          actions: [],
+          actions: [
+            {
+              name: "vnatk_edit",
+              formschemaoverrides: {
+                profilepic: {
+                  type: "file",
+                  "@change": this.uploadToAWS,
+                },
+              },
+            },
+          ],
+          headers: {
+            prjCount: {
+              text: "Project Admins Of",
+              value: "ProjectsOwned[0].ProjAdminCount",
+              moveto: 3,
+            },
+            prjPartOfCount: {
+              text: "Project Part Of",
+              value: "Projects[0].ProjectPartOf",
+              moveto: 4,
+            },
+          },
         },
         // ui: {
         //   headers: [
@@ -209,6 +282,9 @@ export default {
       alert("Import successful");
       this.crudkey = this.crudkey + 1;
       // window.location.reload();
+    },
+    uploadToAWS(e, files) {
+      console.log(e, files);
     },
   },
 };
