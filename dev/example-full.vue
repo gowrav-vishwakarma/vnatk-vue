@@ -32,6 +32,10 @@ export default {
           modeloptions: {
             attributes: ["name", "email", "status", "city_id", "password"],
           },
+          defaultvalues: {
+            // if no value is passed from Create Form, this will be merged in sending data, if Form data contains this value, that will be used instead.
+            userType: "Employee",
+          },
         },
         read: {
           modeloptions: {
