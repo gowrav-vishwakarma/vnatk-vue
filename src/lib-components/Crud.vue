@@ -477,23 +477,22 @@ export default {
         return action.execute(item);
       }
 
-      // if (!this.currentActionUI.item[idField]) {
-      //   let ErrObj = this.errors;
-      //   if (action.formschema) ErrObj = this.currentActionUI.errors;
-
-      //   ErrObj.push(
-      //     "Current Row/Item does not contains idField(" +
-      //       idField +
-      //       ") value, action cannot be performed"
-      //   );
-      //   ErrObj.push(
-      //     "Please add " +
-      //       idField +
-      //       " in your model or add in modeloptions->attributes"
-      //   );
-
-      //   return;
-      // }
+      if (action.name == "vnatk_add") {
+        // add default values if exists
+        if (this.optionsprop.create && this.optionsprop.create.defaultvalues) {
+          for (const [field, value] of Object.entries(
+            this.optionsprop.create.defaultvalues
+          )) {
+            if (!_.has(item, field)) {
+              if (typeof value === "function") {
+                metaData["arg_item"][field] = item[field] = value(item);
+              } else {
+                metaData["arg_item"][field] = item[field] = value;
+              }
+            }
+          }
+        }
+      }
 
       return this.optionsprop.service
         .post(this.optionsprop.basepath + "/executeaction", metaData)
