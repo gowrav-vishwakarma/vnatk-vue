@@ -449,6 +449,14 @@ export default {
           modeloptions: { // Sequlize model options
             attributes: ["name", "email", "status", "city_id", "password"],
           },
+          defaultvalues: {
+            userType: "employee",
+            mobile: function (item) {
+              console.log("callback function");
+              console.log(item);
+              return item.firstName.length;
+            },
+          },
         },
         read: { // OPTIONAL, default to true, set true to read all fields, headers and actions
           modeloptions: { // Sequalize model options
