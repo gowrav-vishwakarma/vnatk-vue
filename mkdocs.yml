@@ -1,0 +1,13 @@
+site_name: VNATK-VUE
+repo_url: https://github.com/gowrav-vishwakarma/vnatk-vue/
+site_author: "Gowrav Vishwakarma"
+site_dir: 'docssite'
+theme: readthedocs
+nav:
+    - Overview: index.md
+    - QuickStart: quickstart.md
+    - Components: 
+      - "List": components/index.md
+      - "vnatk-crud component": components/CRUD.md
+      - "Using VES with Vuetify": using-vnatk-with-vuetify.md
+      - "Sequelize Model Features": sequelize-model-features.md

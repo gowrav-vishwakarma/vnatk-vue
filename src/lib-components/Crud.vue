@@ -233,7 +233,7 @@ export default {
 
   computed: {
     showQuickSearch: function () {
-      return this.optionsprop.quickSearch !== undefined;
+      return this.optionsprop.quicksearch !== undefined;
     },
   },
 
@@ -715,8 +715,8 @@ export default {
     },
 
     quickSearchExecute(clear = false) {
-      if (typeof this.optionsprop.quickSearch == "function") {
-        return this.optionsprop.quickSearch(this.quicksearchtext);
+      if (typeof this.optionsprop.quicksearch == "function") {
+        return this.optionsprop.quicksearch(this.quicksearchtext);
       }
 
       if (clear === true) {
@@ -726,10 +726,10 @@ export default {
       var condition = {};
       for (
         let index = 0;
-        index < this.optionsprop.quickSearch.length;
+        index < this.optionsprop.quicksearch.length;
         index++
       ) {
-        const fieldToSearch = this.optionsprop.quickSearch[index];
+        const fieldToSearch = this.optionsprop.quicksearch[index];
         condition[fieldToSearch] = { $like: "%" + this.quicksearchtext + "%" };
       }
 
@@ -748,10 +748,10 @@ export default {
       } else {
         for (
           let index = 0;
-          index < this.optionsprop.quickSearch.length;
+          index < this.optionsprop.quicksearch.length;
           index++
         ) {
-          const fieldToSearch = this.optionsprop.quickSearch[index];
+          const fieldToSearch = this.optionsprop.quicksearch[index];
           if (this.optionsprop.read.modeloptions.where.$or[fieldToSearch])
             delete this.optionsprop.read.modeloptions.where.$or[fieldToSearch];
         }
