@@ -63,6 +63,7 @@ export default {
             if (this.optionsprop.import && !this.optionsprop.import.service) this.optionsprop.import.service = this.optionsprop.service
             if (this.optionsprop.import && !this.optionsprop.import.basepath) this.optionsprop.import.basepath = this.optionsprop.basepath
             if (this.optionsprop.import && !this.optionsprop.import.model) this.optionsprop.import.model = this.optionsprop.model
+            if (this.optionsprop.import && !this.optionsprop.import.execute) this.optionsprop.import.autoimport = true
 
             return true;
         },
