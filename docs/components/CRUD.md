@@ -521,7 +521,7 @@ crudoptions:{
         transaction: "file", // defaults to 'file' / or 'row'. In 'file' mode, data will rollback for all rows in case of error in any row, in 'row' mode, rows that are not imported are only rolled back and errored rows are reported back on import dialog.
         rowformatter: function (item) {
             item.$vnatk_data_handle = "alwaysCreate"; // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate', (For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
-            item.$vnatk_find_options = {}; // if not provided, finding will be based on all fields and values defined above
+            item.$vnatk_find_options = {}; // if not provided, finding will be based on all fields and values defined above, used for where condition on model
             item.$vnatk_cache_records = true; // default to true, set false to find each time even if same condition is already found previously
             item.$vnatk_update_data = {}; // update only fields and their values defined here (if found), if this option is not provided, all fields defined above will be updated.
 
@@ -579,7 +579,121 @@ crudoptions:{
 ```
 
 #### import.service
-`axios_instance` `[Optional]` - `default root service`
+`axios_instance` `[Mandatory]`
+
+define which
+
+#### import.basepath
+`String` `[Mandatory]`
+
+- defaults to crudoptions basepath
+
+#### import.model
+`String` `[Mandatory]`
+
+Sequelize Model name to import into.
+
+
+#### import.execute
+`String` `[Optional]`
+
+Specify which model class method is to be called to handle the data at server side
+
+#### import.autoimport
+`Boolean` `[Optional]` - `default false`
+
+If set to true, import.execute value is ignored and VES will try to import all data by itself, remember, you can always set data in Sequelize data structure and VES will import all nested data with maintaining all relations.
+
+#### import.transaction
+`String[file/row]` `[Optional]` - `default file`
+
+How you want to handle import transaction, By default, on any error, no data will be imported and everything will be rollbacked, but if specified `row`, Importer will do every row in different transaction and on error in any row, only that row will be rolled back.
+
+#### import.rowformatter
+`function` `[Optional]` - `default undefined`
+
+if defined, importer will map all rows to this function and returned value of this function will be used for that row instead. This way, you can define arrange data from flat csv/excel data to Strcutured data.
+
+For example please see `import` options.
+
+rowformatter allowes you to add $vnatk_ properties in root iyem as well as all nested data, next section describes what are those $vnatk_ handlers for import.
+
+#### $vantk_ handlers explained
+You can add the following $vnatk_ properties in importing row items (at root level as well as nested level)
+
+This will guide VES how you want to treat a particular relation or row.
+
+* `$vnatk_data_handle` : This property has following options to be passed as string values
+    * `alwaysCreate`: with this option, importer will always insert data in table
+    * `findOrCreate`: with this option, importer will try to find record in table based on all fields values, if found no data will be inserted. For relations (Nested belongsTo, belongsTomany) founded Id will be used to make relations. if you have another criteria to search not by all fields, you can set `$vnatk_find_options`
+    * `findAndUpdateOrCreate`: with this option, importer will find (Either by all fields or as per `$vnatk_find_options` if defined) and if found, values for item will be updated. If not found the record will be instered. For relations, if not created, founded record primary key will be used to set relations as per data.
+    * `findToAssociate`: with this option, importer will find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing City. But if not found, this throws error.
+    * `associateIfFound`: with this option, importer will try to find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing Group. But if not found, importer will simply skip association.
+* `$vnatk_find_options` : This property has following options to be passed as string values.
+    If defined, this option guides importer to find a record. If not defined system will find by all items. ike, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don;t want to find by name and status.
+    * `modelscope`: `false` to unscope model before finding, or `String` to set scope for model.
+    * `modeloptions`: `JSON`, provides `where` condition for find. This only allows you to define where condition, attributes or include are not permitted here.
+ 
+#### import.success
+`function|callback` `[Optional]` - `default undefined`
+
+If defined, once importer is finished with importing, this function will be called by passing response data from VES API.
 
 
 ## Crud Events
+
+`vnatk-crud` extends `v-data-table` from Vuetify, Hence, all attributes and events on v-data-table should work here too. In addition to this vnatk-crud emits two events.
+
+### before-action-execute
+
+This event emits just before any action is about to execute passing two parameters `action` object and `item` object.
+
+```javascript
+<vnatk-crud 
+    :options="crudoptions" 
+    @before-action-execute='function1', 
+>
+.
+.
+.
+
+<script>
+export default {
+    .
+    .
+    .
+    methods: {
+        function1(action, item){
+            // DO YOUR STUFF HERE
+        }
+    }
+}
+</script>
+```
+
+### after-action-execute
+
+This event emits when responce is recieved and success callbacl is called. This event passes two parameters to handler function `metaData` object (payload that was sent for this event) and `responseData` (received response data) object.
+
+```javascript
+<vnatk-crud 
+    :options="crudoptions" 
+    @after-action-execute='function2', 
+>
+.
+.
+.
+
+<script>
+export default {
+    .
+    .
+    .
+    methods: {
+        function2(metaData, responseData){
+            // DO YOUR STUFF HERE
+        }
+    }
+}
+</script>
+```
