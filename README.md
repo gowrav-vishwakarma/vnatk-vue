@@ -272,7 +272,7 @@ $yourProjectRoot/client> vue add vuetify
 #to make better use of views etc just add router
 $yourProjectRoot/client> vue add router
 
-$yourProjectRoot/client> npm install --save material-design-icons-iconfont axios vuetify-form-base vnatk-vue
+$yourProjectRoot/client> npm install --save material-design-icons-iconfont axios vuetify-form-base vue-papa-parse vnatk-vue
 ```
 
 ### Step 2.1: setup VNATK-VUE
@@ -326,6 +326,7 @@ export default api;
 ```
 
 ### Step2.2: Create Vue Views
+
 Our system is ready to rock, now we will just create ```models``` and ```methods``` in Sequlize at server side and ```views/page``` in Vue Frontend, The rest logic is well done by itself.
 
 for now open ```views/Home.vue``` file and place the following content to see the magic
