@@ -107,7 +107,76 @@
           <div role="main">
             <div class="section">
               
-                <p>using vnatk</p>
+                <p>This page shows more power of <code>VES</code> (<code>vnatk-express-sequelize</code>) and how you can leverage that as API less system for your  queries from frontend.</p>
+<p>Considering you have installed <code>VES</code> on your server side, you can simply ask for any data without creating APIs for each and every trivial things. Lets just have an exmaple to understand, how you can use VES with vuetify, even not using <code>vnatk-vue</code>.</p>
+<p>This component code shows how you can use VES <code>BASE_PATH/crud</code> api to read anything.</p>
+<pre><code class="language-html">&lt;template&gt;
+  &lt;v-toolbar dense&gt;
+    &lt;v-combobox
+      v-model=&quot;selected_customer&quot;
+      :items=&quot;customers_list&quot;
+      :search-input.sync=&quot;customer_search_input&quot;
+      item-text=&quot;title&quot;
+      item-value=&quot;id&quot;
+      hide-details
+      clearable
+      no-data-text=&quot;No Customer Found. Please try again!&quot;
+      label=&quot;Search Customer Name&quot;
+      class=&quot;pa-4 mb-4&quot;
+    &gt;&lt;/v-combobox&gt;
+  &lt;/v-toolbar&gt;
+&lt;/template&gt;
+&lt;script&gt;
+import customer from &quot;../services/customer&quot;;
+
+export default {
+  name: &quot;CustomerSearch&quot;,
+  data() {
+    return {
+      customer_search_input: &quot;&quot;,
+      customers_list: [],
+      selected_customer: null,
+    };
+  },
+
+  watch: {
+    //customer search
+    customer_search_input: function (newValue) {
+      if (!newValue) return;
+      var postOptions = {
+        model: &quot;User&quot;,
+        read: {
+          modeloptions: {
+            attributes: [&quot;mobile&quot;, &quot;firstName&quot;, &quot;lastName&quot;, &quot;id&quot;],
+            where: {
+              $or: {
+                mobile: {
+                  $like: &quot;%&quot; + newValue + &quot;%&quot;,
+                },
+                firstName: {
+                  $like: &quot;%&quot; + newValue + &quot;%&quot;,
+                },
+                lastName: {
+                  $like: &quot;%&quot; + newValue + &quot;%&quot;,
+                },
+              },
+            },
+            limit: 10,
+          },
+        },
+      };
+      customer.post(&quot;/admin/vnatk/crud&quot;, postOptions).then((response) =&gt; {
+        this.customers_list = response.data.data.map((i) =&gt; {
+          i.title = i.firstName + &quot; &quot; + i.lastName + &quot; &quot; + i.mobile;
+          return i;
+        });
+      });
+    },
+};
+&lt;/script&gt;
+</code></pre>
+<p>Interstingly, here we just created what we want from VES and recived data. also play attention how we just created new property title on fly and used that as <code>item-text</code> for <code>v-combobox</code>.</p>
+<p>Once installed VES, you can use it as alternative to GraphQL for sequlize. To know more about VES please visit <a href="https://github.com/gowrav-vishwakarma/vnatk-express-sequelize">Official Page of Vnatk-Express-Sequelize</a></p>
               
             </div>
           </div>
