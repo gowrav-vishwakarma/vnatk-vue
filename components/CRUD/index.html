@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Gowrav Vishwakarma">
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>vnatk-crud component - VNATK-VUE</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "vnatk-crud component";
+    var mkdocs_page_input_path = "components/CRUD.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> VNATK-VUE</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Overview</a>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../quickstart/">QuickStart</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Components</span></p>
+                <ul class="current">
+                    <li class="toctree-l1"><a class="reference internal" href="../">List</a>
+                    </li>
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">vnatk-crud component</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#sample-crud-option-passing">Sample crud option passing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#crud-options">Crud Options</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#service">service</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#basepath">basepath</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#model">model</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#title">title</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quicksearch">quicksearch</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#create">create</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#createuititle">create.uititle</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#createmodeloptions">create.modeloptions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#createdefaultvalues">create.defaultvalues</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#read">read</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#readmodeloptions">read.modeloptions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#readmodelscope">read.modelscope</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#readautoderef">read.autoderef</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#readserversidepagination">read.serversidepagination</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#readdatatableoptions">read.datatableoptions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#update">update</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#updateuititle">update.uititle</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#updatemodeloptions">update.modeloptions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#delete">delete</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#action">action</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ui">ui</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#uidefaultactionplacement">ui.defaultActionPlacement</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#uiheaders">ui.headers</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#override">override</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#overrideactions">override.actions</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#overrideactionsname">override.actions[].name</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#overrideactionsplacein">override.actions[].placeIn</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#overrideactionsformschemaoverrides">override.actions[].formschemaoverrides</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#overrideheaders">override.headers</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#import">import</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#importservice">import.service</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#crud-events">Crud Events</a>
+    </li>
+    </ul>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../using-vnatk-with-vuetify/">Using VES with Vuetify</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../../sequelize-model-features/">Sequelize Model Features</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">VNATK-VUE</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Components &raquo;</li>
+        
+      
+    
+    <li>vnatk-crud component</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/gowrav-vishwakarma/vnatk-vue/edit/master/docs/components/CRUD.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="vnatk-crud">vnatk-crud</h1>
+<pre><code class="language-html">&lt;vnatk-crud 
+    :options=&quot;crudoptions&quot; 
+    @before-action-execute='function1', 
+    @after-action-execute='function2'
+&gt;
+</code></pre>
+<h2 id="sample-crud-option-passing">Sample crud option passing</h2>
+<p>A sample crud option can be as follows</p>
+<pre><code class="language-html">&lt;template&gt;
+  &lt;vnatk-crud :options=&quot;crudoptions&quot;&gt; &lt;/vnatk-crud&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { VnatkCrud } from &quot;vnatk-vue&quot;;
+import customer from &quot;../services/customer&quot;;
+
+export default {
+  name: &quot;SampleCRUD&quot;,
+  components: {
+    VnatkCrud,
+  },
+  data() {
+    return {
+      crudoptions: {
+        service: customer,
+        model: &quot;User&quot;,
+        title: &quot;Users&quot;,
+      },
+    };
+  },
+};
+&lt;/script&gt;
+</code></pre>
+<h2 id="crud-options">Crud Options</h2>
+<h3 id="service">service</h3>
+<p><code>axios_instance</code> <code>[Mandatory]</code> </p>
+<p>Since VNATK is designed aroung microservices, you can have multiple services to deal with, provide any axios instance as service to do requests by vnatk-crud component.</p>
+<h3 id="basepath">basepath</h3>
+<p><code>String</code> <code>[Optional]</code></p>
+<ul>
+<li>defaults to <code>"/vnatk"</code> for your service</li>
+</ul>
+<p>But since you may have defined some other route for vnatk like <code>admin/vnatk</code> or <code>api/vnatk</code>. provide this string to route your vnatk request to proper url for provided service.</p>
+<h3 id="model">model</h3>
+<p><code>String</code> <code>[Mandatory]</code></p>
+<p>Sequelize Model name to work on with this crud, This model will be considered with its default scope. You can change the scope to deal with further options coming.</p>
+<h3 id="title">title</h3>
+<p><code>String</code> <code>[Optional]</code></p>
+<p>Provides title of your crud</p>
+<h3 id="quicksearch">quicksearch</h3>
+<p><code>Array/Function/Boolean</code> <code>[Optional]</code></p>
+<p>quicksearch adds a input box at top-right of crud and allws you to search in your data.</p>
+<ul>
+<li><code>quicksearch: true</code> will search in your local crud data. (Client side only.)</li>
+<li><code>quicksearch: ['field1', 'field2']</code> This format will work if your pagination is set to server mode, vnatk-crud will perform a like query on the fields provided with user entered value and results will filter in crud.</li>
+<li><code>quicksearch: (usertext)=&gt;{ // do some change in read.modeloptions as per your need }</code> when given as function you can modify crud options based on usertext and vue reactivity will reload crud with new options.</li>
+</ul>
+<h3 id="create">create</h3>
+<p><code>Boolean/JSON</code> <code>[Optional]</code> - <code>default true</code></p>
+<p>When provided just boolean, you just inform if you want to have a create facility or not.</p>
+<ul>
+<li><code>true</code>: If true, system will add a <code>add</code> button and will get all Sequelize Model fields with their relations to have a create form populated. on save it does add record too.</li>
+<li><code>false</code>: If false, system will skip add facility for your crud.</li>
+<li><code>json</code>: When provided a json object you can customize create feature, let's see json object options in detail</li>
+</ul>
+<h4 id="createuititle">create.uititle</h4>
+<p><code>String</code> <code>[Optional]</code></p>
+<p>Title of Dialog opened</p>
+<h4 id="createmodeloptions">create.modeloptions</h4>
+<p><code>JSON</code> <code>[Optional]</code> - <code>default {}</code></p>
+<p>Model options to be passed to Sequelize model.create(<strong>HERE</strong>)</p>
+<pre><code class="language-javascript">crudoptions:{
+    service: customer,
+    model: 'User'
+    create: {
+        modeloptions: {
+            attributes: [&quot;name&quot;, &quot;email&quot;, &quot;status&quot;, &quot;city_id&quot;, &quot;password&quot;],
+        },
+    }
+}
+</code></pre>
+<h4 id="createdefaultvalues">create.defaultvalues</h4>
+<p><code>JSON/Function</code> <code>[Optional]</code> - <code>default {}</code></p>
+<p>Lets say you are showing Users that are employee only so you are using <code>crudoptions.read.modeloptions.modelscope:'employee'</code> But when you create a new User, you don't want to add userType in create form but this should go as default value. You can do this by following example</p>
+<p>Default value as <code>String</code></p>
+<pre><code class="language-javascript">crudoptions:{
+    service: customer,
+    model: 'User'
+    create: {
+        modeloptions: {
+            attributes: [&quot;name&quot;, &quot;email&quot;, &quot;status&quot;, &quot;city_id&quot;, &quot;password&quot;],
+        },
+        defaultvalues:{
+            userType:'employee'
+        }
+    }
+}
+</code></pre>
+<p>Default value as <code>function</code></p>
+<p>any default value can be provided by function also to do some logic on your data going to submit and set your default value based on that logic</p>
+<pre><code class="language-javascript">crudoptions:{
+    service: customer,
+    model: 'User'
+    create: {
+        modeloptions: {
+            attributes: [&quot;name&quot;, &quot;email&quot;, &quot;status&quot;, &quot;city_id&quot;, &quot;password&quot;],
+        },
+        defaultvalues:{
+            userType: function(item){
+                // your logic here like
+                // if email contains company-domain.com return 'employee'
+                // else return 'user'
+                // A return value is must to have
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="read">read</h3>
+<p><code>JSON</code> <code>[Optional]</code> - <code>default {}</code></p>
+<p>Provides information to vnatk-express-seuelize and vnatk-vue to handle your data. You can customize read options by JSON properties.</p>
+<h4 id="readmodeloptions">read.modeloptions</h4>
+<p><code>JSON</code> <code>[Optional]</code> - <code>default {}</code></p>
+<p>Options for yous sequelize model, Wiht a few minor modifications, you can almost use any Sequelize model's option here what you can use in <code>model.findAll</code> (if not using serversidepagination) or you can use in <code>model.findAndCountAll</code>. </p>
+<p>Three things are surely different then those model options are how we define <code>operators</code>, <code>scope</code> and <code>sequelize.fn</code> in our read.modeloptions</p>
+<ul>
+<li>For operator - Use operator alias for operators like in example below </li>
+<li>For scope - Since you define model with string the main model scope is defined by <code>crudoptions.read.modelscope</code> property and for include options in your modeloptions you can define separate <code>scope</code> property to be populated at server side.</li>
+<li>For fn - you can pass json object with fn, col and as property to rebuild sequelize.fn at server side</li>
+</ul>
+<p>Lets have an exmaple to do it now. Please read all the comments to get more about read.modeloptions</p>
+<pre><code class="language-javascript">read: {
+    modeloptions: {
+        subQuery:false,
+        attributes: [
+            &quot;name&quot;,
+            &quot;email&quot;,
+            &quot;status&quot;,
+            &quot;state_id&quot;,
+            &quot;city_id&quot;,
+            &quot;mobile&quot;,
+        ],
+        // include: [&quot;City&quot;, &quot;State&quot;],  // to get all attributes with including without any further customizing (Same as sequelize docs)
+        include: [
+            {
+                model: &quot;City&quot;,
+                attributes: [&quot;name&quot;, &quot;status&quot;], // get only these attributes (Same as sequelize docs)
+                required: false, // To have OUTER LEFT JOIN instead INNER JOIN (Same as sequelize docs)
+                scope: false, // or text (since we define Models as string, scope can be passed as property here) (VNATK-SPECIFIC )
+            },
+            {
+                model: &quot;State&quot;,
+                attributes: [&quot;name&quot;, &quot;status&quot;, &quot;gst_code&quot;],
+                required: false,
+            },
+            {
+                // No relations and wrong models but just to write somewhere till we create proper documentation
+                model: &quot;Project&quot;,
+                as: &quot;ProjectsOwned&quot;,
+                attributes: [{ fn: &quot;count&quot;, col: &quot;*&quot;, as: &quot;ProjAdminCount&quot; }],
+            },
+            {
+                model: &quot;Project&quot;,
+                as: &quot;Projects&quot;,
+                attributes: [
+                    {
+                    fn: &quot;count&quot;,
+                    col: &quot;*&quot;,
+                    as: &quot;ProjectPartOf&quot;,
+                    through: { attributes: [] },
+                    },
+                ],
+            },
+        ],
+        group: [&quot;User.id&quot;],
+    },
+}
+</code></pre>
+<h4 id="readmodelscope">read.modelscope</h4>
+<p><code>Boolean/String</code> <code>[Optional]</code> - <code>undefined</code></p>
+<p>Remember this option effects main model defined in crudoptions while individual scopes in include are just with scope property</p>
+<ul>
+<li><code>undefined or not defined</code>: If not defined, the VES will apply defaultscope like what would sequelize do.</li>
+<li><code>false</code>: set this value to false, model at the server end will be unscoped.</li>
+<li><code>String</code>: if set as any string, system will load the scope by defined name, if not found at server model, system will throw an error.</li>
+</ul>
+<h4 id="readautoderef">read.autoderef</h4>
+<p><code>Boolean</code> <code>[Optional]</code> - <code>default true</code></p>
+<p>VNATK finds relations at server side with sequelize models and solves relations to get de-referenced data here. Liek if user belongsTo City, autderef will also return you the city name by including this attribute by default and also shows in crud. You have total control over this also how to display what, that will come in later options.</p>
+<p>But if you want to skip it doing all de-ref for you, just set it false.
+remember setting this false will also result in all Autocomplete etc not working automatically.</p>
+<h4 id="readserversidepagination">read.serversidepagination</h4>
+<p><code>Boolean</code> <code>[Optional]</code> - <code>default false</code></p>
+<p>The default behaviour is to get all data and do the pagination at client side, but if the data is big or you want serverside pagination, just set this option to true. rest limit, page number etc will be taken care of. 
+For better understanding please see <code>datatableoptions</code> exmaple.</p>
+<h4 id="readdatatableoptions">read.datatableoptions</h4>
+<p><code>JSON</code> <code>[Optional]</code> - <code>default from v-data-table</code></p>
+<p>This is synced option with v-data-table options, so you can use the same options here what you use for v-data-table like</p>
+<pre><code class="language-javascript">    serversidepagination: true,
+    datatableoptions: {
+        page: number,
+        itemsPerPage: number,
+        sortBy: string[],
+        sortDesc: boolean[],
+        groupBy: string[],
+        groupDesc: boolean[],
+        multiSort: boolean,
+        mustSort: boolean
+    },
+</code></pre>
+<h3 id="update">update</h3>
+<p><code>Boolean/JSON</code> <code>[Optional]</code> - <code>default true</code></p>
+<p>if set to false, Editing option will be unavailable for the crud.
+if provided with JSON object, you can customize Editing feature.</p>
+<ul>
+<li>TO edit any field, you must have that in your read.modeloptions.attributes or the system will throw error</li>
+</ul>
+<h4 id="updateuititle">update.uititle</h4>
+<p><code>String</code> <code>[Optional]</code></p>
+<p>Title of Editing Window</p>
+<h4 id="updatemodeloptions">update.modeloptions</h4>
+<p>Mostly used to define what fields you want to edit, rest options will be just passed to your sequelize model.</p>
+<pre><code class="language-javascript">update: {
+    uititle: &quot;Edit User - {name}&quot;,
+    modeloptions: {
+    attributes: [
+        &quot;name&quot;,
+        &quot;email&quot;,
+        &quot;status&quot;,
+        &quot;city_id&quot;, // If autoderef is true, these relations will be converted to autocomplete automatically
+        &quot;state_id&quot;,
+        &quot;mobile&quot;,
+    ],
+    },
+},
+</code></pre>
+<h3 id="delete">delete</h3>
+<p><code>Boolean</code> <code>[Optional]</code> - <code>default true</code></p>
+<p>If set to false, system will remove deleting facility from crud.</p>
+<h3 id="action">action</h3>
+<p><code>Boolean</code> <code>[Optional]</code> - <code>default true</code></p>
+<p>If set to true, VES (vue-express-sequelize) will send all doable actions and the related actions will be visible in CRUD.
+To skip having actions fetched set this value to <code>false</code>.</p>
+<p>To read about how you can define actions from sequelize model, Please see <a href="/sequelize-model-features">Sequelize Model Features</a></p>
+<h3 id="ui">ui</h3>
+<p><code>JSON</code> <code>[Optional]</code> - <code>default undefiend</code>
+defines options for crud, like default action placement place and headers for v-data-table</p>
+<h4 id="uidefaultactionplacement">ui.defaultActionPlacement</h4>
+<p><code>String[DropDown/buttonGroup]</code> <code>[Optional]</code> - <code>default DropDown</code></p>
+<p>Where by default you want your actions to be placed in crud, DropwDown will add them in menu at the end of Row, buttonGroup will add actions in buttons in action column. </p>
+<h4 id="uiheaders">ui.headers</h4>
+<p><code>Array of Objects</code> <code>[Optional]</code> - <code>default undefined</code></p>
+<p>Vantk-crud retrives all headers from sequelize itself, You can even override headers by other options, but many times overriding will be more work to do if you need to show only 2 columns and to hide rest 15 columns, just replace headers coming from server by defining here</p>
+<pre><code class="language-javascript">ui: {
+    defaultActionPlacement: &quot;DropDown&quot;,
+    // Skip headeres received from server and use these as base to mix with override later
+    headers: [
+    {
+        text: &quot;Identifier&quot;,
+        value: &quot;identifier&quot;,
+    },
+    {
+        text: &quot;Attribute Group&quot;,
+        value: &quot;AttributeGroup.name&quot;,
+    },
+    {
+        // Don't forget to add actions column manually in case of heaers defined in ui and
+        // actions: true (default)
+        text: &quot;Actions&quot;,
+        value: &quot;vnatk_actions&quot;,
+    },
+    ],
+},
+</code></pre>
+<h3 id="override">override</h3>
+<p><code>JSON</code> <code>[Optional]</code> - <code>default undefined</code></p>
+<p>you can always override actions and headers to customize your own need. You just have to override only actions/headers that you want to modify.</p>
+<h3 id="overrideactions">override.actions</h3>
+<p><code>Array of Objects</code></p>
+<p>define what actions you want to override, each object in this array must have a <code>name</code> property to identify which action to override and rest properties shows what to override.</p>
+<p>vnatk has a few predefined reserved action names</p>
+<ul>
+<li>vnatk_add</li>
+<li>vnatk_edit</li>
+<li>
+<p>vnatk_delete</p>
+<p><strong>To create forms at runtime fromsequelize model details VNATK is using <a href="https://github.com/wotamann/vuetify-form-base">Vuetify-Form-Base</a> a great plugin to convert your json as beautiful vuetify forms. It will always be a great help to study that also.</strong></p>
+</li>
+</ul>
+<p>Lets have an complete example and then go each option one by one. Please read comments for better unerstaing in the examples</p>
+<pre><code class="language-javascript">override: {
+    actions: [
+    {
+        name: &quot;vnatk_edit&quot;, // edit action is given specially this name
+        placeIn: &quot;buttonGroup&quot;, // or &quot;DropDown&quot;
+
+        // use this to merge formschema options
+        formschemaoverrides: {
+        mobile: {
+            label: &quot;Mobile Number&quot;,
+        },
+        city_id: {
+            // titlefield - only used if field is reference/association type
+            // default titlefield is considered as name or as defined in sequelize model
+            titlefield: &quot;City.name&quot;, // autocomplete text field from recived data
+            label: &quot;Your City&quot;,
+            serviceoptions: {
+                service: customer, // To have data from other service then default service defined for crud
+                basepath: &quot;/vnatk&quot;,
+                model: &quot;City&quot;,
+                modelattributes: [&quot;id&quot;, &quot;name&quot;],
+                searchfield: &quot;name&quot;, // autocomplete search q for like in the field
+                limit: 10,
+            },
+        },
+        email: {
+            clearable: true,
+        },
+        // state_id: {
+        //   titlefield: &quot;State.name&quot;,
+        // no state_id related info is overrided, still working good, in this case: using same service to get details if id,name is required with default limit
+        // },
+        },
+    },
+    {
+        name: &quot;vnatk_add&quot;, // add action is given specially this name
+        // use this to merge formschema options
+        formschemaoverrides: {
+        city_id: {
+            label: &quot;Your City ... &quot;,
+        },
+        },
+    },
+    {
+        name: &quot;activate&quot;,
+        placeIn: &quot;buttonGroup&quot;, // or &quot;DropDown&quot;
+        icon: &quot;mdi-format-align-left&quot;,
+        caption: &quot;Activate User&quot;,
+        // formschema:{} // use this to override complete formschema
+        // formschemaoverrides:{} // use this to merge formschema options
+    },
+    {
+        name: &quot;deactivate&quot;,
+        placeIn: &quot;buttonGroup&quot;,
+        caption: &quot;Deactivate&quot;,
+        // icon: &quot;mdi-format-align-left&quot;,
+    },
+    {
+        name: &quot;clientFunction&quot;,
+        type: &quot;NoRecord&quot;,
+        execute: this.clientFunctionCallBack,
+        isClientAction: true,
+    },
+    ],
+}
+</code></pre>
+<h4 id="overrideactionsname">override.actions[].name</h4>
+<p><code>String</code> <code>[Mandatory]</code></p>
+<p>Used to identify whcih action to override</p>
+<h4 id="overrideactionsplacein">override.actions[].placeIn</h4>
+<p><code>String[buttonGroup/DropDown]</code> <code>[Optional]</code> - <code>default DropDown</code></p>
+<p>where you want to place the action, in dropdown menu at the end of row or in buttonGroup.</p>
+<h4 id="overrideactionsformschemaoverrides">override.actions[].formschemaoverrides</h4>
+<p><code>JSON</code> <code>[Optional]</code></p>
+<p>VES, sends actions and their schema well defined from server, but many times you want to override its scham at client side based on need.
+you can override each field's schema by defineing field_id as key and JSON schema to be overrided as value. </p>
+<p>Remember, only values that you override will be overrided and rest values will be taken as recieved from server.</p>
+<p>please see override.actions for complete example.</p>
+<h3 id="overrideheaders">override.headers</h3>
+<p><code>JSON</code> <code>[Optional]</code></p>
+<p>VES sends all related headrs via initial server call, still you need to hide/add extra header through this options
+Lets have a full exmaple of override.headers option, please read the comments for better understanding</p>
+<p>VES also sends one header valued <code>vnatk_actions</code> to render all actions in it, you can override that too.</p>
+<pre><code class="language-javascript">override: {
+          actions: [
+            ...
+          ],
+          headers: {
+              /*
+                field:{
+                    option: value
+                }
+              */
+            city_id: {
+              hide: true, // vnatk specific property to hide a column in v-data-table
+            },
+            state_id: {
+              hide: true,
+            },
+            mobile: {
+              text: &quot;User Mobile&quot;,
+              sortable: true,
+              // value: &quot;mobile&quot;,
+              // moveto: 0,
+            },
+            City: {
+              // Override DeReferanced Fields (received from server due to autoderef)
+              text: &quot;Primary City&quot;, //Overrided header caption/text
+              value: &quot;City.name&quot;, // Value does not have effect as alrady overrided column by slot in template above
+              // moveto: 2,
+            },
+            &quot;State.gst_code&quot;: {
+              text: &quot;State GST Code&quot;,
+              value: &quot;State.gst_code&quot;,
+              sortable: true,
+              moveto: 4,
+            },
+            vnatk_actions: {
+              moveto: &quot;last&quot;,
+            },
+          },
+        },
+</code></pre>
+<h3 id="import">import</h3>
+<p><code>JSON</code> <code>[Optional]</code> - <code>default undefined</code></p>
+<p>If defined as JSON, your crud will have an import button at top to import data. Data will previewed first and when proceeded, sent to VES for importing into defined model at root option. Also you can restructure data as seqlize relations and all deep data create with all relations will be done at server.</p>
+<p>Lets have an complete example and then understand each option.</p>
+<pre><code class="language-javascript">crudoptions:{
+    .
+    .
+    ,
+    import: {
+        service: catalog,
+        basepath: &quot;/admin/vnatk&quot;,
+        model: &quot;User&quot;,
+        execute: &quot;vnatk_import&quot;, // or any other funtion you want to pass this data to in your model
+        autoimport: true, // ignores execute options and just try to bulk create from given data by default vnatk action
+        transaction: &quot;file&quot;, // defaults to 'file' / or 'row'. In 'file' mode, data will rollback for all rows in case of error in any row, in 'row' mode, rows that are not imported are only rolled back and errored rows are reported back on import dialog.
+        rowformatter: function (item) {
+            item.$vnatk_data_handle = &quot;alwaysCreate&quot;; // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate', (For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
+            item.$vnatk_find_options = {}; // if not provided, finding will be based on all fields and values defined above
+            item.$vnatk_cache_records = true; // default to true, set false to find each time even if same condition is already found previously
+            item.$vnatk_update_data = {}; // update only fields and their values defined here (if found), if this option is not provided, all fields defined above will be updated.
+
+            item.City = {
+                //Data to create or Update (if not defined vnatk_update_data)
+                name: item.city_name,
+                status: item.city_status,
+
+                $vnatk_data_handle: &quot;alwaysCreate&quot;, // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate',(For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
+                $vnatk_find_options: {
+                modeloptions: {},
+                modescope: false,
+                }, // if not provided, finding will be based on all fields and values defined above
+                $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
+                $vnatk_update_data: {}, // update only fields and their values defined here (if found), if this option is not provided, all fields defined above will be updated.
+            };
+
+            item.FavPlaces = [
+                //hasMany relations: set as Array of Object, Each object defines one hasMany/many2many entry
+                {
+                //Data to create or Update (if not defined vnatk_update_data)
+                name: item.fav_place_name_1,
+                $vnatk_data_handle: &quot;alwaysCreate&quot;, // 'alwaysCreate' [default],'findToAssociate' [Produce error if not found],'findOrCreate','findAndUpdateOrCreate','associateIfFound' [Ignores if not found]
+                $vnatk_find_options: {},
+                $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
+                $vnatk_update_data: {},
+                $set_fresh_relations: false, // default to false, if set true all data with this relation will be removed first
+                },
+                {
+                //Data to create or Update (if not defined vnatk_update_data)
+                name: item.fav_place_name_2,
+                $vnatk_data_handle: &quot;alwaysCreate&quot;, // 'alwaysCreate' [default],'findToAssociate' [Produce error if not found],'findOrCreate','findAndUpdateOrCreate','associateIfFound' [Ignores if not found]
+                $vnatk_find_options: {},
+                $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
+                $vnatk_update_data: {},
+                },
+                {
+                //Data to create or Update (if not defined vnatk_update_data)
+                name: item.fav_place_name_3,
+                $vnatk_data_handle: &quot;alwaysCreate&quot;, // 'alwaysCreate' [default],'findToAssociate' [Produce error if not found],'findOrCreate','findAndUpdateOrCreate','associateIfFound' [Ignores if not found]
+                $vnatk_find_options: {},
+                $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
+                $vnatk_update_data: {},
+                },
+            ];
+
+            delete item.city_name;
+            delete item.city_status;
+
+            return i;
+        },
+        success: this.reloadPage,
+    },
+}
+</code></pre>
+<h4 id="importservice">import.service</h4>
+<p><code>axios_instance</code> <code>[Optional]</code> - <code>default root service</code></p>
+<h2 id="crud-events">Crud Events</h2>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../using-vnatk-with-vuetify/" class="btn btn-neutral float-right" title="Using VES with Vuetify">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../" class="btn btn-neutral" title="List"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/gowrav-vishwakarma/vnatk-vue/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href="../" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../../using-vnatk-with-vuetify/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

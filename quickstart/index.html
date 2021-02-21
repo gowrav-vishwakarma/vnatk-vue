@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <meta name="author" content="Gowrav Vishwakarma">
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>QuickStart - VNATK-VUE</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../css/theme.css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "QuickStart";
+    var mkdocs_page_input_path = "quickstart.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> VNATK-VUE</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                    </li>
+                </ul>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">QuickStart</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#pre-requisite">Pre-requisite</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#setup-vnatk-express-sequelize">Setup vnatk-express-sequelize</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#setup-routes">Setup routes</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#vnatk-vue-installation">Vnatk-Vue Installation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#setup-project-for-vnatk">Setup project for vnatk</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#appvuetify-setup">APP/Vuetify setup</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#axios-services-setup">axios-services setup</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#your-first-crud">Your first CRUD</a>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Components</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../components/">List</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../components/CRUD/">vnatk-crud component</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../using-vnatk-with-vuetify/">Using VES with Vuetify</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="../sequelize-model-features/">Sequelize Model Features</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">VNATK-VUE</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>QuickStart</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        <a href="https://github.com/gowrav-vishwakarma/vnatk-vue/edit/master/docs/quickstart.md"
+          class="icon icon-github"> Edit on GitHub</a>
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="quickstart">QuickStart</h1>
+<h2 id="pre-requisite">Pre-requisite</h2>
+<h3 id="setup-vnatk-express-sequelize">Setup vnatk-express-sequelize</h3>
+<p>While there is separate documentation of this project, we will cover basics here to get your minimum setup done.</p>
+<p>Just add the vnatk-express-sequelize in your existing express-sequelize project</p>
+<pre><code class="language-bash">#install our dependencies now
+$yourProjectRoot/server&gt; npm install --save bcrypt body-parser cookie-parser express-handlebars jsonwebtoken morgan cors dotenv lodash mysql2 sequelize vnatk-express-sequelize
+</code></pre>
+<p>it is must have sequelize setup done through </p>
+<pre><code class="language-bash">#install sequelize cli for easy sequlize setup
+$yourProjectRoot/server&gt; npm install --save-dev sequelize-cli
+$yourProjectRoot/server&gt; sequelize init
+</code></pre>
+<h3 id="setup-routes">Setup routes</h3>
+<p>Please add the following code in your <code>app.js</code> file. (DON'T COPY PASTE WHOLE CODE, ITS NOT FULL FILE CODE) </p>
+<p><code>app.js</code></p>
+<pre><code class="language-javascript">// somewhere on the top after 
+// var express = require('express'); &lt;= after this line
+var cors = require('cors');
+const bodyParser = require('body-parser');
+const vnatk = require('vnatk-express-sequelize');
+...
+...
+// You can already have body-parser added, no need to add again
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true }));
+
+// add cors is a good way and mostly you might need this also
+app.use(cors()); // Use this after the variable declaration
+
+var VnatkRouter = require('./routes/vnatk.js');
+app.use('/vnatk', VnatkRouter); // '/vnatk' is called basepath here
+
+</code></pre>
+<p>Now create a new file to export Vnatk Routes
+<code>routes/vnatk.js</code></p>
+<pre><code class="language-javascript">var express = require('express');
+var router = express.Router();
+const vnatk = require('vnatk-express-sequelize');
+
+// Optional to use some auth middleware on this route
+
+//router.use(require('./middleware/adminTokenChecker'));
+
+const Models = require('../../models');
+module.exports = vnatk({ 
+    Models: Models,
+    router: router
+});
+
+</code></pre>
+<p>That's it, create your sequelize models and start using VES as alternative to GraphQL.</p>
+<pre><code>There are some additional features you can use in Sequelize model if you are just not using it as API but also using this vnatk-vue. For those please ffollow coming up session.
+</code></pre>
+<h2 id="vnatk-vue-installation">Vnatk-Vue Installation</h2>
+<p>Assuming you have setup your VES (vnatk-express-sequelize) already on server side, please follow the steps below. Steps define setting up a project from scratch, feel free to skip initial steps if you want VV in your existing project.</p>
+<pre><code class="language-bash"># just be sure you are in root of your project
+$yourProjectRoot&gt; ls
+server
+
+#install vue-cli globally if not installed 
+$yourProjectRoot&gt; npm install -g @vue/cli
+$yourProjectRoot&gt; vue create client
+#follow wizard, I preferred default for beginners
+
+$yourProjectRoot&gt; ls
+client  server
+
+$yourProjectRoot&gt; cd client
+$yourProjectRoot/client&gt; vue add vuetify
+# I prefer defaults for now
+
+#to make better use of views etc just add router
+$yourProjectRoot/client&gt; vue add router
+
+$yourProjectRoot/client&gt; npm install --save material-design-icons-iconfont axios lodash vuetify-form-base vue-papa-parse vnatk-vue
+</code></pre>
+<h2 id="setup-project-for-vnatk">Setup project for vnatk</h2>
+<h3 id="appvuetify-setup">APP/Vuetify setup</h3>
+<p>We are all set to use our system with defined model as in Back</p>
+<p>First we need to update <code>plugins/vuetify.js</code> file as per given code</p>
+<pre><code class="language-javascript">import Vue from 'vue';
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import 'vuetify/dist/vuetify.min.css'
+import Vuetify from &quot;vuetify&quot;;
+
+Vue.use(Vuetify, {
+    iconfont: 'md',
+});
+
+export default new Vuetify({
+});
+</code></pre>
+<p>Also the default setup does not usage <code>v-app</code> from vuetify but just a div in <code>src/App.vue</code>. Lets edit that file also like following</p>
+<pre><code class="language-vue">&lt;template&gt;
+&lt;!-- this below v-app was div in starting --&gt;
+  &lt;v-app id=&quot;app&quot;&gt; 
+    &lt;div id=&quot;nav&quot;&gt;
+      &lt;router-link to=&quot;/&quot;&gt;Home&lt;/router-link&gt; |
+      &lt;router-link to=&quot;/about&quot;&gt;About&lt;/router-link&gt;
+    &lt;/div&gt;
+    &lt;router-view /&gt;
+  &lt;/v-app&gt;
+&lt;/template&gt;
+
+</code></pre>
+<h3 id="axios-services-setup">axios-services setup</h3>
+<p>To connect our service/server let's create a folder <code>services</code> in your project <code>src</code> folder. Considering server/service we created in express setup above, is for customers. Create a file <code>customer.js</code> in services folder and place the following code there</p>
+<pre><code class="language-js">import axios from &quot;axios&quot;;
+
+const api = axios.create({
+  baseURL: process.env.VUE_APP_BASE_URL_CUSTOMER || &quot;http://localhost:3000&quot;
+});
+
+export default api;
+</code></pre>
+<h2 id="your-first-crud">Your first CRUD</h2>
+<p>Our system is ready to rock, now we will just create <code>models</code> and <code>methods</code> in Sequlize at server side and <code>views/page</code> in Vue Frontend, The rest logic is well done by itself.</p>
+<p>for now open <code>views/Home.vue</code> file (You will only get this file if you have done <code>vue add router</code>, otherwise, please find suitable file for you) and place the following content to see the magic</p>
+<pre><code class="language-vue">&lt;template&gt;
+  &lt;vnatk-crud :options=&quot;crudoptions&quot;&gt; &lt;/vnatk-crud&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { VnatkCrud } from &quot;vnatk-vue&quot;;
+import customer from &quot;../services/customer&quot;;
+
+export default {
+  name: &quot;SampleCRUD&quot;,
+  components: {
+    VnatkCrud,
+  },
+  data() {
+    return {
+      crudoptions: {
+        service: customer,
+        model: &quot;User&quot;,
+        title: &quot;Users&quot;,
+      },
+    };
+  },
+};
+&lt;/script&gt;
+</code></pre>
+<p>And your crud will be there with all avilable other actions also like the image below</p>
+<p>Notice city_id and state_id is automatically de-refenced to have their respective names from associations and all defined actions are available in drop down menu of each row. For more about additional features for seuelize models for vnatk-vue, please refer <a href="/sequelize-model-features">Sequelize Model Features</a></p>
+<p>By default system assumes <code>name</code> as title field that is shown instead of ID, but do not worry if you don't follow these notations, everything is customizable.</p>
+<p><img alt="alt text" src="../img/grid_image.png" title="Logo Title Text 1" /></p>
+<p>This is how edit form and functionality is created.</p>
+<p><img alt="alt text" src="../img/edit_action.png" title="Logo Title Text 1" /></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../components/" class="btn btn-neutral float-right" title="List">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/gowrav-vishwakarma/vnatk-vue/" class="fa fa-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../components/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
