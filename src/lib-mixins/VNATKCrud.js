@@ -14,14 +14,14 @@ export default {
 
             var err = [];
             // check for mandatory options
-            if (!this.options.response && this.options.data !== false) {
-                if (!this.options.model) err.push('"model" option not defined in crud options');
-                if (!this.options.service) err.push('"service" option not defined in crud options, service must be axios instance');
+            if (!this.optionsprop.response && this.optionsprop.data !== false) {
+                if (!this.optionsprop.model) err.push('"model" option not defined in crud options');
+                if (!this.optionsprop.service) err.push('"service" option not defined in crud options, service must be axios instance');
             }
 
-            if (this.options.response !== undefined) {
-                if (this.options.response.idfield === undefined) err.push('In case of Array based data please pass "idfield" property also');
-                if (this.options.response.headers === undefined) err.push('Please define "headers" in response headers:[{text,value},{text,value}]');
+            if (this.optionsprop.response !== undefined) {
+                if (this.optionsprop.response.idfield === undefined) err.push('In case of Array based data please pass "idfield" property also');
+                if (this.optionsprop.response.headers === undefined) err.push('Please define "headers" in response headers:[{text,value},{text,value}]');
             }
 
             if (err.length) {
@@ -30,35 +30,40 @@ export default {
             }
             // put default mendatory options
 
-            if (!this.options.basepath) this.options.basepath = '/vnatk';
-            if (!_.has(this.options, 'read')) this.options.read = {};
-            if (!this.options.title) this.options.title = this.options.model;
-            if (!this.options.ui) this.options.ui = { defaultActionPlacement: 'DropDown' };
-            if (this.options.read.autoderef !== false) this.options.read.autoderef = true;
-            if (!this.options.read.modeloptions) this.options.read.modeloptions = {};
-            if (this.options.read.headers !== false) this.options.read.headers = true;
-            if (this.options.read.autoderef !== false) this.options.read.autoderef = true;
-            if (!_.has(this.options, 'actions')) this.options.actions = true;
-            if (!_.has(this.options, 'create')) this.options.create = true;
-            if (!_.has(this.options, 'update')) this.options.update = true;
-            if (!_.has(this.options, 'delete')) this.options.delete = true;
+            if (!this.optionsprop.basepath) this.optionsprop.basepath = '/vnatk';
+            if (!_.has(this.options, 'read')) this.optionsprop.read = {};
+            if (!this.optionsprop.title) this.optionsprop.title = this.optionsprop.model;
+            if (!this.optionsprop.ui) this.optionsprop.ui = { defaultActionPlacement: 'DropDown' };
+            if (this.optionsprop.read.autoderef !== false) this.optionsprop.read.autoderef = true;
+            if (!this.optionsprop.read.modeloptions) this.optionsprop.read.modeloptions = {};
+            if (this.optionsprop.read.headers !== false) this.optionsprop.read.headers = true;
+            if (this.optionsprop.read.autoderef !== false) this.optionsprop.read.autoderef = true;
+            if (!_.has(this.optionsprop, 'actions')) this.optionsprop.actions = true;
+            if (!_.has(this.optionsprop, 'create')) this.optionsprop.create = true;
+            if (!_.has(this.optionsprop, 'update')) this.optionsprop.update = true;
+            if (!_.has(this.optionsprop, 'delete')) this.optionsprop.delete = true;
 
-            if (_.has(this.options.read.modeloptions, 'attributes')) {
-                if (typeof this.options.update === 'object' && this.options.update.modeloptions && this.options.update.modeloptions.attributes) {
-                    var fieldsNotinread = _.difference(this.options.update.modeloptions.attributes, this.options.read.modeloptions.attributes);
+            if (_.has(this.optionsprop.read.modeloptions, 'attributes')) {
+                if (typeof this.optionsprop.update === 'object' && this.optionsprop.update.modeloptions && this.optionsprop.update.modeloptions.attributes) {
+                    var fieldsNotinread = _.difference(this.optionsprop.update.modeloptions.attributes, this.optionsprop.read.modeloptions.attributes);
                     if (fieldsNotinread.length) {
                         this.errors.push(fieldsNotinread.join(', ') + ' Are required in edit but you are not retriving their values, include them in read and hide if not needed');
                         return false;
                     }
                 }
-                else if (this.options.update === true) {
-                    this.options.update = { modeloptions: { attributes: JSON.parse(JSON.stringify(this.options.read.modeloptions.attributes)) } };
-                } else if (typeof this.options.update === 'object' && !this.options.update.modeloptions) {
-                    this.options.update.modeloptions = { attributes: JSON.parse(JSON.stringify(this.options.read.modeloptions.attributes)) };
-                } else if (typeof this.options.update === 'object' && this.options.update.modeloptions && !this.options.update.modeloptions.attributes) {
-                    this.options.update.modeloptions.attributes = JSON.parse(JSON.stringify(this.options.read.modeloptions.attributes));
+                else if (this.optionsprop.update === true) {
+                    this.optionsprop.update = { modeloptions: { attributes: JSON.parse(JSON.stringify(this.optionsprop.read.modeloptions.attributes)) } };
+                } else if (typeof this.optionsprop.update === 'object' && !this.optionsprop.update.modeloptions) {
+                    this.optionsprop.update.modeloptions = { attributes: JSON.parse(JSON.stringify(this.optionsprop.read.modeloptions.attributes)) };
+                } else if (typeof this.optionsprop.update === 'object' && this.optionsprop.update.modeloptions && !this.optionsprop.update.modeloptions.attributes) {
+                    this.optionsprop.update.modeloptions.attributes = JSON.parse(JSON.stringify(this.optionsprop.read.modeloptions.attributes));
                 }
             }
+
+            if (this.optionsprop.import && !this.optionsprop.import.service) this.optionsprop.import.service = this.optionsprop.service
+            if (this.optionsprop.import && !this.optionsprop.import.basepath) this.optionsprop.import.basepath = this.optionsprop.basepath
+            if (this.optionsprop.import && !this.optionsprop.import.model) this.optionsprop.import.model = this.optionsprop.model
+            if (this.optionsprop.import && !this.optionsprop.import.execute) this.optionsprop.import.autoimport = true
 
             return true;
         },
@@ -74,9 +79,9 @@ export default {
 
         handleHeaderOverrides(serverheaders, overrideheaders) {
             // Add action column for client side data
-            if (this.options.response) {
-                if (this.options.response.actions && this.options.response.headers.findIndex((h) => { return h.value == 'vnatk_actions' }) == -1) {
-                    this.options.response.headers.push({ text: 'Actions', value: 'vnatk_actions' });
+            if (this.optionsprop.response) {
+                if (this.optionsprop.response.actions && this.optionsprop.response.headers.findIndex((h) => { return h.value == 'vnatk_actions' }) == -1) {
+                    this.optionsprop.response.headers.push({ text: 'Actions', value: 'vnatk_actions' });
                 }
             }
             if (!overrideheaders) return serverheaders;
@@ -115,7 +120,7 @@ export default {
             // TODO Convert serverside validations to client side 
 
             // add crud actions by default for Array based data provided for crud
-            if (this.options.response) {
+            if (this.optionsprop.response) {
                 if (typeof serveractions === 'boolean') serveractions = [];
                 serveractions.push(
                     {
@@ -259,19 +264,19 @@ export default {
         },
 
         addArrayCrudData(rowData) {
-            if (!rowData[this.options.response.idfield]) rowData[this.options.response.idfield] = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2)
+            if (!rowData[this.optionsprop.response.idfield]) rowData[this.optionsprop.response.idfield] = (new Date()).getTime().toString(36) + Math.random().toString(36).slice(2)
             this.data.push(rowData);
             return true;
         },
         editArrayCrudData(rowData) {
-            var index = this.data.findIndex(a => a[this.options.response.idfield] === rowData[this.options.response.idfield])
+            var index = this.data.findIndex(a => a[this.optionsprop.response.idfield] === rowData[this.optionsprop.response.idfield])
             delete this.data[index];
             this.data.splice(index, 1, rowData);
             return true;
         },
         deleteArrayCrudData(rowData) {
             if (confirm('Really delete row?')) {
-                return this.data.splice(this.data.findIndex(a => a[this.options.response.idfield] === rowData[this.options.response.idfield]), 1)
+                return this.data.splice(this.data.findIndex(a => a[this.optionsprop.response.idfield] === rowData[this.optionsprop.response.idfield]), 1)
             }
         },
 
