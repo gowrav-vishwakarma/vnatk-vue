@@ -186,7 +186,7 @@ VES try to guess best ui information from model, but you can pass the ui propert
     .
     isDumped: {
         type: DataType.Boolean,
-        ui:{
+        ui: {
             type: 'Checkbox',
             text: 'Dumped Project'
         }
