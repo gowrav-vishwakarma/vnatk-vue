@@ -507,7 +507,18 @@ If defined as JSON, your crud will have an import button at top to import data. 
 
 Lets have an complete example and then understand each option.
 
+If using import don't forget to use vue-papa-parse to use either on your component or globally on Vue instance
+
 ```javascript
+<script>
+
+import Vue from "vue";
+import VuePapaParse from "vue-papa-parse";
+Vue.use(VuePapaParse);
+
+.
+.
+.
 crudoptions:{
     .
     .
@@ -579,17 +590,17 @@ crudoptions:{
 ```
 
 #### import.service
-`axios_instance` `[Mandatory]`
+`axios_instance` `[Optional]` - `default to root service`
 
-define which
+if not defined, vnatk will use root service
 
 #### import.basepath
-`String` `[Mandatory]`
+`String` `[Optional]` - `defaults to root basepath`
 
 - defaults to crudoptions basepath
 
 #### import.model
-`String` `[Mandatory]`
+`String` `[Optional]` - `defaults to root model`
 
 Sequelize Model name to import into.
 

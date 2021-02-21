@@ -6,6 +6,10 @@
 import { VnatkCrud } from "@/entry";
 import customer from "./services/catalog";
 
+import Vue from "vue";
+import VuePapaParse from "vue-papa-parse";
+Vue.use(VuePapaParse);
+
 export default {
   name: "Example3",
   components: {
@@ -17,6 +21,7 @@ export default {
         service: customer,
         model: "User",
         basepath: "admin/vnatk",
+        quicksearch: ["firstName", "lastName", "email"],
         create: {
           modeloptions: {
             attributes: ["firstName", "lastName", "email"],
@@ -49,17 +54,14 @@ export default {
           },
         },
         delete: true,
-        //   title: "Users",
-        //   tableoptions: {
-        //     modeloptions: {
-        //       attributes: ["name", "email", "state_id", "city_id", "status"],
-        //     },
-        //     headersoverrides: {
-        //       status: {
-        //         hide: true,
-        //       },
-        //     },
-        //   },
+        import: {
+          autoimport: true,
+          rowformatter: function (item) {
+            item.mobile = parseInt(Math.random() * 1000);
+            item.userType = "employee";
+            return item;
+          },
+        },
       },
     };
   },
