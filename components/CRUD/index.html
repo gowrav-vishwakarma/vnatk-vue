@@ -631,7 +631,17 @@ Lets have a full exmaple of override.headers option, please read the comments fo
 <p><code>JSON</code> <code>[Optional]</code> - <code>default undefined</code></p>
 <p>If defined as JSON, your crud will have an import button at top to import data. Data will previewed first and when proceeded, sent to VES for importing into defined model at root option. Also you can restructure data as seqlize relations and all deep data create with all relations will be done at server.</p>
 <p>Lets have an complete example and then understand each option.</p>
-<pre><code class="language-javascript">crudoptions:{
+<p>If using import don't forget to use vue-papa-parse to use either on your component or globally on Vue instance</p>
+<pre><code class="language-javascript">&lt;script&gt;
+
+import Vue from &quot;vue&quot;;
+import VuePapaParse from &quot;vue-papa-parse&quot;;
+Vue.use(VuePapaParse);
+
+.
+.
+.
+crudoptions:{
     .
     .
     ,
@@ -701,15 +711,15 @@ Lets have a full exmaple of override.headers option, please read the comments fo
 }
 </code></pre>
 <h4 id="importservice">import.service</h4>
-<p><code>axios_instance</code> <code>[Mandatory]</code></p>
-<p>define which</p>
+<p><code>axios_instance</code> <code>[Optional]</code> - <code>default to root service</code></p>
+<p>if not defined, vnatk will use root service</p>
 <h4 id="importbasepath">import.basepath</h4>
-<p><code>String</code> <code>[Mandatory]</code></p>
+<p><code>String</code> <code>[Optional]</code> - <code>defaults to root basepath</code></p>
 <ul>
 <li>defaults to crudoptions basepath</li>
 </ul>
 <h4 id="importmodel">import.model</h4>
-<p><code>String</code> <code>[Mandatory]</code></p>
+<p><code>String</code> <code>[Optional]</code> - <code>defaults to root model</code></p>
 <p>Sequelize Model name to import into.</p>
 <h4 id="importexecute">import.execute</h4>
 <p><code>String</code> <code>[Optional]</code></p>
