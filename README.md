@@ -1,4 +1,4 @@
-## ALPHA/BETA - Under heavy development and not for production use
+### Beta Release
 ---
 
 [Official Documentation](https://gowrav-vishwakarma.github.io/vnatk-vue/)
