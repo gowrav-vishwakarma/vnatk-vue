@@ -61,6 +61,11 @@ export default {
             item.userType = "employee";
             return item;
           },
+          errorhandler: function (err) {
+            return err.response.data.Exception.errors
+              .map((e) => e.message)
+              .join("<br/>");
+          },
         },
       },
     };

@@ -629,6 +629,30 @@ For example please see `import` options.
 
 rowformatter allowes you to add $vnatk_ properties in root iyem as well as all nested data, next section describes what are those $vnatk_ handlers for import.
 
+#### import.errorhandler
+`function` `[Optional]` - `default undefined`
+
+VV try to manage coming errors well, but in case you want to handle errors by your won, you can create this property
+
+Returned `String` will be shown at the top of import preview page.
+
+```javascript
+import: {
+          autoimport: true,
+          rowformatter: function (item) {
+            // set default values in importer
+            item.userType = "employee";
+            return item;
+          },
+          errorhandler: function (err) {
+            return err.response.data.Exception.errors
+              .map((e) => e.message)
+              .join("<br/>");
+          },
+        },
+```
+
+
 #### $vantk_ handlers explained
 You can add the following $vnatk_ properties in importing row items (at root level as well as nested level)
 
