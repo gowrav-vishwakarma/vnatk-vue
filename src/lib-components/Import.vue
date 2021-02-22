@@ -24,8 +24,14 @@
     >
       <v-card>
         <v-card-title primary-title> Import Preview </v-card-title>
-        <v-alert type="error" v-if="errors.length" dismissible>
-          {{ errors }}
+        <v-alert
+          type="error"
+          v-if="errors.length"
+          v-for="(e, i) in errors"
+          :key="i"
+          dismissible
+        >
+          {{ e }}
         </v-alert>
         <v-card-text>
           <v-data-table
@@ -133,7 +139,16 @@ export default {
           this.closedialog();
         })
         .catch((error) => {
-          console.log(error);
+          if (
+            this.options.errorhandler &&
+            typeof this.options.errorhandler == "function"
+          ) {
+            let r = this.options.errorhandler(error);
+            this.errors.push(r);
+            console.log("Handed by errorhandler ", r);
+            this.isImporting = false;
+            return;
+          }
           if (error.response) this.errors.push(error.response.data);
           else this.errors.push(error);
           this.isImporting = false;
