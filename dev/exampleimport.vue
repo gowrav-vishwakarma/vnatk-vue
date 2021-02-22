@@ -95,13 +95,9 @@ export default {
               modeloptions: {
                 // if not provided, finding will be based on all fields and values defined above
                 email: item.email,
-                // groupId: true, // based on belongs to relation also ?
               },
               modelscope: false,
             };
-            item.$vnatk_cache_records = true; // ::: NOT IMPLEMENTED NOW ::: default to true, set false to find each time even if same condition is already found previously
-            item.$vnatk_update_data = {}; // update only fields and their values defined here (if found), if this option is not provided, all fields defined above will be updated.
-
             if (item.group) {
               item.Group = {
                 identifier: item.group,
