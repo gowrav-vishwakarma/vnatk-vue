@@ -543,7 +543,9 @@ crudoptions:{
 
                 $vnatk_data_handle: "alwaysCreate", // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate',(For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
                 $vnatk_find_options: {
-                modeloptions: {},
+                modeloptions: {
+                    where:{} // if required
+                },
                 modescope: false,
                 }, // if not provided, finding will be based on all fields and values defined above
                 $vnatk_cache_records: true, // default to true, set false to find each time even if same condition is already found previously
