@@ -89,7 +89,8 @@ export default {
                 belongsToArray.push({
                     id: index,
                     model: assos.model,
-                    foreignField: assos.foreignKey
+                    foreignField: assos.foreignKey,
+                    as: assos.as ? assos.as : assos.name.singular
                 })
             }
 
@@ -112,6 +113,10 @@ export default {
                         {
                             text: "Field",
                             value: "foreignField",
+                        },
+                        {
+                            text: "As",
+                            value: "as",
                         }
                     ],
                     actions: true,
@@ -145,7 +150,8 @@ export default {
                 HasManyArray.push({
                     id: index,
                     model: assos.model,
-                    foreignField: assos.foreignKey
+                    foreignField: assos.foreignKey,
+                    as: assos.as ? assos.as : assos.name.plural
                 })
             }
 
@@ -168,6 +174,10 @@ export default {
                         {
                             text: "Field",
                             value: "foreignField",
+                        },
+                        {
+                            text: "As",
+                            value: "as",
                         }
                     ],
                     actions: true,
@@ -203,7 +213,8 @@ export default {
                     id: index,
                     model: assos.model,
                     through: assos.through.model,
-                    foreignField: assos.foreignKey
+                    foreignField: assos.foreignKey,
+                    as: assos.as ? assos.as : assos.name.plural
                 })
             }
 
@@ -230,6 +241,10 @@ export default {
                         {
                             text: "Field",
                             value: "foreignField",
+                        },
+                        {
+                            text: "As",
+                            value: "as",
                         }
                     ],
                     actions: true,
@@ -411,20 +426,23 @@ export default {
         getBelongsToSchemas() {
             return {
                 model: { type: 'select', label: 'Model', items: _.keys(this.modelsData) },
-                foreignField: { type: 'text', label: 'Field' }
+                foreignField: { type: 'text', label: 'Field' },
+                as: { type: 'text', label: 'As' }
             }
         },
         getHasManySchemas() {
             return {
                 model: { type: 'select', label: 'Model', items: _.keys(this.modelsData) },
-                foreignField: { type: 'text', label: 'Field' }
+                foreignField: { type: 'text', label: 'Field' },
+                as: { type: 'text', label: 'As' }
             }
         },
         getBelongsToManySchemas() {
             return {
                 model: { type: 'select', label: 'Model', items: _.keys(this.modelsData) },
                 through: { type: 'select', label: 'Through', items: _.keys(this.modelsData) },
-                foreignField: { type: 'text', label: 'Field' }
+                foreignField: { type: 'text', label: 'Field' },
+                as: { type: 'text', label: 'As' }
             }
         },
 

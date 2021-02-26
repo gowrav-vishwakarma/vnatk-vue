@@ -1,7 +1,9 @@
 ### Beta Release
 ---
 
-[Official Documentation](https://gowrav-vishwakarma.github.io/vnatk-vue/)
+# [Click Here for Official Documentation](https://gowrav-vishwakarma.github.io/vnatk-vue/)
+
+[![Join our Discord server!](https://invidget.switchblade.xyz/Dd5canYQxK)](http://discord.gg/Dd5canYQxK)
 
 ## VNATK
 
