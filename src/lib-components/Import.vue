@@ -104,9 +104,11 @@ export default {
         this.options.rowformatter &&
         typeof this.options.rowformatter === "function"
       ) {
-        importdata = this.filedata.data.map((i) =>
-          this.options.rowformatter(i)
-        );
+        importdata = this.filedata.data
+          .map((i) => this.options.rowformatter(i))
+          .filter(function (i) {
+            return i !== false;
+          });
         console.log("importdata", importdata);
       }
 
