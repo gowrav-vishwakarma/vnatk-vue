@@ -4,7 +4,7 @@
 
 <script>
 import { ModelDesigner } from "@/entry";
-import customer from "./services/customer";
+import customer from "./services/catalog";
 
 export default {
   name: "ModelDesginierExample",

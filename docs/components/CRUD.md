@@ -531,6 +531,9 @@ crudoptions:{
         autoimport: true, // ignores execute options and just try to bulk create from given data by default vnatk action
         transaction: "file", // defaults to 'file' / or 'row'. In 'file' mode, data will rollback for all rows in case of error in any row, in 'row' mode, rows that are not imported are only rolled back and errored rows are reported back on import dialog.
         rowformatter: function (item) {
+            // return false on any condition to skip this particular row.
+            if(item.name=='') return false;
+            
             item.$vnatk_data_handle = "alwaysCreate"; // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate', (For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
             item.$vnatk_find_options = {}; // if not provided, finding will be based on all fields and values defined above, used for where condition on model
             item.$vnatk_cache_records = true; // default to true, set false to find each time even if same condition is already found previously
