@@ -121,32 +121,34 @@ export default {
 
             // add crud actions by default for Array based data provided for crud
             if (this.optionsprop.response) {
-                if (typeof serveractions === 'boolean') serveractions = [];
-                serveractions.push(
-                    {
-                        name: "Add",
-                        type: "NoRecord",
-                        isClientAction: true,
-                        execute: this.addArrayCrudData,
+                if (typeof serveractions === 'boolean') {
+                    serveractions = [];
+                    serveractions.push(
+                        {
+                            name: "Add",
+                            type: "NoRecord",
+                            isClientAction: true,
+                            execute: this.addArrayCrudData,
 
-                    });
-                serveractions.push(
-                    {
-                        name: "Edit",
-                        type: "single",
-                        isClientAction: true,
-                        execute: this.editArrayCrudData,
-                    });
-                serveractions.push(
-                    {
-                        name: "Delete",
-                        type: "single",
-                        isClientAction: true,
-                        execute: this.deleteArrayCrudData,
-                    })
+                        });
+                    serveractions.push(
+                        {
+                            name: "Edit",
+                            type: "single",
+                            isClientAction: true,
+                            execute: this.editArrayCrudData,
+                        });
+                    serveractions.push(
+                        {
+                            name: "Delete",
+                            type: "single",
+                            isClientAction: true,
+                            execute: this.deleteArrayCrudData,
+                        })
+                }
             }
 
-            if (!overrideactions) return serveractions;
+            if (overrideactions.length === 0) return serveractions;
             var finalActions = [...serveractions];
 
             for (let index = 0; index < overrideactions.length; index++) {
