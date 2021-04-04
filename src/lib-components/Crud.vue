@@ -224,7 +224,8 @@ export default {
       deep: true,
     },
     optionsprop: {
-      handler() {
+      handler(newValue, OldValue) {
+        console.log(newValue, OldValue);
         this.crudInit(true);
       },
       deep: true,
@@ -321,7 +322,7 @@ export default {
       // handle actions
       if (response.data.actions) {
         this.resetActions();
-        // console.log("response.data.actions", response.data.actions);
+        console.log("response.data.actions", response.data.actions);
         this.actions = this.handleActionsOverridesAndValidations(
           response.data.actions,
           this.optionsprop.override && this.optionsprop.override.actions
@@ -474,6 +475,7 @@ export default {
       }
 
       if (action.isClientAction) {
+        this.actionExecuting = false;
         return action.execute(item);
       }
 
