@@ -351,6 +351,28 @@ export default {
     },
 
     async executeAction(action, item, submit = false) {
+      // check if some records selected for multi records
+      if (action.type.toLowerCase().includes("multi") && !item) {
+        if (this.selectedIds.length == 0) {
+          alert("Please select some records");
+          return;
+        } else {
+          for (let index = 0; index < this.selectedIds.length; index++) {
+            const element = this.selectedIds[index];
+            if (!this.actionApplicable(action, element)) {
+              alert(
+                "This action can only work on " +
+                  JSON.stringify(action.where) +
+                  " conditions, please de-select non-matched records"
+              );
+              return;
+            }
+          }
+        }
+      }
+
+      // check if correct where condition is met for all seleted records for multi actions
+
       if (submit) {
         this.actionExecuting = "Executing ....";
         await this.emitPromise("before-action-execute", action, item);
