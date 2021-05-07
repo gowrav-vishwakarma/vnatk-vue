@@ -57,10 +57,10 @@ export default {
                 required: false,
               },
             ],
-            where: {
-              status: "Active",
-              // $or: {},
-            },
+            // where: {
+            //   status: "Active",
+            //   // $or: {},
+            // },
             // attributes: [
             //   "id",
             //   "parentId",
