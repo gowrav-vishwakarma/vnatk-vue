@@ -9,6 +9,8 @@
     v-bind="$attrs"
     v-on="$listeners"
     :key="crudkey"
+    :show-select="selectionAdded"
+    v-model="selectedIds"
   >
     <template v-slot:top>
       <v-alert
@@ -30,6 +32,14 @@
           </v-btn>
         </span>
         <v-spacer></v-spacer>
+        <span
+          v-for="(action, index) in actionUIs.multirecords"
+          :key="(index + 1) * 1000"
+        >
+          <v-btn color="primary" dark @click="executeAction(action)">
+            {{ action.caption ? action.caption : action.name }}
+          </v-btn>
+        </span>
         <span>
           <v-text-field
             v-if="showQuickSearch"
@@ -194,7 +204,8 @@ export default {
         autocompletesUnWacthers: [],
         errors: [],
       },
-
+      selectionAdded: false,
+      selectedIds: [],
       actionExecuting: false,
       quicksearchtext: "",
     };
@@ -334,6 +345,7 @@ export default {
     },
 
     async executeAction(action, item, submit = false) {
+      // console.log("action", action);
       if (submit) {
         this.actionExecuting = "Executing ....";
         await this.emitPromise("before-action-execute", action, item);
@@ -361,7 +373,7 @@ export default {
 
           var editing_record = false;
           // For Row based actions set current item to work on
-          if (action.type == "single".toLowerCase()) {
+          if (action.type.toLowerCase().includes("single")) {
             this.currentActionUI.item = Object.assign({}, item);
             editing_record = true;
           }
@@ -466,11 +478,20 @@ export default {
               "ID Field(" + idField + ") value not found "
             );
           }
-
+          console.log("picking from ", this.currentActionUI.item);
           metaData["arg_item"] = metaData["formdata"] = _.pick(
             this.currentActionUI.item,
             [..._.keys(this.currentActionUI.action.formschema), ...[idField]]
           );
+          console.log("picked ", metaData["arg_item"]);
+          console.log("idField ", idField);
+
+          // add selected records in case of multirecords action
+          if (this.selectedIds.length > 0) {
+            metaData["arg_item"]["vnatk_selected_records"] = metaData[
+              "formdata"
+            ]["vnatk_selected_records"] = this.selectedIds;
+          }
         }
       }
 
@@ -654,33 +675,33 @@ export default {
         const element = finalActions[i];
         if (element.type == undefined) element.type = "single";
         if (
-          element.type.toLowerCase() == "single" &&
+          element.type.toLowerCase().includes("single") &&
           element.placeIn == undefined
         )
           element.placeIn = defaultActionPlacement;
 
         // Place action in proper action group
-        switch (true) {
-          case element.type.toLowerCase() == "single".toLowerCase() &&
-            element.placeIn.toLowerCase() == "buttonGroup".toLowerCase():
-            this.buttonGroupActions.push(element);
-            break;
+        // console.log(element.type);
+        if (
+          element.type.toLowerCase().includes("single") &&
+          element.placeIn.toLowerCase() == "buttonGroup".toLowerCase()
+        )
+          this.buttonGroupActions.push(element);
 
-          case element.type.toLowerCase() == "single".toLowerCase() &&
-            element.placeIn == "DropDown":
-            this.dropDownActions.push(element);
-            break;
+        if (
+          element.type.toLowerCase().includes("single") &&
+          element.placeIn == "DropDown"
+        )
+          this.dropDownActions.push(element);
 
-          case element.type.toLowerCase() == "NoRecord".toLowerCase():
-            this.noRecordActions.push(element);
-            break;
+        if (element.type.toLowerCase() == "NoRecord".toLowerCase())
+          this.noRecordActions.push(element);
 
-          case element.type.toLowerCase() == "MultiRecords".toLowerCase():
-            this.noRecordActions.push(element);
-            break;
-          default:
-            this.dropDownActions.push(element);
-            break;
+        if (element.type.toLowerCase().includes("multi")) {
+          this.multiRecordActions.push(element);
+          if (!this.selectionAdded) {
+            this.selectionAdded = true;
+          }
         }
 
         // Any action that has formschema needs a ui in dialog to be setup
@@ -688,7 +709,14 @@ export default {
           element.formschema ||
           element.type.toLowerCase() == "NoRecord".toLowerCase()
         ) {
-          this.actionUIs[element.type.toLowerCase()].push(element);
+          if (element.type.toLowerCase().includes("norecord"))
+            this.actionUIs["norecord"].push(element);
+
+          if (element.type.toLowerCase().includes("single"))
+            this.actionUIs["single"].push(element);
+
+          if (element.type.toLowerCase().includes("multi"))
+            this.actionUIs["multirecords"].push(element);
         }
       }
     },
