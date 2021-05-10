@@ -33,7 +33,7 @@
         </span>
         <v-spacer></v-spacer>
         <span
-          v-for="(action, index) in actionUIs.multirecords"
+          v-for="(action, index) in multiRecordActions"
           :key="(index + 1) * 1000"
         >
           <v-btn color="primary" dark @click="executeAction(action)">
@@ -273,9 +273,15 @@ export default {
       var response = { data: {} };
 
       if (this.optionsprop.response == undefined) {
+        let APIIdentifier = this.crudcontext.model
+          ? this.crudcontext.model
+          : "";
         // call initialization from server
         response = await this.optionsprop.service
-          .post(this.optionsprop.basepath + "/crud", this.crudcontext)
+          .post(
+            this.optionsprop.basepath + "/crud?vnatk_api=" + APIIdentifier,
+            this.crudcontext
+          )
           .catch((error) => {
             if (!error.response) {
               throw error;
@@ -345,7 +351,28 @@ export default {
     },
 
     async executeAction(action, item, submit = false) {
-      // console.log("action", action);
+      // check if some records selected for multi records
+      if (action.type.toLowerCase().includes("multi") && !item) {
+        if (this.selectedIds.length == 0) {
+          alert("Please select some records");
+          return;
+        } else {
+          for (let index = 0; index < this.selectedIds.length; index++) {
+            const element = this.selectedIds[index];
+            if (!this.actionApplicable(action, element)) {
+              alert(
+                "This action can only work on " +
+                  JSON.stringify(action.where) +
+                  " conditions, please de-select non-matched records"
+              );
+              return;
+            }
+          }
+        }
+      }
+
+      // check if correct where condition is met for all seleted records for multi actions
+
       if (submit) {
         this.actionExecuting = "Executing ....";
         await this.emitPromise("before-action-execute", action, item);
@@ -353,7 +380,8 @@ export default {
 
       var metaData = this.crudcontext;
       metaData["action_to_execute"] = action;
-      metaData["arg_item"] = item;
+      metaData["arg_item"] = item ? item : {};
+      if (metaData.formdata) delete metaData.formdata;
 
       var idField = this.serverheaders.find((o) => o.isIdField === true);
       if (idField) idField = idField["text"];
@@ -478,21 +506,25 @@ export default {
               "ID Field(" + idField + ") value not found "
             );
           }
-          console.log("picking from ", this.currentActionUI.item);
+          // console.log("picking from ", this.currentActionUI.item);
           metaData["arg_item"] = metaData["formdata"] = _.pick(
             this.currentActionUI.item,
             [..._.keys(this.currentActionUI.action.formschema), ...[idField]]
           );
-          console.log("picked ", metaData["arg_item"]);
-          console.log("idField ", idField);
-
-          // add selected records in case of multirecords action
-          if (this.selectedIds.length > 0) {
-            metaData["arg_item"]["vnatk_selected_records"] = metaData[
-              "formdata"
-            ]["vnatk_selected_records"] = this.selectedIds;
-          }
+          // console.log("picked ", metaData["arg_item"]);
+          // console.log("idField ", idField);
         }
+      }
+
+      // add selected records in case of multirecords action
+      if (
+        this.selectedIds.length > 0 &&
+        action.type.toLowerCase().includes("multi")
+      ) {
+        if (metaData["arg_item"])
+          metaData["arg_item"]["vnatk_selected_records"] = this.selectedIds;
+        if (metaData["formdata"])
+          metaData["formdata"]["vnatk_selected_records"] = this.selectedIds;
       }
 
       if (action.isClientAction) {
@@ -517,16 +549,28 @@ export default {
         }
       }
 
+      let APIIdentifier =
+        (metaData.model ? metaData.model : "") +
+        "_" +
+        (metaData.action_to_execute ? metaData.action_to_execute.name : "");
+
       return this.optionsprop.service
-        .post(this.optionsprop.basepath + "/executeaction", metaData)
+        .post(
+          this.optionsprop.basepath +
+            "/executeaction?vnatk_api=" +
+            APIIdentifier,
+          metaData
+        )
         .then((response) => {
-          const currentIndex = this.data.findIndex((p) => p.id === item.id);
-          if (response.data.row_data)
-            if (currentIndex > -1)
-              this.data.splice(currentIndex, 1, response.data.row_data);
-            else this.data.unshift(response.data.row_data);
-          else {
-            this.data.splice(currentIndex, 1);
+          if (item && item.id) {
+            const currentIndex = this.data.findIndex((p) => p.id === item.id);
+            if (response.data.row_data)
+              if (currentIndex > -1)
+                this.data.splice(currentIndex, 1, response.data.row_data);
+              else this.data.unshift(response.data.row_data);
+            else {
+              this.data.splice(currentIndex, 1);
+            }
           }
           this.$emit("after-action-execute", metaData, response.data);
           this.actionExecuting = false;
