@@ -256,7 +256,7 @@ module.exports = (sequelize, DataTypes) =&gt; {
 <ul>
 <li><code>Single</code> - Performable on one record, record will be loaded before executing, on frontend, these action will be displayed at row level. like activate/deactivate etc.</li>
 <li><code>NoRecord</code> - Performable on NO record, Will be executed on non-loaded models, like <code>vnatk_add</code> etc</li>
-<li><code>MultiRecord</code> - Under development, DO NOT USE FOR NOW</li>
+<li><code>MultiRecord</code> - Under development, when used, Crud grid will have selection options, and all selected recrods will be available in propert 'vnatk_selected_records' of function argument.</li>
 </ul>
 <p>To study more about formschema please read more at <a href="https://github.com/wotamann/vuetify-form-base">Vuetify-Form-Base</a></p>
 <h2 id="field-specific">Field Specific</h2>
