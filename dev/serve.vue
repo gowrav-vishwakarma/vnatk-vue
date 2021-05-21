@@ -1,5 +1,7 @@
 <template>
   <v-app>
+    <h1>Test</h1>
+    <test />
     <!-- <h1>Example Import</h1> -->
 
     <!-- <exampleimport /> -->
@@ -18,7 +20,8 @@
 <script>
 import Vue from "vue";
 // import Exampleimport from "./exampleimport.vue";
-import Example1 from "./example1.vue";
+import Test from "./test.vue";
+// import Example1 from "./example1.vue";
 // import Example2 from "./example2.vue";
 // import Example3 from "./example3.vue";
 // import ExampleFull from "./example-full.vue";
@@ -28,7 +31,8 @@ export default Vue.extend({
   name: "ServeDev",
   components: {
     // Exampleimport,
-    Example1,
+    Test,
+    // Example1,
     // Example2,
     // Example3,
     // ExampleFull,
