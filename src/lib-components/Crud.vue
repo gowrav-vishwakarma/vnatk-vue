@@ -263,6 +263,7 @@ export default {
         // set always sending options with all API calls as options, we say this crudcontext
         // leave ui and override values as these are only useful for frontend
       }
+
       this.crudcontext = _.omit(JSON.parse(JSON.stringify(this.optionsprop)), [
         "ui",
         "override",
@@ -554,13 +555,31 @@ export default {
         "_" +
         (metaData.action_to_execute ? metaData.action_to_execute.name : "");
 
+      let endpoint =
+        this.optionsprop.basepath + "/executeaction?vnatk_api=" + APIIdentifier;
+
+      let postVars = metaData;
+
+      if (
+        action.handleviaimport !== undefined &&
+        action.handleviaimport === true
+      ) {
+        if (action.rowformatter && typeof action.rowformatter === "function") {
+          metaData = [action.rowformatter(metaData.arg_item)];
+        }
+        postVars = {
+          action_to_execute: {
+            execute: "vnatk_autoimport",
+            name: "vnatk_autoimport",
+          },
+          importdata: metaData,
+          model: this.optionsprop.model,
+          transaction: this.optionsprop.transaction === "row" ? "row" : "file",
+        };
+      }
+
       return this.optionsprop.service
-        .post(
-          this.optionsprop.basepath +
-            "/executeaction?vnatk_api=" +
-            APIIdentifier,
-          metaData
-        )
+        .post(endpoint, postVars)
         .then((response) => {
           if (item && item.id) {
             const currentIndex = this.data.findIndex((p) => p.id === item.id);
@@ -623,6 +642,8 @@ export default {
         newValue
       );
 
+      console.log("schema is ", schema);
+
       // get its serviceoptionsoverrides
       var crudcontext = this.getAutoCompleteServiceOptions(
         schema,
@@ -634,18 +655,30 @@ export default {
       this.optionsprop.service
         .post(crudcontext.basepath + "/crud", crudcontext)
         .then((response) => {
-          schema.items = response.data.data.map(function (o) {
+          schema.items = response.data.data.map((o) => {
+            console.log(
+              "schema.serviceoptions.titlefield",
+              schema.serviceoptions,
+              o
+            );
             return Object.assign(
               {
                 value: o.id,
                 text:
-                  o[
-                    schema.serviceoptions && schema.serviceoptions.searchfield
-                      ? schema.serviceoptions.searchfield
-                      : schema.titlefield
-                      ? schema.titlefield
-                      : "name"
-                  ],
+                  schema.serviceoptions &&
+                  schema.serviceoptions.titlefield &&
+                  typeof schema.serviceoptions.titlefield === "function"
+                    ? schema.serviceoptions.titlefield(o)
+                    : o[
+                        schema.serviceoptions &&
+                        schema.serviceoptions.searchfield
+                          ? Array.isArray(schema.serviceoptions.searchfield)
+                            ? schema.serviceoptions.searchfield[0]
+                            : schema.serviceoptions.searchfield
+                          : schema.titlefield
+                          ? schema.titlefield
+                          : "name"
+                      ],
               },
               _.omit(
                 o,

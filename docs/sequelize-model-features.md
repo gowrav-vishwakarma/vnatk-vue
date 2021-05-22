@@ -144,7 +144,7 @@ Action type can be one of three
 
 * `Single` - Performable on one record, record will be loaded before executing, on frontend, these action will be displayed at row level. like activate/deactivate etc.
 * `NoRecord` - Performable on NO record, Will be executed on non-loaded models, like `vnatk_add` etc
-* `MultiRecord` - Under development, DO NOT USE FOR NOW
+* `MultiRecord` - Under development, when used, Crud grid will have selection options, and all selected recrods will be available in propert 'vnatk_selected_records' of function argument.
 
 To study more about formschema please read more at [Vuetify-Form-Base](https://github.com/wotamann/vuetify-form-base)
 
