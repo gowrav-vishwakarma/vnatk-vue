@@ -220,6 +220,7 @@ export default {
             } else {
                 serviceoptions.read.modeloptions['where'][sf] = { $like: "%" + q + "%" };
             }
+            serviceoptions.titlefield = overrideserviceoption.titlefield ? overrideserviceoption.titlefield : sf;
             serviceoptions.read.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             if (overrideserviceoption.modelscope !== undefined) serviceoptions.read.modelscope = overrideserviceoption.modelscope;
             // console.log(serviceoptions);

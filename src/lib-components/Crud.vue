@@ -347,6 +347,7 @@ export default {
             ? this.optionsprop.override.actions
             : []
         );
+        console.log("this.actions", this.actions);
         this.filterActions();
       }
     },
@@ -390,10 +391,13 @@ export default {
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
-        action.formschema = JSON.parse(
-          JSON.stringify(action.formschema, (k, v) =>
-            k === "error-messages" ? undefined : v
-          )
+        // action.formschema = JSON.parse(
+        //   JSON.stringify(action.formschema, (k, v) =>
+        //     k === "error-messages" ? undefined : v
+        //   )
+        // );
+        action.formschema = _.mapValues(action.formschema, (v) =>
+          _.isObject(v) ? _.omit(v, "error-messages") : v
         );
 
         if (!submit) {
