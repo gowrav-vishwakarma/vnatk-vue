@@ -397,6 +397,7 @@ override: {
         // },
         },
     },
+    // Override individual field ...
     {
         name: "vnatk_add", // add action is given specially this name
         // use this to merge formschema options
@@ -406,6 +407,45 @@ override: {
         },
         },
     },
+
+    // OR override completely with new form and handle it via import way
+
+    {
+        name: "vnatk_add",
+        formschema: {
+        identifier: {
+            type: "text",
+            label: "Your Identifier",
+        },
+        name_in_eng: {
+            type: "text",
+            label: "Name in Eng",
+        },
+        vendor: {
+            lable: "VendorList",
+            type: "autocomplete",
+            searchInput: "",
+
+            serviceoptions: {
+                service: catalog,
+                basepath: "/admin/vnatk",
+                model: "Vendor",
+                modelattributes: ["id", "first_name", "company"],
+                searchfield: ["company", "first_name"], // autocomplete search q for like in the field
+                limit: 10,
+                titlefield: function (o) {
+                    return o.company + " of Mr. " + o.first_name;
+                },
+            },
+        },
+        },
+        handleviaimport: true,
+        rowformatter: function (formData) {
+        formData.createdById = 1;
+        return formData;
+        },
+    },
+
     {
         name: "activate",
         placeIn: "buttonGroup", // or "DropDown"
