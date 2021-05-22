@@ -540,6 +540,7 @@ defines options for crud, like default action placement place and headers for v-
         // },
         },
     },
+    // Override individual field ...
     {
         name: &quot;vnatk_add&quot;, // add action is given specially this name
         // use this to merge formschema options
@@ -549,6 +550,45 @@ defines options for crud, like default action placement place and headers for v-
         },
         },
     },
+
+    // OR override completely with new form and handle it via import way
+
+    {
+        name: &quot;vnatk_add&quot;,
+        formschema: {
+        identifier: {
+            type: &quot;text&quot;,
+            label: &quot;Your Identifier&quot;,
+        },
+        name_in_eng: {
+            type: &quot;text&quot;,
+            label: &quot;Name in Eng&quot;,
+        },
+        vendor: {
+            lable: &quot;VendorList&quot;,
+            type: &quot;autocomplete&quot;,
+            searchInput: &quot;&quot;,
+
+            serviceoptions: {
+                service: catalog,
+                basepath: &quot;/admin/vnatk&quot;,
+                model: &quot;Vendor&quot;,
+                modelattributes: [&quot;id&quot;, &quot;first_name&quot;, &quot;company&quot;],
+                searchfield: [&quot;company&quot;, &quot;first_name&quot;], // autocomplete search q for like in the field
+                limit: 10,
+                titlefield: function (o) {
+                    return o.company + &quot; of Mr. &quot; + o.first_name;
+                },
+            },
+        },
+        },
+        handleviaimport: true,
+        rowformatter: function (formData) {
+        formData.createdById = 1;
+        return formData;
+        },
+    },
+
     {
         name: &quot;activate&quot;,
         placeIn: &quot;buttonGroup&quot;, // or &quot;DropDown&quot;
