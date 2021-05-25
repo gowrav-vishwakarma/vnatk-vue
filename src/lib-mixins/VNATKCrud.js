@@ -163,7 +163,7 @@ export default {
                     // remove formschema in overrideactions
                     if (_.has(thisFinalAction, 'formschema') && _.has(to_update, 'formschema')) {
                         finalActions[i].formschema = Object.assign({}, to_update.formschema);
-                        delete to_update.formschema;
+                        // delete to_update.formschema;
                     }
 
                     // if finalActions has formschema and overrideactions has formschemaoverrides
@@ -173,7 +173,7 @@ export default {
                         for (const [field, overrideObj] of Object.entries(to_update.formschemaoverrides)) {
                             Object.assign(finalActions[i].formschema[field], overrideObj);
                         }
-                        delete to_update.formschemaoverrides
+                        // delete to_update.formschemaoverrides
                     }
                     // check if this needs position change
                     // or merge overrideaction over this finalAction

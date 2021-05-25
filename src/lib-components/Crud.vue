@@ -8,7 +8,7 @@
     class="elevation-1"
     v-bind="$attrs"
     v-on="$listeners"
-    :key="crudkey"
+    :key="'vnatk_crud_' + `${crudkey}`"
     :show-select="selectionAdded"
     v-model="selectedIds"
   >
@@ -236,7 +236,7 @@ export default {
     },
     optionsprop: {
       handler(newValue, OldValue) {
-        console.log(newValue, OldValue);
+        console.log("changed", newValue, OldValue);
         this.crudInit(true);
       },
       deep: true,
@@ -438,6 +438,7 @@ export default {
 
             // setup prefiled values for autocomplete value:text in case of editing
             if (action.formschema[fld].type == "autocomplete") {
+              // console.log("Doing autocomplete ", action.formschema[fld]);
               action.formschema[fld].filter = (i) => i;
               if (editing_record) {
                 if (item[fld]) {
@@ -853,9 +854,8 @@ export default {
 
       if (!this.optionsprop.read.modeloptions.where.$or)
         this.optionsprop.read.modeloptions.where.$or = {};
-
       if (this.quicksearchtext) {
-        this.optionsprop.read.modeloptions.where.$or = condition;
+        this.$set(this.optionsprop.read.modeloptions.where, "$or", condition);
       } else {
         for (
           let index = 0;
