@@ -81,7 +81,7 @@ import VuePapaParse from "vue-papa-parse";
 Vue.use(VuePapaParse);
 
 export default {
-  name: "Test",
+  name: "Home",
   components: { VnatkCrud },
   data() {
     return {
@@ -111,6 +111,8 @@ export default {
               "includeSubcategoryAttributeInFilter",
               "isAppRootCategory",
               "code",
+              "status",
+              "sizechartVariable",
             ],
           },
           defaultvalues: {
@@ -176,42 +178,6 @@ export default {
           serversidepagination: true,
           modelscope: false,
         },
-        // import: {
-        //   service: catalog,
-        //   basepath: "/admin/vnatk",
-        //   model: "Category",
-        //   // execute: "foo_bar_function",
-        //   autoimport: true,
-        //   transaction: "row",
-        //   rowformatter: function (item) {
-        //     item.$vnatk_data_handle = "findOrCreate"; // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate', (For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
-        //     item.$vnatk_find_options = {
-        //       modeloptions: {
-        //         identifier: item.identifier,
-        //       },
-        //       modelscope: false,
-        //     };
-
-        //     if (item.parent_id) {
-        //       item.ParentCategory = {
-        //         $vnatk_data_handle: "findToAssociate",
-        //         $vnatk_find_options: {
-        //           modeloptions: {
-        //             identifier: item.parent_id,
-        //           },
-        //         },
-        //       };
-        //     } else {
-        //       delete item.parent_id;
-        //     }
-        //     if (item.image) {
-        //       item.thumbnailImageUrl = item.image;
-        //       delete item.image;
-        //     }
-        //     return item;
-        //   },
-        //   success: this.reloadPage,
-        // },
 
         import: {
           autoimport: true,
@@ -251,7 +217,6 @@ export default {
               let t = {
                 name: item.name,
                 description: item.description,
-                createdById: 1,
                 Lang: {
                   $vnatk_data_handle: "findToAssociate",
                   $vnatk_find_options: {
@@ -278,28 +243,278 @@ export default {
             {
               name: "vnatk_add",
               formschema: {
-                identifier: {
-                  type: "text",
-                  label: "Your Identifier",
-                },
-                name_in_eng: {
-                  type: "text",
-                  label: "Name in Eng",
-                },
-                vendor: {
-                  lable: "VendorList",
+                parent_id: {
                   type: "autocomplete",
+                  label: "Parent Id",
                   searchInput: "",
-
                   serviceoptions: {
                     service: catalog,
                     basepath: "/admin/vnatk",
-                    model: "Vendor",
-                    modelattributes: ["id", "first_name", "company"],
-                    searchfield: ["company", "first_name"], // autocomplete search q for like in the field
+                    model: "Category",
+                    modelattributes: ["id", "parentId", "identifier"],
+                    searchfield: ["identifier"], // autocomplete search q for like in the field
                     limit: 10,
                     titlefield: function (o) {
-                      return o.company + " of Mr. " + o.first_name;
+                      return o.identifier;
+                    },
+                  },
+                },
+                coverImageUrl: {
+                  type: "file-uploader",
+                  label: "Cover Image",
+                  accept: "image/*",
+                },
+                identifier: {
+                  type: "text",
+                  label: "Identifier",
+                },
+                thumbnailImageUrl: {
+                  type: "file-uploader",
+                  label: "Thumbnail Image",
+                  accept: "image/*",
+                },
+                redirectUrl: {
+                  type: "text",
+                  label: "Redirect Url",
+                },
+                isShareable: {
+                  type: "checkbox",
+                  label: "isShareable",
+                },
+                name: {
+                  type: "text",
+                  label: "Name",
+                },
+                status: {
+                  items: ["Active", "InActive"],
+                  type: "select",
+                  label: "Status",
+                },
+                description: {
+                  type: "textarea",
+                  label: "Description",
+                },
+                sizechartVariable: {
+                  type: "textarea",
+                  label: "sizechartVariable",
+                },
+                appLayout: {
+                  type: "text",
+                  label: "App Layout",
+                },
+                isAppRootCategory: {
+                  type: "checkbox",
+                  label: "isAppRootCategory",
+                },
+                includeSubcategorySpecificationInFilter: {
+                  type: "checkbox",
+                  label: "includeSubcategorySpecificationInFilter",
+                },
+                includeSubcategoryAttributeInFilter: {
+                  type: "checkbox",
+                  label: "includeSubcategoryAttributeInFilter",
+                },
+                sequenceOrder: {
+                  type: "text",
+                  label: "Sequence Order",
+                },
+                metaName: {
+                  type: "text",
+                  label: "Meta Name",
+                },
+                attribute_group_id: {
+                  type: "autocomplete",
+                  label: "Attribute id",
+                  searchInput: "",
+                  serviceoptions: {
+                    service: catalog,
+                    basepath: "/admin/vnatk",
+                    model: "Category",
+                    modelattributes: ["id", "attribute_group_id", "identifier"],
+                    searchfield: ["identifier"], // autocomplete search q for like in the field
+                    limit: 10,
+                    titlefield: function (o) {
+                      return o.identifier;
+                    },
+                  },
+                },
+                specification: {
+                  type: "autocomplete",
+                  label: "specification",
+                  searchInput: "",
+                  serviceoptions: {
+                    service: catalog,
+                    basepath: "/admin/vnatk",
+                    model: "Category",
+                    modelattributes: ["id", "specification"],
+                    searchfield: ["specification"], // autocomplete search q for like in the field
+                    limit: 10,
+                    titlefield: function (o) {
+                      return o.specification;
+                    },
+                  },
+                },
+                brand: {
+                  type: "autocomplete",
+                  label: "Brand",
+                  searchInput: "",
+                  serviceoptions: {
+                    service: catalog,
+                    basepath: "/admin/vnatk",
+                    model: "Brand",
+                    modelattributes: ["id", "name"],
+                    searchfield: ["name"], // autocomplete search q for like in the field
+                    limit: 10,
+                    titlefield: function (o) {
+                      return o.name;
+                    },
+                  },
+                },
+              },
+              handleviaimport: true,
+              rowformatter: function (formData) {
+                formData.createdById = 1;
+                return formData;
+              },
+            },
+            {
+              name: "vnatk_edit",
+              formschema: {
+                parent_id: {
+                  type: "autocomplete",
+                  label: "Parent Id",
+                  searchInput: "",
+                  association: {
+                    name: {
+                      singular: "Category",
+                    },
+                  },
+                  titlefield: "identifier",
+                  serviceoptions: {
+                    service: catalog,
+                    basepath: "/admin/vnatk",
+                    model: "Category",
+                    modelattributes: ["id", "parentId", "identifier"],
+                    searchfield: ["identifier"], // autocomplete search q for like in the field
+                    limit: 10,
+                    titlefield: function (o) {
+                      return o.identifier;
+                    },
+                  },
+                },
+                coverImageUrl: {
+                  type: "file-uploader",
+                  label: "Cover Image",
+                  accept: "image/*",
+                },
+                identifier: {
+                  type: "text",
+                  label: "Identifier",
+                },
+                thumbnailImageUrl: {
+                  type: "file-uploader",
+                  label: "Thumbnail Image",
+                  accept: "image/*",
+                },
+                redirectUrl: {
+                  type: "text",
+                  label: "Redirect Url",
+                },
+                isShareable: {
+                  type: "checkbox",
+                  label: "isShareable",
+                },
+                name: {
+                  type: "text",
+                  label: "Name",
+                },
+                status: {
+                  type: "text",
+                  label: "isShareable",
+                },
+                description: {
+                  type: "textarea",
+                  label: "Description",
+                },
+                sizechartVariable: {
+                  type: "textarea",
+                  label: "sizechartVariable",
+                },
+                appLayout: {
+                  type: "text",
+                  label: "App Layout",
+                },
+                isAppRootCategory: {
+                  type: "checkbox",
+                  label: "isAppRootCategory",
+                },
+                includeSubcategorySpecificationInFilter: {
+                  type: "checkbox",
+                  label: "includeSubcategorySpecificationInFilter",
+                },
+                includeSubcategoryAttributeInFilter: {
+                  type: "checkbox",
+                  label: "includeSubcategoryAttributeInFilter",
+                },
+                sequenceOrder: {
+                  type: "text",
+                  label: "Sequence Order",
+                },
+                metaName: {
+                  type: "text",
+                  label: "Meta Name",
+                },
+                attribute_group_id: {
+                  type: "autocomplete",
+                  label: "Attribute id",
+                  searchInput: "",
+                  association: {
+                    name: {
+                      singular: "AttributeGroup",
+                    },
+                  },
+                  // titlefield: "identifier",
+                  serviceoptions: {
+                    service: catalog,
+                    basepath: "/admin/vnatk",
+                    model: "Category",
+                    modelattributes: ["id", "attribute_group_id", "identifier"],
+                    searchfield: ["identifier"], // autocomplete search q for like in the field
+                    limit: 10,
+                    titlefield: function (o) {
+                      return o.identifier;
+                    },
+                  },
+                },
+                specification: {
+                  type: "autocomplete",
+                  label: "specification",
+                  searchInput: "",
+                  serviceoptions: {
+                    service: catalog,
+                    basepath: "/admin/vnatk",
+                    model: "Category",
+                    modelattributes: ["id", "specification"],
+                    searchfield: ["specification"], // autocomplete search q for like in the field
+                    limit: 10,
+                    titlefield: function (o) {
+                      return o.specification;
+                    },
+                  },
+                },
+                brand: {
+                  type: "autocomplete",
+                  label: "Brand",
+                  searchInput: "",
+                  serviceoptions: {
+                    service: catalog,
+                    basepath: "/admin/vnatk",
+                    model: "Brand",
+                    modelattributes: ["id", "name"],
+                    searchfield: ["name"], // autocomplete search q for like in the field
+                    limit: 10,
+                    titlefield: function (o) {
+                      return o.name;
                     },
                   },
                 },
