@@ -5,6 +5,7 @@
     :options="crudoptions" 
     @before-action-execute='function1', 
     @after-action-execute='function2'
+    @on-data-fetch='function3' // data as arguments
 >
 ```
 ## Sample crud option passing

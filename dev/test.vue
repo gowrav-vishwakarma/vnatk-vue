@@ -2,6 +2,7 @@
   <div class="home">
     <vnatk-crud
       :options="crudoptions"
+      @on-data-fetch="convertData"
       @before-action-execute="checkFileUpload"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
@@ -683,6 +684,14 @@ export default {
     };
   },
   methods: {
+    convertData(data) {
+      data.map((d) => {
+        console.log("d.identifier", d.identifier);
+        if (d.identifier.indexOf("o") != -1) {
+          d.identifier = "hahahaha";
+        }
+      });
+    },
     clientFunctionCallBack(formData) {
       console.log(formData);
     },

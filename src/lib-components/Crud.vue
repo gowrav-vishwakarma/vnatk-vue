@@ -314,6 +314,8 @@ export default {
         response.data = this.optionsprop.response;
       }
 
+      await this.emitPromise("on-data-fetch", response.data.data);
+
       if (response.data.headers) {
         this.serverheaders = response.data.headers;
         this.headers = this.handleHeaderOverrides(
