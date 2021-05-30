@@ -218,8 +218,11 @@
                 <h1 id="vnatk-crud">vnatk-crud</h1>
 <pre><code class="language-html">&lt;vnatk-crud 
     :options=&quot;crudoptions&quot; 
-    @before-action-execute='function1', 
-    @after-action-execute='function2'
+    @before-action-execute='function1', (action,item) args
+    @after-action-execute='function2' (metaData,response.data)
+    @on-data-fetch='function3' // data as arguments
+    @before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
+    @after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
 &gt;
 </code></pre>
 <h2 id="sample-crud-option-passing">Sample crud option passing</h2>
