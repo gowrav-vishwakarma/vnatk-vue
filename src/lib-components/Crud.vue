@@ -314,6 +314,8 @@ export default {
         response.data = this.optionsprop.response;
       }
 
+      await this.emitPromise("on-data-fetch", response.data.data);
+
       if (response.data.headers) {
         this.serverheaders = response.data.headers;
         this.headers = this.handleHeaderOverrides(
@@ -410,6 +412,13 @@ export default {
             this.currentActionUI.item = Object.assign({}, item);
             editing_record = true;
           }
+          this.$emit(
+            "before-dialog-open",
+            action,
+            this.currentActionUI.item,
+            item
+          );
+
           // lets loop through all fields in formschemas
           var formschema_fields = _.keys(action.formschema);
           for (let i = 0; i < formschema_fields.length; i++) {
@@ -501,6 +510,13 @@ export default {
             }
           }
           this.currentActionUI.open = true;
+          this.$emit(
+            "after-dialog-open",
+            action,
+            this.currentActionUI.item,
+            item
+          );
+
           // Just keep yourself to show form .... do not go further... thats execute action code
 
           return;
@@ -596,7 +612,7 @@ export default {
               this.data.splice(currentIndex, 1);
             }
           }
-          this.$emit("after-action-execute", metaData, response.data);
+          this.$emit("after-action-execute", postVars, response.data);
           this.actionExecuting = false;
           return true;
         })
@@ -647,7 +663,7 @@ export default {
         newValue
       );
 
-      console.log("schema is ", schema);
+      // console.log("schema is ", schema);
 
       // get its serviceoptionsoverrides
       var crudcontext = this.getAutoCompleteServiceOptions(
@@ -656,8 +672,14 @@ export default {
         this.crudcontext
       );
 
+      // console.log("autocomplete crudcontext.service are", crudcontext);
+
       // call service
-      this.optionsprop.service
+      let service = crudcontext.service
+        ? crudcontext.service
+        : this.optionsprop.service;
+
+      service
         .post(crudcontext.basepath + "/crud", crudcontext)
         .then((response) => {
           schema.items = response.data.data.map((o) => {
