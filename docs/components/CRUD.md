@@ -3,9 +3,11 @@
 ```html
 <vnatk-crud 
     :options="crudoptions" 
-    @before-action-execute='function1', 
-    @after-action-execute='function2'
+    @before-action-execute='function1', (action,item) args
+    @after-action-execute='function2' (metaData,response.data)
     @on-data-fetch='function3' // data as arguments
+    @before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
+    @after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
 >
 ```
 ## Sample crud option passing

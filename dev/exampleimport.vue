@@ -93,10 +93,8 @@ export default {
             item.$vnatk_data_handle = "findOrCreate"; // 'alwaysCreate' [default], 'findOrCreate','findAndUpdateOrCreate', (For Associations, two more options) 'findToAssociate' [Produce error if not found],'associateIfFound' [Ignores if not found]
             item.$vnatk_find_options = {
               modeloptions: {
-                where: {
-                  // if not provided, finding will be based on all fields and values defined above
-                  email: item.email,
-                },
+                // if not provided, finding will be based on all fields and values defined above
+                email: item.email,
               },
               modelscope: false,
             };
@@ -133,9 +131,7 @@ export default {
                 $vnatk_data_handle: "findAndUpdateOrCreate", // if found, update admin Id to this user id
                 $vnatk_find_options: {
                   modeloptions: {
-                    where: {
-                      code: item.useradmin_project_1_code,
-                    },
+                    code: item.useradmin_project_1_code,
                   },
                   modelscope: false,
                 },
@@ -149,9 +145,7 @@ export default {
                 $vnatk_data_handle: "findAndUpdateOrCreate", // if found, update admin Id to this user id
                 $vnatk_find_options: {
                   modeloptions: {
-                    where: {
-                      code: item.useradmin_project_2_code,
-                    },
+                    code: item.useradmin_project_2_code,
                   },
                   modelscope: false,
                 },
@@ -169,9 +163,7 @@ export default {
                   $vnatk_data_handle: "findOrCreate",
                   $vnatk_find_options: {
                     modeloptions: {
-                      where: {
-                        code: item.user_project_1,
-                      },
+                      code: item.user_project_1,
                     },
                   },
                 },
@@ -206,9 +198,7 @@ export default {
                   $vnatk_data_handle: "findOrCreate",
                   $vnatk_find_options: {
                     modeloptions: {
-                      where: {
-                        code: item.user_project_2,
-                      },
+                      code: item.user_project_2,
                     },
                   },
                 },
