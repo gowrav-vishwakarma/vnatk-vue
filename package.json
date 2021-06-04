@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "vue-papa-parse": "^2.0.0",
-    "vuetify-form-base": "^0.3.2",
+    "vuetify-form-base": "^0.3.3",
     "lodash": "^4.17.19"
   },
   "devDependencies": {
@@ -67,7 +67,7 @@
     "vue": "^2.6.11",
     "vuetify": "^2.2.11",
     "vue-papa-parse": "^2.0.0",
-    "vuetify-form-base": "^0.3.2",
+    "vuetify-form-base": "^0.3.3",
     "lodash": "^4.17.19"
   },
   "engines": {

@@ -379,6 +379,10 @@ export default {
 
       if (submit) {
         this.actionExecuting = "Executing ....";
+        if (!this.$refs.currentActionUIForm.validate()) {
+          this.actionExecuting = false;
+          return;
+        }
         await this.emitPromise("before-action-execute", action, item);
       }
 
