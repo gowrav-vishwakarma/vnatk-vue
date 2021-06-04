@@ -19,6 +19,21 @@ import Vue from "vue";
 import VuePapaParse from "vue-papa-parse";
 Vue.use(VuePapaParse);
 
+// Helper & Partial Functions
+const minLen = (l) => (v) => (v && v.length >= l) || `min. ${l} Characters`;
+const maxLen = (l) => (v) => (v && v.length <= l) || `max. ${l} Characters`;
+const required = (msg) => (v) => !!v || msg;
+const requiredArray = (msg) => (v) => (Array.isArray(v) && v.length > 1) || msg;
+// Rules
+const rules = {
+  requiredEmail: required("E-mail is required"),
+  requiredSel: required("Selection is required"),
+  requiredSelMult: requiredArray("2 Selections are required"),
+  max12: maxLen(12),
+  min6: minLen(6),
+  validEmail: (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+};
+
 export default {
   name: "PartnerCrud",
   //   props: {   },
@@ -70,6 +85,9 @@ export default {
             include: [
               { model: "Partner", as: "ParentPartner", required: false },
             ],
+            where: {
+              gstin: { $is: null },
+            },
             modelscope: false,
           },
           serversidepagination: true,
@@ -175,6 +193,7 @@ export default {
                 firstName: {
                   type: "text",
                   label: "First Name",
+                  rules: [rules.min6, rules.requiredEmail, rules.validEmail],
                 },
                 lastName: {
                   type: "text",

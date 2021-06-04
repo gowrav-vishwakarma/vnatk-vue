@@ -380,6 +380,10 @@ export default {
       if (submit) {
         this.actionExecuting = "Executing ....";
         await this.emitPromise("before-action-execute", action, item);
+        if (!this.$refs.currentActionUIForm.validate()) {
+          this.actionExecuting = false;
+          return;
+        }
       }
 
       var metaData = this.crudcontext;
