@@ -193,14 +193,7 @@ export default {
                 firstName: {
                   type: "text",
                   label: "First Name",
-                  rules: [
-                    function (v) {
-                      !!v && "must";
-                    },
-                    rules.min6,
-                    rules.requiredEmail,
-                    rules.validEmail,
-                  ],
+                  rules: [rules.min6, rules.requiredEmail, rules.validEmail],
                 },
                 lastName: {
                   type: "text",
