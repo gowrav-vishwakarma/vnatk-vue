@@ -834,15 +834,15 @@ export default {
     },
 
     formEventClick(obj) {
-      this.emitPromise("formEventClick", obj);
+      this.$emit("formEventClick", obj);
     },
 
     formEventInput(obj) {
-      this.emitPromise("formEventInput", obj);
+      this.$emit("formEventInput", obj);
     },
 
     formEventChanged(obj) {
-      this.emitPromise("formEventChanged", obj);
+      this.$emit("formEventChanged", obj);
     },
 
     async emitPromise(method, ...params) {
