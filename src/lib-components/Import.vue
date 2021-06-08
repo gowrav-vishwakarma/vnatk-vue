@@ -72,6 +72,17 @@ export default {
   },
 
   methods: {
+    async emitPromise(method, ...params) {
+      let listener =
+        this.$listeners[method] || this.$attrs[method] || this[method];
+      if (listener) {
+        //one can additionally wrap this in try/catch if needed and handle the error further
+        let res = await listener(...params);
+        return res === undefined || res;
+      }
+      return false;
+    },
+
     onComplete(results, file) {
       // Your logic here! functions or axios calls
       this.datatableheaders = [];
@@ -109,8 +120,10 @@ export default {
           .filter(function (i) {
             return i !== false;
           });
-        console.log("importdata", importdata);
+        // console.log("importdata", importdata);
       }
+
+      this.emitPromise("before-import", importdata);
 
       var endpoint = "/executeaction";
       var postVars = {
@@ -136,7 +149,7 @@ export default {
           if (typeof this.options.success === "function") {
             this.options.success(response.data);
           }
-          this.$emit("import-finished", postVars, response.data);
+          this.emitPromise("after-import", postVars, response.data);
           this.isImporting = false;
           this.closedialog();
         })

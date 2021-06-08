@@ -55,6 +55,8 @@
           ><vnatk-import
             :options="optionsprop.import"
             v-if="optionsprop.import"
+            @before-import="throwBeforeImport"
+            @after-import="throwAfterImport"
           ></vnatk-import
         ></span>
         <v-dialog
@@ -251,6 +253,7 @@ export default {
 
   methods: {
     async crudInit(initialCall = false) {
+      this.loading = true;
       if (initialCall) {
         if (!this.checkOptionsAndSetDefaults()) return;
 
@@ -284,6 +287,7 @@ export default {
             this.crudcontext
           )
           .catch((error) => {
+            this.loading = false;
             if (!error.response) {
               throw error;
             }
@@ -313,7 +317,7 @@ export default {
       } else {
         response.data = this.optionsprop.response;
       }
-
+      this.loading = false;
       await this.emitPromise("on-data-fetch", response.data.data);
 
       if (response.data.headers) {
@@ -349,7 +353,7 @@ export default {
             ? this.optionsprop.override.actions
             : []
         );
-        console.log("this.actions", this.actions);
+        // console.log("this.actions", this.actions);
         this.filterActions();
       }
     },
@@ -416,7 +420,7 @@ export default {
             this.currentActionUI.item = Object.assign({}, item);
             editing_record = true;
           }
-          this.$emit(
+          this.emitPromise(
             "before-dialog-open",
             action,
             this.currentActionUI.item,
@@ -514,7 +518,7 @@ export default {
             }
           }
           this.currentActionUI.open = true;
-          this.$emit(
+          this.emitPromise(
             "after-dialog-open",
             action,
             this.currentActionUI.item,
@@ -616,7 +620,7 @@ export default {
               this.data.splice(currentIndex, 1);
             }
           }
-          this.$emit("after-action-execute", postVars, response.data);
+          this.emitPromise("after-action-execute", postVars, response.data);
           this.actionExecuting = false;
           return true;
         })
@@ -830,15 +834,15 @@ export default {
     },
 
     formEventClick(obj) {
-      this.$emit("formEventClick", obj);
+      this.emitPromise("formEventClick", obj);
     },
 
     formEventInput(obj) {
-      this.$emit("formEventInput", obj);
+      this.emitPromise("formEventInput", obj);
     },
 
     formEventChanged(obj) {
-      this.$emit("formEventChanged", obj);
+      this.emitPromise("formEventChanged", obj);
     },
 
     async emitPromise(method, ...params) {
@@ -850,6 +854,14 @@ export default {
         return res === undefined || res;
       }
       return false;
+    },
+
+    throwBeforeImport(data) {
+      this.emitPromise("before-import", data);
+    },
+
+    throwAfterImport(data) {
+      this.emitPromise("after-import", data);
     },
 
     quickSearchExecute(clear = false) {
