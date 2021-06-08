@@ -8,6 +8,8 @@
     @on-data-fetch='function3' // data as arguments
     @before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
     @after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
+    @before-import='function5' // (data) args
+    @after-import='function6' // (data) args
 >
 ```
 ## Sample crud option passing
