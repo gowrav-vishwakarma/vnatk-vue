@@ -540,10 +540,10 @@ export default {
             );
           }
           // console.log("picking from ", this.currentActionUI.item);
-          metaData["arg_item"] = metaData["formdata"] = _.pick(
-            this.currentActionUI.item,
-            [..._.keys(this.currentActionUI.action.formschema), ...[idField]]
-          );
+          metaData["arg_item"] = _.pick(this.currentActionUI.item, [
+            ..._.keys(this.currentActionUI.action.formschema),
+            ...[idField],
+          ]);
           // console.log("picked ", metaData["arg_item"]);
           // console.log("idField ", idField);
         }
@@ -557,8 +557,8 @@ export default {
       ) {
         if (metaData["arg_item"])
           metaData["arg_item"]["vnatk_selected_records"] = this.selectedIds;
-        if (metaData["formdata"])
-          metaData["formdata"]["vnatk_selected_records"] = this.selectedIds;
+        // if (metaData["formdata"])
+        //   metaData["formdata"]["vnatk_selected_records"] = this.selectedIds;
       }
 
       if (action.isClientAction) {
