@@ -121,7 +121,7 @@
     </template>
     <template v-slot:item.vnatk_actions="{ item }">
       <span
-        v-for="(action, index) in buttonGroupActions"
+        v-for="(action, index) in applicableActions(buttonGroupActions, item)"
         :key="index"
         class="flex flex-row"
       >
@@ -142,7 +142,10 @@
         </template>
 
         <v-list>
-          <v-list-item v-for="(action, i) in dropDownActions" :key="i">
+          <v-list-item
+            v-for="(action, i) in applicableActions(dropDownActions, item)"
+            :key="i"
+          >
             <v-list-item-title
               @click="executeAction(action, item)"
               v-if="actionApplicable(action, item)"
@@ -397,7 +400,6 @@ export default {
 
       var idField = this.serverheaders.find((o) => o.isIdField === true);
       if (idField) idField = idField["text"];
-
       //   Create Form if Action has formschema and not submitting
       if (action.formschema) {
         // remove all error messages to get fresh errors if still persists
@@ -416,6 +418,7 @@ export default {
 
           var editing_record = false;
           // For Row based actions set current item to work on
+
           if (action.type.toLowerCase().includes("single")) {
             this.currentActionUI.item = Object.assign({}, item);
             editing_record = true;
@@ -549,7 +552,8 @@ export default {
       // add selected records in case of multirecords action
       if (
         this.selectedIds.length > 0 &&
-        action.type.toLowerCase().includes("multi")
+        action.type.toLowerCase().includes("multi") &&
+        !item
       ) {
         if (metaData["arg_item"])
           metaData["arg_item"]["vnatk_selected_records"] = this.selectedIds;
@@ -775,6 +779,10 @@ export default {
         }
       }
       return true;
+    },
+
+    applicableActions(actions, item) {
+      return actions.filter((i) => this.actionApplicable(i, item));
     },
 
     filterActions() {
