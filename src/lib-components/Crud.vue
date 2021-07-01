@@ -363,6 +363,15 @@ export default {
 
     async executeAction(action, item, submit = false) {
       // check if some records selected for multi records
+      if (
+        action.type.toLowerCase().includes("multi") &&
+        action.type.toLowerCase().includes("single")
+      ) {
+        alert(
+          "Multi and Single both type actions are not implemented yet, please define them separate"
+        );
+        return;
+      }
       if (action.type.toLowerCase().includes("multi") && !item) {
         if (this.selectedIds.length == 0) {
           alert("Please select some records");
@@ -540,25 +549,34 @@ export default {
             );
           }
           // console.log("picking from ", this.currentActionUI.item);
-          metaData["arg_item"] = metaData["formdata"] = _.pick(
-            this.currentActionUI.item,
-            [..._.keys(this.currentActionUI.action.formschema), ...[idField]]
-          );
+          metaData["arg_item"] = _.pick(this.currentActionUI.item, [
+            ..._.keys(this.currentActionUI.action.formschema),
+            ...[idField],
+          ]);
           // console.log("picked ", metaData["arg_item"]);
           // console.log("idField ", idField);
         }
       }
 
       // add selected records in case of multirecords action
+      console.log(
+        "this.selectedIds.length",
+        this.selectedIds.length,
+        'action.type.toLowerCase().includes("multi")',
+        action.type.toLowerCase().includes("multi"),
+        "!item",
+        !item,
+        "item",
+        item
+      );
       if (
         this.selectedIds.length > 0 &&
-        action.type.toLowerCase().includes("multi") &&
-        !item
+        action.type.toLowerCase().includes("multi")
       ) {
         if (metaData["arg_item"])
           metaData["arg_item"]["vnatk_selected_records"] = this.selectedIds;
-        if (metaData["formdata"])
-          metaData["formdata"]["vnatk_selected_records"] = this.selectedIds;
+        // if (metaData["formdata"])
+        //   metaData["formdata"]["vnatk_selected_records"] = this.selectedIds;
       }
 
       if (action.isClientAction) {
