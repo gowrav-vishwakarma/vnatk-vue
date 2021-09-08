@@ -1,6 +1,6 @@
 {
   "name": "vnatk-vue",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "VNATK-VUE is Frontend part of VNATK (Vue Node AgileTool Kit). Making app development easy by including some best practices as integral part, yet, giving you total customization options.",
   "main": "dist/vnatkvue.ssr.js",
   "browser": "dist/vnatkvue.esm.js",
@@ -32,7 +32,8 @@
   "dependencies": {
     "vue-papa-parse": "^2.0.0",
     "vuetify-form-base": "^0.3.3",
-    "lodash": "^4.17.19"
+    "lodash": "^4.17.19",
+    "file-saver": "^2.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

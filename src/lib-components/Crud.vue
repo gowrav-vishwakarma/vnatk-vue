@@ -51,14 +51,23 @@
             @click:clear="quickSearchExecute(true)"
           ></v-text-field>
         </span>
-        <span
-          ><vnatk-import
+        <span>
+          <vnatk-import
             :options="optionsprop.import"
             v-if="optionsprop.import"
             @before-import="throwBeforeImport"
             @after-import="throwAfterImport"
-          ></vnatk-import
-        ></span>
+          >
+          </vnatk-import>
+        </span>
+        <span>
+          <vnatk-exporter
+            v-bind="optionsprop.export"
+            :crudoptions="optionsprop"
+            v-if="optionsprop.export"
+          >
+          </vnatk-exporter>
+        </span>
         <v-dialog
           v-model="currentActionUI.open"
           style="max-width: 80%"
@@ -167,6 +176,7 @@ import _ from "lodash";
 import VFormBase from "vuetify-form-base";
 import VNATKCrud from "../lib-mixins/VNATKCrud";
 import VnatkImport from "./Import.vue";
+import VnatkExporter from "./Exporter.vue";
 
 export default {
   name: "VnatkCrud",
@@ -175,6 +185,7 @@ export default {
   components: {
     VFormBase,
     VnatkImport,
+    VnatkExporter,
   },
   props: {
     options: [Object],
@@ -500,12 +511,10 @@ export default {
                     },
                   ];
 
-                  this.currentActionUI.action.formschema[
-                    fld
-                  ].items = existingSelect;
-                  this.currentActionUI.action.formschema[
-                    fld
-                  ].searchInput = fieldtext;
+                  this.currentActionUI.action.formschema[fld].items =
+                    existingSelect;
+                  this.currentActionUI.action.formschema[fld].searchInput =
+                    fieldtext;
                 }
               } else {
                 // mostly adding or other action
@@ -513,11 +522,8 @@ export default {
                   this.currentActionUI.action.name === "vnatk_add" &&
                   _.has(this.currentActionUI.action.formschema[fld], "items")
                 ) {
-                  this.currentActionUI.action.formschema[
-                    fld
-                  ].searchInput = this.currentActionUI.action.formschema[
-                    fld
-                  ].items[0].text;
+                  this.currentActionUI.action.formschema[fld].searchInput =
+                    this.currentActionUI.action.formschema[fld].items[0].text;
                 }
               }
 
