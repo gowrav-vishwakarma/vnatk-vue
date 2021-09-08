@@ -223,7 +223,15 @@
     @on-data-fetch='function3' // data as arguments
     @before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
     @after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
+    @before-import='function5' // (data) args
+    @after-import='function6' // (data) args
 &gt;
+&lt;!-- also use slots as per vuetify datatable --&gt;
+&lt;!-- You will have following slots for adding your own menu buttons --&gt;
+&lt;template v-slot:MenuTopLeftBefore&gt;
+&lt;template v-slot:MenuTopLeftAfter&gt;
+&lt;template v-slot:MenuTopRightBefore&gt;
+&lt;template v-slot:MenuTopRightAfter&gt;
 </code></pre>
 <h2 id="sample-crud-option-passing">Sample crud option passing</h2>
 <p>A sample crud option can be as follows</p>
