@@ -1,6 +1,9 @@
 <template>
   <div class="home">
     <vnatk-crud :options="crudoptions">
+      <template v-slot:MenuTopRightAfter>
+        <v-btn color="success">text</v-btn>
+      </template>
       <template v-slot:[`item.identifier`]="{ item }">
         {{ item.identifier }}<br />
         <small class="text--disabled"
@@ -38,9 +41,10 @@ export default {
             attributes: ["identifier", "isShareable"],
           },
         },
+        create: true,
         export: {
           ipp: 100,
-          rowformatter: function (row) {
+          rowformatter: function(row) {
             if (row.CreatedBy) {
               row.CreatedBy = row.CreatedBy.firstName;
             }
@@ -91,13 +95,11 @@ export default {
           execute: "vnatk_import",
           success: this.reloadPage,
           autoimport: true,
-          rowformatter: function (item) {
+          rowformatter: function(item) {
             return item;
           },
         },
-        override: {
-          actions: [],
-        },
+        override: {},
         ui: {
           headers: [
             {

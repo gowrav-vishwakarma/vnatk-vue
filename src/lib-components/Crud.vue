@@ -26,12 +26,21 @@
       <v-toolbar flat>
         <v-toolbar-title>{{ options.title }}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
+        <span>
+          <slot name="MenuTopLeftBefore"></slot>
+        </span>
         <span v-for="(action, index) in actionUIs.norecord" :key="index">
           <v-btn color="primary" dark @click="executeAction(action)">
             {{ action.caption ? action.caption : action.name }}
           </v-btn>
         </span>
+        <span>
+          <slot name="MenuTopLeftAfter"></slot>
+        </span>
         <v-spacer></v-spacer>
+        <span>
+          <slot name="MenuTopRightBefore"></slot>
+        </span>
         <span
           v-for="(action, index) in multiRecordActions"
           :key="(index + 1) * 1000"
@@ -40,6 +49,7 @@
             {{ action.caption ? action.caption : action.name }}
           </v-btn>
         </span>
+
         <span>
           <v-text-field
             v-if="showQuickSearch"
@@ -68,6 +78,9 @@
           >
           </vnatk-exporter>
         </span>
+        <span>
+          <slot name="MenuTopRightAfter"></slot>
+        </span>
         <v-dialog
           v-model="currentActionUI.open"
           style="max-width: 80%"
@@ -77,10 +90,10 @@
             <v-card-title>
               <span class="headline">{{
                 options.model +
-                " " +
-                (currentActionUI.action.caption
-                  ? currentActionUI.action.caption
-                  : currentActionUI.action.name)
+                  " " +
+                  (currentActionUI.action.caption
+                    ? currentActionUI.action.caption
+                    : currentActionUI.action.name)
               }}</span>
             </v-card-title>
 
@@ -260,7 +273,7 @@ export default {
   },
 
   computed: {
-    showQuickSearch: function () {
+    showQuickSearch: function() {
       return this.optionsprop.quicksearch !== undefined;
     },
   },
@@ -511,10 +524,12 @@ export default {
                     },
                   ];
 
-                  this.currentActionUI.action.formschema[fld].items =
-                    existingSelect;
-                  this.currentActionUI.action.formschema[fld].searchInput =
-                    fieldtext;
+                  this.currentActionUI.action.formschema[
+                    fld
+                  ].items = existingSelect;
+                  this.currentActionUI.action.formschema[
+                    fld
+                  ].searchInput = fieldtext;
                 }
               } else {
                 // mostly adding or other action
@@ -522,8 +537,11 @@ export default {
                   this.currentActionUI.action.name === "vnatk_add" &&
                   _.has(this.currentActionUI.action.formschema[fld], "items")
                 ) {
-                  this.currentActionUI.action.formschema[fld].searchInput =
-                    this.currentActionUI.action.formschema[fld].items[0].text;
+                  this.currentActionUI.action.formschema[
+                    fld
+                  ].searchInput = this.currentActionUI.action.formschema[
+                    fld
+                  ].items[0].text;
                 }
               }
 

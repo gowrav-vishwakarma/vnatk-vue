@@ -11,6 +11,12 @@
     @before-import='function5' // (data) args
     @after-import='function6' // (data) args
 >
+<!-- also use slots as per vuetify datatable -->
+<!-- You will have following slots for adding your own menu buttons -->
+<template v-slot:MenuTopLeftBefore>
+<template v-slot:MenuTopLeftAfter>
+<template v-slot:MenuTopRightBefore>
+<template v-slot:MenuTopRightAfter>
 ```
 ## Sample crud option passing
 
