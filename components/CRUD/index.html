@@ -117,6 +117,10 @@
     </li>
     <li class="toctree-l4"><a class="reference internal" href="#uiheaders">ui.headers</a>
     </li>
+    <li class="toctree-l4"><a class="reference internal" href="#uidatatableoptions">ui.datatableoptions</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#uidatatableoptionspaginator">ui.datatableoptions.paginator</a>
+    </li>
         </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#override">override</a>
@@ -501,6 +505,24 @@ defines options for crud, like default action placement place and headers for v-
     ],
 },
 </code></pre>
+<h4 id="uidatatableoptions">ui.datatableoptions</h4>
+<p><code>Object</code> <code>[Optional]</code> - <code>default {datatable options}</code></p>
+<h4 id="uidatatableoptionspaginator">ui.datatableoptions.paginator</h4>
+<p><code>Object</code> <code>[Optional]</code> - <code>default { totalPageVisible: 5, itemsPerPageOptions: [2, 5, 10, 50 - 1]}</code></p>
+<pre><code class="language-javascript">{
+    read:{},
+    ...
+    ui:{
+        datatableoptions: {
+            paginator: {
+                totalPageVisible: 5,
+                itemsPerPageOptions: [2, 5, 10, 50 - 1],
+            },
+          },
+    }
+}
+</code></pre>
+<p>set <code>paginator: false</code> for default pagination</p>
 <h3 id="override">override</h3>
 <p><code>JSON</code> <code>[Optional]</code> - <code>default undefined</code></p>
 <p>you can always override actions and headers to customize your own need. You just have to override only actions/headers that you want to modify.</p>
