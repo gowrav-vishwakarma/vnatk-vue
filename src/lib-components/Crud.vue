@@ -11,6 +11,16 @@
     :key="'vnatk_crud_' + `${crudkey}`"
     :show-select="selectionAdded"
     v-model="selectedIds"
+    @page-count="pageCount = $event"
+    :page.sync="currentPage"
+    :footer-props="{
+      'items-per-page-options':
+        options.ui.datatableoptions &&
+        options.ui.datatableoptions.paginator &&
+        options.ui.datatableoptions.paginator.itemsPerPageOptions
+          ? options.ui.datatableoptions.paginator.itemsPerPageOptions
+          : [10, 25, 50, 100, 250, 500, 1000],
+    }"
   >
     <template v-slot:top>
       <v-alert
@@ -90,10 +100,10 @@
             <v-card-title>
               <span class="headline">{{
                 options.model +
-                  " " +
-                  (currentActionUI.action.caption
-                    ? currentActionUI.action.caption
-                    : currentActionUI.action.name)
+                " " +
+                (currentActionUI.action.caption
+                  ? currentActionUI.action.caption
+                  : currentActionUI.action.name)
               }}</span>
             </v-card-title>
 
@@ -181,6 +191,29 @@
     <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"
       ><slot :name="slot" v-bind="scope"
     /></template>
+
+    <!-- <template v-slot:footer> -->
+    <template
+      v-slot:footer.page-text="props"
+      v-if="
+        !(
+          options.ui.datatableoptions &&
+          options.ui.datatableoptions.paginator == false
+        )
+      "
+    >
+      <v-pagination
+        v-model="currentPage"
+        :length="pageCount"
+        :total-visible="
+          options.ui.datatableoptions &&
+          options.ui.datatableoptions.paginator &&
+          options.ui.datatableoptions.paginator.totalPageVisible
+            ? options.ui.datatableoptions.paginator.totalPageVisible
+            : totalPageVisible
+        "
+      ></v-pagination>
+    </template>
   </v-data-table>
 </template>
 
@@ -237,6 +270,9 @@ export default {
       selectedIds: [],
       actionExecuting: false,
       quicksearchtext: "",
+      currentPage: 1,
+      pageCount: 0,
+      totalPageVisible: 7,
     };
   },
   created() {
@@ -273,7 +309,7 @@ export default {
   },
 
   computed: {
-    showQuickSearch: function() {
+    showQuickSearch: function () {
       return this.optionsprop.quicksearch !== undefined;
     },
   },
@@ -524,12 +560,10 @@ export default {
                     },
                   ];
 
-                  this.currentActionUI.action.formschema[
-                    fld
-                  ].items = existingSelect;
-                  this.currentActionUI.action.formschema[
-                    fld
-                  ].searchInput = fieldtext;
+                  this.currentActionUI.action.formschema[fld].items =
+                    existingSelect;
+                  this.currentActionUI.action.formschema[fld].searchInput =
+                    fieldtext;
                 }
               } else {
                 // mostly adding or other action
@@ -537,11 +571,8 @@ export default {
                   this.currentActionUI.action.name === "vnatk_add" &&
                   _.has(this.currentActionUI.action.formschema[fld], "items")
                 ) {
-                  this.currentActionUI.action.formschema[
-                    fld
-                  ].searchInput = this.currentActionUI.action.formschema[
-                    fld
-                  ].items[0].text;
+                  this.currentActionUI.action.formschema[fld].searchInput =
+                    this.currentActionUI.action.formschema[fld].items[0].text;
                 }
               }
 
