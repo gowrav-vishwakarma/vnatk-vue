@@ -353,6 +353,30 @@ ui: {
 },
 ```
 
+#### ui.datatableoptions
+`Object` `[Optional]` - `default {datatable options}`
+
+#### ui.datatableoptions.paginator
+`Object` `[Optional]` - `default { totalPageVisible: 5, itemsPerPageOptions: [2, 5, 10, 50 - 1]}`
+
+```javascript
+{
+    read:{},
+    ...
+    ui:{
+        datatableoptions: {
+            paginator: {
+                totalPageVisible: 5,
+                itemsPerPageOptions: [2, 5, 10, 50 - 1],
+            },
+          },
+    }
+}
+```
+
+set `paginator: false` for default pagination
+
+
 ### override
 `JSON` `[Optional]` - `default undefined`
 
