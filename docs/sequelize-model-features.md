@@ -10,7 +10,7 @@ VES will de-reference all realtions and try to find proper name to idetify relat
 
 If, `User belongsTo City`, we have `CityId` in `Users` Table. if City has name field, VNATK will show City's name in data grid etc and even in autocomplete dropdown to type, while when saving its appropriate Id will be saved in User.
 
-But, if you have different field in Model that defines name for that record like `identifier` in Products table. you can create `titlefield` property to be value `identifier`, And rest VNATK will doing de-referencing with this firld now.
+But, if you have different field in Model that defines name for that record like `identifier` in Products table. you can create `titlefield` property to be value `identifier`, And rest VNATK will doing de-referencing with this field now.
 
 
 example 
