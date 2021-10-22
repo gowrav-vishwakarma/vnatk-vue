@@ -55,7 +55,7 @@ Crud Options
 ### service
 `axios_instance` `[Mandatory]` 
 
-Since VNATK is designed aroung microservices, you can have multiple services to deal with, provide any axios instance as service to do requests by vnatk-crud component.
+Since VNATK is designed around microservices, you can have multiple services to deal with, provide any axios instance as service to do requests by vnatk-crud component.
 
 ### basepath
 `String` `[Optional]`
@@ -169,7 +169,7 @@ Provides information to vnatk-express-seuelize and vnatk-vue to handle your data
 #### read.modeloptions
 `JSON` `[Optional]` - `default {}`
 
-Options for yous sequelize model, Wiht a few minor modifications, you can almost use any Sequelize model's option here what you can use in `model.findAll` (if not using serversidepagination) or you can use in `model.findAndCountAll`. 
+Options for your sequelize model, With a few minor modifications, you can almost use any Sequelize model's option here what you can use in `model.findAll` (if not using serversidepagination) or you can use in `model.findAndCountAll`. 
 
 Three things are surely different then those model options are how we define `operators`, `scope` and `sequelize.fn` in our read.modeloptions
 
@@ -240,7 +240,7 @@ Remember this option effects main model defined in crudoptions while individual 
 #### read.autoderef
 `Boolean` `[Optional]` - `default true`
 
-VNATK finds relations at server side with sequelize models and solves relations to get de-referenced data here. Liek if user belongsTo City, autderef will also return you the city name by including this attribute by default and also shows in crud. You have total control over this also how to display what, that will come in later options.
+VNATK finds relations at server side with sequelize models and solves relations to get de-referenced data here. Like if user belongsTo City, autderef will also return you the city name by including this attribute by default and also shows in crud. You have total control over this also how to display what, that will come in later options.
 
 But if you want to skip it doing all de-ref for you, just set it false.
 remember setting this false will also result in all Autocomplete etc not working automatically.
@@ -276,7 +276,7 @@ This is synced option with v-data-table options, so you can use the same options
 if set to false, Editing option will be unavailable for the crud.
 if provided with JSON object, you can customize Editing feature.
 
-* TO edit any field, you must have that in your read.modeloptions.attributes or the system will throw error
+* To edit any field, you must have that in your read.modeloptions.attributes or the system will throw error
 
 #### update.uititle
 `String` `[Optional]`
@@ -507,7 +507,7 @@ override: {
 #### override.actions[].name
 `String` `[Mandatory]`
 
-Used to identify whcih action to override
+Used to identify which action to override
 
 #### override.actions[].placeIn
 `String[buttonGroup/DropDown]` `[Optional]` - `default DropDown`
@@ -518,7 +518,7 @@ where you want to place the action, in dropdown menu at the end of row or in but
 `JSON` `[Optional]`
 
 VES, sends actions and their schema well defined from server, but many times you want to override its scham at client side based on need.
-you can override each field's schema by defineing field_id as key and JSON schema to be overrided as value. 
+you can override each field's schema by defining field_id as key and JSON schema to be overrided as value. 
 
 Remember, only values that you override will be overrided and rest values will be taken as recieved from server.
 
@@ -707,7 +707,7 @@ if defined, importer will map all rows to this function and returned value of th
 
 For example please see `import` options.
 
-rowformatter allowes you to add $vnatk_ properties in root iyem as well as all nested data, next section describes what are those $vnatk_ handlers for import.
+rowformatter allowes you to add $vnatk_ properties in root item as well as all nested data, next section describes what are those $vnatk_ handlers for import.
 
 #### import.errorhandler
 `function` `[Optional]` - `default undefined`
@@ -745,7 +745,7 @@ This will guide VES how you want to treat a particular relation or row.
     * `findToAssociate`: with this option, importer will find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing City. But if not found, this throws error.
     * `associateIfFound`: with this option, importer will try to find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing Group. But if not found, importer will simply skip association.
 * `$vnatk_find_options` : This property has following options to be passed as string values.
-    If defined, this option guides importer to find a record. If not defined system will find by all items. ike, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don;t want to find by name and status.
+    If defined, this option guides importer to find a record. If not defined system will find by all items. like, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don't want to find by name and status.
     * `modelscope`: `false` to unscope model before finding, or `String` to set scope for model.
     * `modeloptions`: `JSON`, provides `where` condition for find. This only allows you to define where condition, attributes or include are not permitted here.
  
@@ -788,7 +788,7 @@ export default {
 
 ### after-action-execute
 
-This event emits when responce is recieved and success callbacl is called. This event passes two parameters to handler function `metaData` object (payload that was sent for this event) and `responseData` (received response data) object.
+This event emits when responce is received and success callback is called. This event passes two parameters to handler function `metaData` object (payload that was sent for this event) and `responseData` (received response data) object.
 
 ```javascript
 <vnatk-crud 
