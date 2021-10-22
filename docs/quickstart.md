@@ -181,7 +181,7 @@ export default {
 
 And your crud will be there with all avilable other actions also like the image below
 
-Notice city_id and state_id is automatically de-refenced to have their respective names from associations and all defined actions are available in drop down menu of each row. For more about additional features for seuelize models for vnatk-vue, please refer [Sequelize Model Features](/sequelize-model-features)
+Notice city_id and state_id is automatically de-referenced to have their respective names from associations and all defined actions are available in drop down menu of each row. For more about additional features for seuelize models for vnatk-vue, please refer [Sequelize Model Features](/sequelize-model-features)
 
 By default system assumes ```name``` as title field that is shown instead of ID, but do not worry if you don't follow these notations, everything is customizable.
 
