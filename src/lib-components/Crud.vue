@@ -159,8 +159,12 @@
       >
         <v-btn
           v-if="actionApplicable(action, item)"
-          x-small
           @click="executeAction(action, item)"
+          v-bind="
+            action.attributes
+              ? { ...{ 'x-small': 'x-small' }, ...action.attributes }
+              : { 'x-small': 'x-small' }
+          "
         >
           <v-icon x-small>{{ action.icon ? action.icon : "mdi-cog" }}</v-icon>
           {{ action.caption ? action.caption : action.name }}
@@ -181,6 +185,7 @@
             <v-list-item-title
               @click="executeAction(action, item)"
               v-if="actionApplicable(action, item)"
+              v-bind="action.attributes ? action.attributes : ''"
             >
               {{ action.caption ? action.caption : action.name }}
             </v-list-item-title>
