@@ -15,6 +15,7 @@
     :page.sync="currentPage"
     :footer-props="{
       'items-per-page-options':
+        options.ui &&
         options.ui.datatableoptions &&
         options.ui.datatableoptions.paginator &&
         options.ui.datatableoptions.paginator.itemsPerPageOptions
@@ -202,6 +203,7 @@
       v-slot:footer.page-text="props"
       v-if="
         !(
+          options.ui &&
           options.ui.datatableoptions &&
           options.ui.datatableoptions.paginator == false
         )
@@ -211,6 +213,7 @@
         v-model="currentPage"
         :length="pageCount"
         :total-visible="
+          options.ui &&
           options.ui.datatableoptions &&
           options.ui.datatableoptions.paginator &&
           options.ui.datatableoptions.paginator.totalPageVisible
