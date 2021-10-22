@@ -267,7 +267,7 @@ export default {
 <h2 id="crud-options">Crud Options</h2>
 <h3 id="service">service</h3>
 <p><code>axios_instance</code> <code>[Mandatory]</code> </p>
-<p>Since VNATK is designed aroung microservices, you can have multiple services to deal with, provide any axios instance as service to do requests by vnatk-crud component.</p>
+<p>Since VNATK is designed around microservices, you can have multiple services to deal with, provide any axios instance as service to do requests by vnatk-crud component.</p>
 <h3 id="basepath">basepath</h3>
 <p><code>String</code> <code>[Optional]</code></p>
 <ul>
@@ -354,7 +354,7 @@ export default {
 <p>Provides information to vnatk-express-seuelize and vnatk-vue to handle your data. You can customize read options by JSON properties.</p>
 <h4 id="readmodeloptions">read.modeloptions</h4>
 <p><code>JSON</code> <code>[Optional]</code> - <code>default {}</code></p>
-<p>Options for yous sequelize model, Wiht a few minor modifications, you can almost use any Sequelize model's option here what you can use in <code>model.findAll</code> (if not using serversidepagination) or you can use in <code>model.findAndCountAll</code>. </p>
+<p>Options for your sequelize model, With a few minor modifications, you can almost use any Sequelize model's option here what you can use in <code>model.findAll</code> (if not using serversidepagination) or you can use in <code>model.findAndCountAll</code>. </p>
 <p>Three things are surely different then those model options are how we define <code>operators</code>, <code>scope</code> and <code>sequelize.fn</code> in our read.modeloptions</p>
 <ul>
 <li>For operator - Use operator alias for operators like in example below </li>
@@ -419,7 +419,7 @@ export default {
 </ul>
 <h4 id="readautoderef">read.autoderef</h4>
 <p><code>Boolean</code> <code>[Optional]</code> - <code>default true</code></p>
-<p>VNATK finds relations at server side with sequelize models and solves relations to get de-referenced data here. Liek if user belongsTo City, autderef will also return you the city name by including this attribute by default and also shows in crud. You have total control over this also how to display what, that will come in later options.</p>
+<p>VNATK finds relations at server side with sequelize models and solves relations to get de-referenced data here. Like if user belongsTo City, autderef will also return you the city name by including this attribute by default and also shows in crud. You have total control over this also how to display what, that will come in later options.</p>
 <p>But if you want to skip it doing all de-ref for you, just set it false.
 remember setting this false will also result in all Autocomplete etc not working automatically.</p>
 <h4 id="readserversidepagination">read.serversidepagination</h4>
@@ -446,7 +446,7 @@ For better understanding please see <code>datatableoptions</code> exmaple.</p>
 <p>if set to false, Editing option will be unavailable for the crud.
 if provided with JSON object, you can customize Editing feature.</p>
 <ul>
-<li>TO edit any field, you must have that in your read.modeloptions.attributes or the system will throw error</li>
+<li>To edit any field, you must have that in your read.modeloptions.attributes or the system will throw error</li>
 </ul>
 <h4 id="updateuititle">update.uititle</h4>
 <p><code>String</code> <code>[Optional]</code></p>
@@ -647,14 +647,14 @@ defines options for crud, like default action placement place and headers for v-
 </code></pre>
 <h4 id="overrideactionsname">override.actions[].name</h4>
 <p><code>String</code> <code>[Mandatory]</code></p>
-<p>Used to identify whcih action to override</p>
+<p>Used to identify which action to override</p>
 <h4 id="overrideactionsplacein">override.actions[].placeIn</h4>
 <p><code>String[buttonGroup/DropDown]</code> <code>[Optional]</code> - <code>default DropDown</code></p>
 <p>where you want to place the action, in dropdown menu at the end of row or in buttonGroup.</p>
 <h4 id="overrideactionsformschemaoverrides">override.actions[].formschemaoverrides</h4>
 <p><code>JSON</code> <code>[Optional]</code></p>
 <p>VES, sends actions and their schema well defined from server, but many times you want to override its scham at client side based on need.
-you can override each field's schema by defineing field_id as key and JSON schema to be overrided as value. </p>
+you can override each field's schema by defining field_id as key and JSON schema to be overrided as value. </p>
 <p>Remember, only values that you override will be overrided and rest values will be taken as recieved from server.</p>
 <p>please see override.actions for complete example.</p>
 <h3 id="overrideheaders">override.headers</h3>
@@ -814,7 +814,7 @@ crudoptions:{
 <p><code>function</code> <code>[Optional]</code> - <code>default undefined</code></p>
 <p>if defined, importer will map all rows to this function and returned value of this function will be used for that row instead. This way, you can define arrange data from flat csv/excel data to Strcutured data.</p>
 <p>For example please see <code>import</code> options.</p>
-<p>rowformatter allowes you to add $vnatk_ properties in root iyem as well as all nested data, next section describes what are those $vnatk_ handlers for import.</p>
+<p>rowformatter allowes you to add $vnatk_ properties in root item as well as all nested data, next section describes what are those $vnatk_ handlers for import.</p>
 <h4 id="importerrorhandler">import.errorhandler</h4>
 <p><code>function</code> <code>[Optional]</code> - <code>default undefined</code></p>
 <p>VV try to manage coming errors well, but in case you want to handle errors by your won, you can create this property</p>
@@ -846,7 +846,7 @@ crudoptions:{
 </ul>
 </li>
 <li><code>$vnatk_find_options</code> : This property has following options to be passed as string values.
-    If defined, this option guides importer to find a record. If not defined system will find by all items. ike, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don;t want to find by name and status.<ul>
+    If defined, this option guides importer to find a record. If not defined system will find by all items. like, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don't want to find by name and status.<ul>
 <li><code>modelscope</code>: <code>false</code> to unscope model before finding, or <code>String</code> to set scope for model.</li>
 <li><code>modeloptions</code>: <code>JSON</code>, provides <code>where</code> condition for find. This only allows you to define where condition, attributes or include are not permitted here.</li>
 </ul>
@@ -881,7 +881,7 @@ export default {
 &lt;/script&gt;
 </code></pre>
 <h3 id="after-action-execute">after-action-execute</h3>
-<p>This event emits when responce is recieved and success callbacl is called. This event passes two parameters to handler function <code>metaData</code> object (payload that was sent for this event) and <code>responseData</code> (received response data) object.</p>
+<p>This event emits when responce is received and success callback is called. This event passes two parameters to handler function <code>metaData</code> object (payload that was sent for this event) and <code>responseData</code> (received response data) object.</p>
 <pre><code class="language-javascript">&lt;vnatk-crud 
     :options=&quot;crudoptions&quot; 
     @after-action-execute='function2', 
