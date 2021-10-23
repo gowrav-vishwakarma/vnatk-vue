@@ -206,20 +206,25 @@ export default {
             serviceoptions.model = overrideserviceoption.model ? overrideserviceoption.model : schema.association.model;
             serviceoptions.read = {}
             serviceoptions.read.modeloptions = {};
-            serviceoptions.read.modeloptions['where'] = {};
-            serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name')];
-            let sf = overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name');
-            if (Array.isArray(sf)) {
-                serviceoptions.read.modeloptions['where'] = { '$or': [] }
-                for (let index = 0; index < sf.length; index++) {
-                    const f = sf[index];
-                    let c = {}
-                    c[f] = { $like: "%" + q + "%" }
-                    serviceoptions.read.modeloptions['where']['$or'].push(c);
-                }
+            if (overrideserviceoption.where && typeof overrideserviceoption.where === 'function') {
+                serviceoptions.read.modeloptions['where'] = overrideserviceoption.where(q, schema)
             } else {
-                serviceoptions.read.modeloptions['where'][sf] = { $like: "%" + q + "%" };
+                serviceoptions.read.modeloptions['where'] = {};
+                serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name')];
+                let sf = overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name');
+                if (Array.isArray(sf)) {
+                    serviceoptions.read.modeloptions['where'] = { '$or': [] }
+                    for (let index = 0; index < sf.length; index++) {
+                        const f = sf[index];
+                        let c = {}
+                        c[f] = { $like: "%" + q + "%" }
+                        serviceoptions.read.modeloptions['where']['$or'].push(c);
+                    }
+                } else {
+                    serviceoptions.read.modeloptions['where'][sf] = { $like: "%" + q + "%" };
+                }
             }
+
             serviceoptions.titlefield = overrideserviceoption.titlefield ? overrideserviceoption.titlefield : sf;
             serviceoptions.read.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             if (overrideserviceoption.modelscope !== undefined) serviceoptions.read.modelscope = overrideserviceoption.modelscope;
