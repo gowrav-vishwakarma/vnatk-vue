@@ -762,9 +762,9 @@ export default {
       var crudcontext = this.getAutoCompleteServiceOptions(
         schema,
         newValue,
-        this.crudcontext
+        this.crudcontext,
+        this.currentActionUI.item
       );
-
       // console.log("autocomplete crudcontext.service are", crudcontext);
 
       // call service

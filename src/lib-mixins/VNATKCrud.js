@@ -194,7 +194,9 @@ export default {
             return false;
         },
 
-        getAutoCompleteServiceOptions(schema, q, serveroptions) {
+        getAutoCompleteServiceOptions(schema, q, serveroptions, formFields = {}) {
+            // console.log("inside getAutoCompleteServiceOptions", schema);
+            // console.log("inside getAutoCompleteServiceOptions Item", Item);
             // create service option from schema association info
             // override user defined values
             if (!q) return;
@@ -206,9 +208,12 @@ export default {
             serviceoptions.model = overrideserviceoption.model ? overrideserviceoption.model : schema.association.model;
             serviceoptions.read = {}
             serviceoptions.read.modeloptions = {};
+            // console.log("where function", overrideserviceoption.where);
             if (overrideserviceoption.where && typeof overrideserviceoption.where === 'function') {
-                serviceoptions.read.modeloptions['where'] = overrideserviceoption.where(q, schema)
+                // console.log("where function", overrideserviceoption.where);
+                serviceoptions.read.modeloptions['where'] = overrideserviceoption.where(q, formFields, schema)
             } else {
+                // console.log("else part", schema.titlefield);
                 serviceoptions.read.modeloptions['where'] = {};
                 serviceoptions.read.modeloptions['attributes'] = overrideserviceoption.modelattributes ? overrideserviceoption.modelattributes : ["id", overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name')];
                 let sf = overrideserviceoption.searchfield ? overrideserviceoption.searchfield : (schema.titlefield ? schema.titlefield : 'name');
@@ -223,9 +228,9 @@ export default {
                 } else {
                     serviceoptions.read.modeloptions['where'][sf] = { $like: "%" + q + "%" };
                 }
+                serviceoptions.titlefield = overrideserviceoption.titlefield ? overrideserviceoption.titlefield : sf;
             }
 
-            serviceoptions.titlefield = overrideserviceoption.titlefield ? overrideserviceoption.titlefield : sf;
             serviceoptions.read.modeloptions['limit'] = overrideserviceoption.limit ? overrideserviceoption.limit : 10;
             if (overrideserviceoption.modelscope !== undefined) serviceoptions.read.modelscope = overrideserviceoption.modelscope;
             // console.log(serviceoptions);
