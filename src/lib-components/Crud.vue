@@ -460,10 +460,15 @@ export default {
       }
 
       // check if correct where condition is met for all seleted records for multi actions
-
+      let localSelectedIDS = JSON.parse(JSON.stringify(this.selectedIds));
       if (submit) {
         this.actionExecuting = "Executing ....";
-        await this.emitPromise("before-action-execute", action, item);
+        await this.emitPromise(
+          "before-action-execute",
+          action,
+          item,
+          localSelectedIDS
+        );
         if (!this.$refs.currentActionUIForm.validate()) {
           this.actionExecuting = false;
           return;
@@ -625,6 +630,8 @@ export default {
       console.log(
         "this.selectedIds.length",
         this.selectedIds.length,
+        "localSelectedIDS",
+        localSelectedIDS,
         'action.type.toLowerCase().includes("multi")',
         action.type.toLowerCase().includes("multi"),
         "!item",
@@ -633,11 +640,11 @@ export default {
         item
       );
       if (
-        this.selectedIds.length > 0 &&
+        localSelectedIDS.length > 0 &&
         action.type.toLowerCase().includes("multi")
       ) {
         if (metaData["arg_item"])
-          metaData["arg_item"]["vnatk_selected_records"] = this.selectedIds;
+          metaData["arg_item"]["vnatk_selected_records"] = localSelectedIDS;
         // if (metaData["formdata"])
         //   metaData["formdata"]["vnatk_selected_records"] = this.selectedIds;
       }
