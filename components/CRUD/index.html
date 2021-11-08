@@ -222,7 +222,7 @@
                 <h1 id="vnatk-crud">vnatk-crud</h1>
 <pre><code class="language-html">&lt;vnatk-crud 
     :options=&quot;crudoptions&quot; 
-    @before-action-execute='function1', (action,item) args
+    @before-action-execute='function1', (action,item, selectedItems) args
     @after-action-execute='function2' (metaData,response.data)
     @on-data-fetch='function3' // data as arguments
     @before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args
