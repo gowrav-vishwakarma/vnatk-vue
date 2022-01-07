@@ -1,13 +1,14 @@
 <template>
   <v-app>
     <h1>Test</h1>
-    <example-export />
+    <!-- <example-export /> -->
     <!-- <h1>Example Import</h1> -->
     <!-- <exampleimport /> -->
     <!-- <h1>Example 1</h1>
     <example1 /> -->
     <h1>Example 2</h1>
-    <exampleAutoCompleteWhere />
+    <exampleimportBatchWise />
+    <!-- <exampleAutoCompleteWhere /> -->
     <!-- <h1>Example 3</h1>
     <example3 /> -->
     <!-- <model-designer-example /> -->
@@ -26,7 +27,8 @@ import Vue from "vue";
 // import Example3 from "./example3.vue";
 // import ExampleFull from "./example-full.vue";
 // import modelDesignerExample from "./modelDeginerExample.vue";
-import exampleAutoCompleteWhere from "./exampleAutoCompleteWhere.vue";
+// import exampleAutoCompleteWhere from "./exampleAutoCompleteWhere.vue";
+import exampleimportBatchWise from "./exampleimportBatchWise.vue";
 
 export default Vue.extend({
   name: "ServeDev",
@@ -39,7 +41,8 @@ export default Vue.extend({
     // Example3,
     // ExampleFull,
     // modelDesignerExample,
-    exampleAutoCompleteWhere,
+    // exampleAutoCompleteWhere,
+    exampleimportBatchWise,
   },
 });
 </script>

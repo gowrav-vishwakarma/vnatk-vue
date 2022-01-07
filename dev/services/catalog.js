@@ -3,9 +3,8 @@ import axios from "axios";
 //import mock_api from "@/services/mock_customer";
 
 const api = axios.create({
-  baseURL:
-    process.env.VUE_APP_BASE_URL_CUSTOMER ||
-    "https://catalog.service.staging.frendy.in",
+  baseURL: process.env.VUE_APP_BASE_URL_CUSTOMER || "http://localhost:3002",
+  // "https://catalog.service.staging.frendy.in",
 });
 
 api.interceptors.request.use(
