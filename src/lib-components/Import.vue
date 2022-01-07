@@ -33,6 +33,18 @@
         >
           {{ e }}
         </v-alert>
+
+        <v-progress-linear
+          v-if="options.batchSize"
+          v-model="batchProgress"
+          color="blue-grey"
+          height="200"
+        >
+          <template v-slot:default="{ value }">
+            <strong>{{ Math.ceil(value) }}%</strong>
+          </template>
+        </v-progress-linear>
+
         <v-card-text>
           <v-data-table
             v-if="filedata.data.length"
@@ -68,6 +80,7 @@ export default {
       openpreviewdialog: false,
       datatableheaders: [],
       filedata: { data: [], meta: { fields: [] } },
+      batchProgress: 1,
     };
   },
 
@@ -107,7 +120,7 @@ export default {
       this.$refs.file.value = "";
       this.openpreviewdialog = false;
     },
-    sendtoimport() {
+    async sendtoimport() {
       this.isImporting = "Importing...";
       var importdata = this.filedata.data;
 
@@ -123,51 +136,72 @@ export default {
         // console.log("importdata", importdata);
       }
 
-      this.emitPromise("before-import", importdata);
-
-      var endpoint = "/executeaction";
-      var postVars = {
-        action_to_execute: { execute: this.options.execute },
-        importdata: importdata,
-        model: this.options.model,
-        transaction: this.options.transaction === "row" ? "row" : "file",
-      };
-
-      if (this.options.autoimport === true) {
-        postVars.action_to_execute = {
-          execute: "vnatk_autoimport",
-          name: "vnatk_autoimport",
-        };
+      let bi = this.emitPromise("before-import", importdata);
+      if (bi === false) {
+        return;
       }
 
-      this.options.service
-        .post(
-          (this.options.basepath ? this.options.basepath : "/vnatk") + endpoint,
-          postVars
-        )
-        .then((response) => {
-          if (typeof this.options.success === "function") {
-            this.options.success(response.data);
-          }
-          this.emitPromise("after-import", postVars, response.data);
-          this.isImporting = false;
-          this.closedialog();
-        })
-        .catch((error) => {
-          if (
-            this.options.errorhandler &&
-            typeof this.options.errorhandler == "function"
-          ) {
-            let r = this.options.errorhandler(error);
-            this.errors.push(r);
-            console.log("Handed by errorhandler ", r);
+      let totaldataSize = importdata.length;
+      let batchSize = this.options.batchSize
+        ? this.options.batchSize
+        : totaldataSize;
+
+      for (let i = 0; i < totaldataSize; i += batchSize) {
+        let batchImportData = importdata.slice(i, i + batchSize);
+
+        var endpoint = "/executeaction";
+        var postVars = {
+          action_to_execute: { execute: this.options.execute },
+          importdata: batchImportData,
+          model: this.options.model,
+          transaction: this.options.transaction === "row" ? "row" : "file",
+        };
+
+        if (this.options.autoimport === true) {
+          postVars.action_to_execute = {
+            execute: "vnatk_autoimport",
+            name: "vnatk_autoimport",
+          };
+        }
+
+        await this.options.service
+          .post(
+            (this.options.basepath ? this.options.basepath : "/vnatk") +
+              endpoint,
+            postVars
+          )
+          .then((response) => {
+            if (typeof this.options.success === "function") {
+              this.options.success(response.data);
+            }
+            this.emitPromise("after-import", postVars, response.data, i); // i = batch number
+
+            this.batchProgress =
+              (totaldataSize / (batchSize * i)) * 100 > 100
+                ? 100
+                : Math.ceil((totaldataSize / (batchSize * i)) * 100);
+          })
+          .catch((error) => {
+            if (
+              this.options.errorhandler &&
+              typeof this.options.errorhandler == "function"
+            ) {
+              let r = this.options.errorhandler(error);
+              this.errors.push(r);
+              console.log("Handed by errorhandler ", r);
+              this.isImporting = false;
+              if (this.options.batchSize) {
+                throw new Error(error);
+              }
+              return;
+            }
+            if (error.response) this.errors.push(error.response.data);
+            else this.errors.push(error);
             this.isImporting = false;
-            return;
-          }
-          if (error.response) this.errors.push(error.response.data);
-          else this.errors.push(error);
-          this.isImporting = false;
-        });
+          });
+      }
+      this.isImporting = false;
+      // this.closedialog();
     },
   },
 };
