@@ -3,9 +3,17 @@
     <!-- <slot name="exportButton"> -->
     <v-btn depressed color="primary" @click.once="fetchData"> Export</v-btn>
     <!-- </slot> -->
-    <v-btn @click="exportDataToCSV()" v-if="loader.percentage >= 100">
+
+    <v-btn
+      @click="exportDataToCSV()"
+      v-if="
+        (useStreamSaver == false || useStreamSaver == 'false') &&
+        loader.percentage >= 100
+      "
+    >
       Download File
     </v-btn>
+
     <v-progress-circular
       v-if="loader.percentage > 0 && loader.percentage < 100"
       :rotate="360"
@@ -135,14 +143,14 @@ export default {
      * export data save to export file not in memory
      */
     useStreamSaver: {
-      type: Boolean,
+      type: [Boolean, String],
       default: false,
     },
     /**
      * when api res is error or service is not reachable, it auto try request with delay...
      */
     retryDelay: {
-      type: Number,
+      type: [Number, String],
       default: 15000,
     },
 
@@ -151,7 +159,7 @@ export default {
      * when api respose is error or service is not reachable
      */
     maxRetryCount: {
-      type: Number,
+      type: [Number, String],
       default: 5,
     },
   },
@@ -168,7 +176,7 @@ export default {
       cloneCrudOptions: [Object, Boolean],
       streamWriteObject: false,
       fetchContinue: true,
-      serverFailureCount: 0,
+      serverFailureCount: 1,
     };
   },
 
@@ -247,7 +255,16 @@ export default {
             )
             .catch((error) => {
               //throw
-              if (this.serverFailureCount >= this.maxRetryCount) {
+              if (
+                (this.useStreamSaver == true ||
+                  this.useStreamSaver == "true") &&
+                this.serverFailureCount >= this.maxRetryCount
+              ) {
+                this.streamWriteObject.close();
+                if (!error.response) {
+                  throw error;
+                }
+              } else {
                 if (!error.response) {
                   throw error;
                 }
@@ -386,29 +403,7 @@ export default {
 
       // }
     },
-
-    streamSaver() {
-      const fileStream = streamSaver.createWriteStream("teststream.csv");
-      const writer = fileStream.getWriter();
-
-      let i = 1;
-      let max = 10;
-      const interval = setInterval(() => {
-        writer.write(new TextEncoder().encode("StreamSaver is awesome " + i));
-        i++;
-        if (i === max) {
-          writer.close();
-          clearInterval(interval);
-        }
-      }, 1000);
-    },
   },
-
-  // mounted() {
-  // console.log(streamSaver);
-  // console.log(windowStreamSaver);
-  // console.log("CRUD crudoptions", this.crudoptions);
-  // },
 };
 </script>
 
