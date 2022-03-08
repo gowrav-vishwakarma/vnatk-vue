@@ -30,10 +30,11 @@
     "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
   "dependencies": {
-    "vue-papa-parse": "^2.0.0",
-    "vuetify-form-base": "^0.3.3",
+    "file-saver": "^2.0.5",
     "lodash": "^4.17.19",
-    "file-saver": "^2.0.5"
+    "streamsaver": "^2.0.6",
+    "vue-papa-parse": "^2.0.0",
+    "vuetify-form-base": "^0.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

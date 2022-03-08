@@ -3,9 +3,17 @@
     <!-- <slot name="exportButton"> -->
     <v-btn depressed color="primary" @click.once="fetchData"> Export</v-btn>
     <!-- </slot> -->
-    <v-btn @click="exportDataToCSV()" v-if="loader.percentage >= 100">
+
+    <v-btn
+      @click="exportDataToCSV()"
+      v-if="
+        (useStreamSaver == false || useStreamSaver == 'false') &&
+        loader.percentage >= 100
+      "
+    >
       Download File
     </v-btn>
+
     <v-progress-circular
       v-if="loader.percentage > 0 && loader.percentage < 100"
       :rotate="360"
@@ -22,12 +30,12 @@
 
   <!-- 
     // use this
-    ----- Template/Html ------------------------
     <Exporter
       :exportData="exportData"
       :dataCallback="dataCallBackFunc" 
       :crudoptions="crudoptions" > 
     </Exporter>
+    ----- Template/Html ------------------------
     -------------------------------------------
     
     ----- RowFormatter method ------------------------
@@ -71,6 +79,10 @@
 <script>
 // import _ from "lodash";
 import { saveAs } from "file-saver";
+//import streamSaver from "streamsaver";
+const streamSaver = require("streamsaver");
+// const windowStreamSaver = window.streamSaver;
+
 import { unparse } from "papaparse";
 
 export default {
@@ -111,6 +123,10 @@ export default {
       type: String,
       default: "export",
     },
+    fileName: {
+      type: String,
+      default: "export",
+    },
     ipp: {
       type: Number,
       default: 100,
@@ -121,6 +137,30 @@ export default {
     },
     rowformatter: {
       type: Function,
+    },
+
+    /**
+     * export data save to export file not in memory
+     */
+    useStreamSaver: {
+      type: [Boolean, String],
+      default: true,
+    },
+    /**
+     * when api res is error or service is not reachable, it auto try request with delay...
+     */
+    retryDelay: {
+      type: [Number, String],
+      default: 15000,
+    },
+
+    /**
+     * max retry try count
+     * when api respose is error or service is not reachable
+     */
+    maxRetryCount: {
+      type: [Number, String],
+      default: 5,
     },
   },
 
@@ -134,6 +174,9 @@ export default {
       interval: function () {},
       exportData: [Array, Boolean],
       cloneCrudOptions: [Object, Boolean],
+      streamWriteObject: false,
+      fetchContinue: true,
+      serverFailureCount: 1,
     };
   },
 
@@ -177,7 +220,7 @@ export default {
         // console.log("CRUD Options start", this.crudoptions);
         let crudResData = [];
         let offsetCount = 0;
-        let fetchContinue = true;
+        // let fetchContinue = true;
 
         this.cloneCrudOptions = JSON.parse(
           JSON.stringify(this.crudoptions, (k, v) =>
@@ -196,11 +239,12 @@ export default {
           //   this.cloneCrudOptions.read.modeloptions.offset
           // );
 
-          var response = { data: {} };
+          let response = { data: {} };
 
           let APIIdentifier = this.cloneCrudOptions.model
             ? this.cloneCrudOptions.model
             : "";
+          // console.log("crud options response 1..1 " + this.serverFailureCount);
           // call initialization from server
           response = await this.crudoptions.service
             .post(
@@ -210,46 +254,83 @@ export default {
               this.cloneCrudOptions
             )
             .catch((error) => {
-              if (!error.response) {
-                throw error;
+              //throw
+              if (
+                (this.useStreamSaver == true ||
+                  this.useStreamSaver == "true") &&
+                this.serverFailureCount >= this.maxRetryCount
+              ) {
+                this.streamWriteObject.close();
+                if (!error.response) {
+                  throw error;
+                }
+              } else {
+                if (!error.response) {
+                  throw error;
+                }
               }
             });
 
-          tempResData = response.data.data;
-          // console.log("crud options response ", tempResData);
-          let fetchedRecords = this.ipp + offsetCount * this.ipp;
-          if (fetchedRecords >= response.data.datacount) {
-            fetchContinue = false;
+          /**
+           * managing response error handling  for 3 times and with time interval
+           *
+           *  system will try 3 time to wait for api response in case of server failure
+           */
+          // this.serverFailureCount = 0;
+
+          if (typeof response !== "undefined" && response != null) {
+            console.log("response server ", response);
+            tempResData = response.data.data;
+            this.serverFailureCount = 0;
+            let fetchedRecords = this.ipp + offsetCount * this.ipp;
+            if (fetchedRecords >= response.data.datacount) {
+              this.fetchContinue = false;
+            } else {
+              // update loader percentage
+              offsetCount += 1;
+            }
+
+            // console.log("fetchedRecords", fetchedRecords);
+            // console.log("response.data.datacount", response.data.datacount);
+            // console.log(
+            //   "this.loader.percentage",
+            //   (fetchedRecords / response.data.datacount) * 100
+            // );
+            this.loader.percentage =
+              (fetchedRecords / response.data.datacount) * 100 > 100
+                ? 100
+                : Math.ceil((fetchedRecords / response.data.datacount) * 100);
+
+            this.cloneCrudOptions.read.modeloptions.offset = fetchedRecords;
+            // console.log("rowformatter", this.rowformatter);
+            // console.log("rowformatter type", typeof this.rowformatter);
+            if (this.rowformatter && typeof this.rowformatter === "function") {
+              tempResData = response.data.data
+                .map((i) => this.rowformatter(i))
+                .filter(function (i) {
+                  return i !== false;
+                });
+            }
+
+            // write data to files direct
+            if (this.useStreamSaver) {
+              console.log("streamSaver start");
+              this.exportData = tempResData;
+              this.exportDataToCSV();
+              this.exportData = [];
+            } else {
+              crudResData = [].concat(crudResData, tempResData);
+            }
           } else {
-            // update loader percentage
-            offsetCount += 1;
+            // api response failure count;
+            this.serverFailureCount += 1;
+
+            //api Request delay
+            await new Promise((res) => setTimeout(res, this.retryDelay));
           }
+        } while (this.fetchContinue);
 
-          // console.log("fetchedRecords", fetchedRecords);
-          // console.log("response.data.datacount", response.data.datacount);
-          // console.log(
-          //   "this.loader.percentage",
-          //   (fetchedRecords / response.data.datacount) * 100
-          // );
-          this.loader.percentage =
-            (fetchedRecords / response.data.datacount) * 100 > 100
-              ? 100
-              : Math.ceil((fetchedRecords / response.data.datacount) * 100);
-
-          this.cloneCrudOptions.read.modeloptions.offset = fetchedRecords;
-          // console.log("rowformatter", this.rowformatter);
-          // console.log("rowformatter type", typeof this.rowformatter);
-          if (this.rowformatter && typeof this.rowformatter === "function") {
-            tempResData = response.data.data
-              .map((i) => this.rowformatter(i))
-              .filter(function (i) {
-                return i !== false;
-              });
-          }
-          crudResData = [].concat(crudResData, tempResData);
-        } while (fetchContinue);
-
-        if (!fetchContinue) {
+        if (!this.fetchContinue && !this.useStreamSaver) {
           this.exportData = crudResData;
           // console.log("final data", this.exportData);
           this.exportDataToCSV();
@@ -300,14 +381,28 @@ export default {
         type: "application/csvcharset=" + this.encoding,
       });
 
-      saveAs(blob, this.fielName + "_" + this.postfixDateTime + ".csv");
+      if (this.useStreamSaver) {
+        // console.log("streamSaver save function called");
+        let writer = null;
+
+        if (this.streamWriteObject) {
+          writer = this.streamWriteObject;
+        } else {
+          const fileStream = streamSaver.createWriteStream(
+            this.fileName + "_" + this.postfixDateTime + ".csv"
+          );
+          writer = this.streamWriteObject = fileStream.getWriter();
+        }
+
+        writer.write(new TextEncoder().encode(csv));
+        if (!this.fetchContinue) writer.close();
+        // console.log("streamSaver save function called");
+      } else {
+        saveAs(blob, this.fileName + "_" + this.postfixDateTime + ".csv");
+      }
+
       // }
     },
-  },
-
-  mounted() {
-    console.log("Exporter Data options", this.crudoptions);
-    // console.log("CRUD crudoptions", this.crudoptions);
   },
 };
 </script>
