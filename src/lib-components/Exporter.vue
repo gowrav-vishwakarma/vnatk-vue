@@ -144,7 +144,7 @@ export default {
      */
     useStreamSaver: {
       type: [Boolean, String],
-      default: false,
+      default: true,
     },
     /**
      * when api res is error or service is not reachable, it auto try request with delay...

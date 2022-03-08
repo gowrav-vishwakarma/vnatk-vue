@@ -44,7 +44,7 @@ export default {
         create: true,
         export: {
           ipp: 100,
-          rowformatter: function(row) {
+          rowformatter: function (row) {
             if (row.CreatedBy) {
               row.CreatedBy = row.CreatedBy.firstName;
             }
@@ -56,6 +56,22 @@ export default {
             }
             return row;
           },
+          /**
+           * export data save to export file not in memory
+           * optional default Value is true
+           */
+          useStreamSaver: true,
+          /**
+           * when api res is error or service is not reachable, it auto try request with delay...
+           * optional default Value is: 15000 ms
+           * */
+          retryDelay: 15000,
+          /**
+           * max retry try count
+           * when api respose is error or service is not reachable
+           * optional default Value is: 5
+           */
+          maxRetryCount: 5,
         },
         read: {
           modeloptions: {
@@ -95,7 +111,7 @@ export default {
           execute: "vnatk_import",
           success: this.reloadPage,
           autoimport: true,
-          rowformatter: function(item) {
+          rowformatter: function (item) {
             return item;
           },
         },
