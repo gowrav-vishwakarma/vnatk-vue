@@ -279,7 +279,7 @@ export default {
           // this.serverFailureCount = 0;
 
           if (typeof response !== "undefined" && response != null) {
-            console.log("response server ", response);
+            // console.log("response server ", response);
             tempResData = response.data.data;
             this.serverFailureCount = 0;
             let fetchedRecords = this.ipp + offsetCount * this.ipp;
@@ -314,7 +314,6 @@ export default {
 
             // write data to files direct
             if (this.useStreamSaver) {
-              console.log("streamSaver start");
               this.exportData = tempResData;
               this.exportDataToCSV();
               this.exportData = [];
@@ -358,6 +357,13 @@ export default {
         console.error("No data to export");
         return;
       }
+
+      // if streamWriteObject is running means pagination is working
+      let overrideHeader = {};
+      if (this.streamWriteObject) {
+        overrideHeader = { header: false };
+      }
+
       let csv = unparse(
         dataExport,
         Object.assign(
@@ -365,7 +371,10 @@ export default {
             delimiter: this.delimiter,
             encoding: this.encoding,
           },
-          this.parserAdvancedOptions
+          Object.assign(
+            this.parserAdvancedOptions ? this.parserAdvancedOptions : {},
+            overrideHeader
+          )
         )
       );
       if (this.separatorExcel) {
@@ -375,6 +384,8 @@ export default {
       if (this.encoding === "utf-8") {
         csv = "\ufeff" + csv;
       }
+
+      // console.log("csv -----", csv);
       this.$emit("export-finished");
       // if (!this.testing) {
       let blob = new Blob([csv], {
@@ -387,6 +398,7 @@ export default {
 
         if (this.streamWriteObject) {
           writer = this.streamWriteObject;
+          csv = "\r\n" + csv; // appending \r\n to chunks data from second counting
         } else {
           const fileStream = streamSaver.createWriteStream(
             this.fileName + "_" + this.postfixDateTime + ".csv"
