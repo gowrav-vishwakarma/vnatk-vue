@@ -75,7 +75,7 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#quicksearch">quicksearch</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#quicksearch_1">quicksearch</a>
+    <li class="toctree-l3"><a class="reference internal" href="#quicksearch_like_enabled">quicksearch_like_enabled</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#create">create</a>
         <ul>
@@ -224,13 +224,14 @@
             <div class="section">
               
                 <h1 id="vnatk-crud">vnatk-crud</h1>
-<pre><code class="language-html">&lt;vnatk-crud :options=&quot;crudoptions&quot; @before-action-execute='function1',
-(action,item, selectedItems) args @after-action-execute='function2'
-(metaData,response.data) @on-data-fetch='function3' // data as arguments
-@before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem)
-args @after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem)
-args @before-import='function5' // (data) args @after-import='function6' //
-(data) args &gt;
+<pre><code class="language-html">&lt;vnatk-crud :options=&quot;crudoptions&quot; 
+@before-action-execute='function1', // (action,item, selectedItems) args 
+@after-action-execute='function2' // (metaData,response.data) 
+@on-data-fetch='function3' // data as arguments
+@before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args 
+@after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args 
+@before-import='function5' // (data) args 
+@after-import='function6' // (data) args &gt;
 &lt;!-- also use slots as per vuetify datatable --&gt;
 &lt;!-- You will have following slots for adding your own menu buttons --&gt;
 &lt;template v-slot:MenuTopLeftBefore&gt;
@@ -290,11 +291,9 @@ args @before-import='function5' // (data) args @after-import='function6' //
 <li><code>quicksearch: ['field1', 'field2']</code> This format will work if your pagination is set to server mode, vnatk-crud will perform a exact match (equal condition) query on the fields provided with user entered value and results will filter in crud.</li>
 <li><code>quicksearch: (usertext)=&gt;{ // do some change in read.modeloptions as per your need }</code> when given as function you can modify crud options based on usertext and vue reactivity will reload crud with new options.</li>
 </ul>
-<h3 id="quicksearch_1">quicksearch</h3>
+<h3 id="quicksearch_like_enabled">quicksearch_like_enabled</h3>
 <p><code>Boolean</code> <code>[Optional]: Default value : false</code></p>
-<ul>
-<li><code>quicksearchlikeenabled: true</code> vnatk-crud will perform a like query on the fields (quicksearch: ['field1', 'field2']) provided with user entered value and results will filter in crud.</li>
-</ul>
+<p><code>quicksearch_like_enabled: true</code> vnatk-crud will perform a like query on the fields (quicksearch: ['field1', 'field2']) provided with user entered value and results will filter in crud.</p>
 <h3 id="create">create</h3>
 <p><code>Boolean/JSON</code> <code>[Optional]</code> - <code>default true</code></p>
 <p>When provided just boolean, you just inform if you want to have a create facility or not.</p>
