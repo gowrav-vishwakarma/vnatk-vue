@@ -977,9 +977,9 @@ export default {
       ) {
         const fieldToSearch = this.optionsprop.quicksearch[index];
         if (
-          this.optionsprop.quicksearchlikeenabled &&
-          (this.optionsprop.quicksearchlikeenabled == true ||
-            this.optionsprop.quicksearchlikeenabled == "true")
+          this.optionsprop.quicksearch_like_enabled &&
+          (this.optionsprop.quicksearch_like_enabled == true ||
+            this.optionsprop.quicksearch_like_enabled == "true")
         ) {
           condition[fieldToSearch] = {
             $like: "%" + this.quicksearchtext + "%",

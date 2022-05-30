@@ -1,13 +1,14 @@
 # vnatk-crud
 
 ```html
-<vnatk-crud :options="crudoptions" @before-action-execute='function1',
-(action,item, selectedItems) args @after-action-execute='function2'
-(metaData,response.data) @on-data-fetch='function3' // data as arguments
-@before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem)
-args @after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem)
-args @before-import='function5' // (data) args @after-import='function6' //
-(data) args >
+<vnatk-crud :options="crudoptions" 
+@before-action-execute='function1', // (action,item, selectedItems) args 
+@after-action-execute='function2' // (metaData,response.data) 
+@on-data-fetch='function3' // data as arguments
+@before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args 
+@after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args 
+@before-import='function5' // (data) args 
+@after-import='function6' // (data) args >
 <!-- also use slots as per vuetify datatable -->
 <!-- You will have following slots for adding your own menu buttons -->
 <template v-slot:MenuTopLeftBefore>
@@ -86,11 +87,10 @@ quicksearch adds a input box at top-right of crud and allws you to search in you
 - `quicksearch: ['field1', 'field2']` This format will work if your pagination is set to server mode, vnatk-crud will perform a exact match (equal condition) query on the fields provided with user entered value and results will filter in crud.
 - `quicksearch: (usertext)=>{ // do some change in read.modeloptions as per your need }` when given as function you can modify crud options based on usertext and vue reactivity will reload crud with new options.
 
-### quicksearch
-
+### quicksearch_like_enabled
 `Boolean` `[Optional]: Default value : false`
 
-- `quicksearchlikeenabled: true` vnatk-crud will perform a like query on the fields (quicksearch: ['field1', 'field2']) provided with user entered value and results will filter in crud.
+`quicksearch_like_enabled: true` vnatk-crud will perform a like query on the fields (quicksearch: ['field1', 'field2']) provided with user entered value and results will filter in crud.
 
 ### create
 
