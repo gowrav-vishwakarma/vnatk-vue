@@ -11,9 +11,9 @@ args @before-import='function5' // (data) args @after-import='function6' //
 <!-- also use slots as per vuetify datatable -->
 <!-- You will have following slots for adding your own menu buttons -->
 <template v-slot:MenuTopLeftBefore>
-    <template v-slot:MenuTopLeftAfter>
-        <template v-slot:MenuTopRightBefore>
-            <template v-slot:MenuTopRightAfter></template></template></template
+  <template v-slot:MenuTopLeftAfter>
+    <template v-slot:MenuTopRightBefore>
+      <template v-slot:MenuTopRightAfter></template></template></template
 ></template>
 ```
 
@@ -23,28 +23,28 @@ A sample crud option can be as follows
 
 ```html
 <template>
-    <vnatk-crud :options="crudoptions"> </vnatk-crud>
+  <vnatk-crud :options="crudoptions"> </vnatk-crud>
 </template>
 
 <script>
-    import { VnatkCrud } from "vnatk-vue";
-    import customer from "../services/customer";
+  import { VnatkCrud } from "vnatk-vue";
+  import customer from "../services/customer";
 
-    export default {
-        name: "SampleCRUD",
-        components: {
-            VnatkCrud,
+  export default {
+    name: "SampleCRUD",
+    components: {
+      VnatkCrud,
+    },
+    data() {
+      return {
+        crudoptions: {
+          service: customer,
+          model: "User",
+          title: "Users",
         },
-        data() {
-            return {
-                crudoptions: {
-                    service: customer,
-                    model: "User",
-                    title: "Users",
-                },
-            };
-        },
-    };
+      };
+    },
+  };
 </script>
 ```
 
@@ -60,7 +60,7 @@ Since VNATK is designed around microservices, you can have multiple services to 
 
 `String` `[Optional]`
 
--   defaults to `"/vnatk"` for your service
+- defaults to `"/vnatk"` for your service
 
 But since you may have defined some other route for vnatk like `admin/vnatk` or `api/vnatk`. provide this string to route your vnatk request to proper url for provided service.
 
@@ -82,9 +82,15 @@ Provides title of your crud
 
 quicksearch adds a input box at top-right of crud and allws you to search in your data.
 
--   `quicksearch: true` will search in your local crud data. (Client side only.)
--   `quicksearch: ['field1', 'field2']` This format will work if your pagination is set to server mode, vnatk-crud will perform a like query on the fields provided with user entered value and results will filter in crud.
--   `quicksearch: (usertext)=>{ // do some change in read.modeloptions as per your need }` when given as function you can modify crud options based on usertext and vue reactivity will reload crud with new options.
+- `quicksearch: true` will search in your local crud data. (Client side only.)
+- `quicksearch: ['field1', 'field2']` This format will work if your pagination is set to server mode, vnatk-crud will perform a exact match (equal condition) query on the fields provided with user entered value and results will filter in crud.
+- `quicksearch: (usertext)=>{ // do some change in read.modeloptions as per your need }` when given as function you can modify crud options based on usertext and vue reactivity will reload crud with new options.
+
+### quicksearch
+
+`Boolean` `[Optional]: Default value : false`
+
+- `quicksearchlikeenabled: true` vnatk-crud will perform a like query on the fields (quicksearch: ['field1', 'field2']) provided with user entered value and results will filter in crud.
 
 ### create
 
@@ -92,9 +98,9 @@ quicksearch adds a input box at top-right of crud and allws you to search in you
 
 When provided just boolean, you just inform if you want to have a create facility or not.
 
--   `true`: If true, system will add a `add` button and will get all Sequelize Model fields with their relations to have a create form populated. on save it does add record too.
--   `false`: If false, system will skip add facility for your crud.
--   `json`: When provided a json object you can customize create feature, let's see json object options in detail
+- `true`: If true, system will add a `add` button and will get all Sequelize Model fields with their relations to have a create form populated. on save it does add record too.
+- `false`: If false, system will skip add facility for your crud.
+- `json`: When provided a json object you can customize create feature, let's see json object options in detail
 
 #### create.uititle
 
@@ -181,9 +187,9 @@ Options for your sequelize model, With a few minor modifications, you can almost
 
 Three things are surely different then those model options are how we define `operators`, `scope` and `sequelize.fn` in our read.modeloptions
 
--   For operator - Use operator alias for operators like in example below
--   For scope - Since you define model with string the main model scope is defined by `crudoptions.read.modelscope` property and for include options in your modeloptions you can define separate `scope` property to be populated at server side.
--   For fn - you can pass json object with fn, col and as property to rebuild sequelize.fn at server side
+- For operator - Use operator alias for operators like in example below
+- For scope - Since you define model with string the main model scope is defined by `crudoptions.read.modelscope` property and for include options in your modeloptions you can define separate `scope` property to be populated at server side.
+- For fn - you can pass json object with fn, col and as property to rebuild sequelize.fn at server side
 
 Lets have an exmaple to do it now. Please read all the comments to get more about read.modeloptions
 
@@ -242,9 +248,9 @@ read: {
 
 Remember this option effects main model defined in crudoptions while individual scopes in include are just with scope property
 
--   `undefined or not defined`: If not defined, the VES will apply defaultscope like what would sequelize do.
--   `false`: set this value to false, model at the server end will be unscoped.
--   `String`: if set as any string, system will load the scope by defined name, if not found at server model, system will throw an error.
+- `undefined or not defined`: If not defined, the VES will apply defaultscope like what would sequelize do.
+- `false`: set this value to false, model at the server end will be unscoped.
+- `String`: if set as any string, system will load the scope by defined name, if not found at server model, system will throw an error.
 
 #### read.autoderef
 
@@ -289,7 +295,7 @@ This is synced option with v-data-table options, so you can use the same options
 if set to false, Editing option will be unavailable for the crud.
 if provided with JSON object, you can customize Editing feature.
 
--   To edit any field, you must have that in your read.modeloptions.attributes or the system will throw error
+- To edit any field, you must have that in your read.modeloptions.attributes or the system will throw error
 
 #### update.uititle
 
@@ -411,11 +417,11 @@ define what actions you want to override, each object in this array must have a 
 
 vnatk has a few predefined reserved action names
 
--   vnatk_add
--   vnatk_edit
--   vnatk_delete
+- vnatk_add
+- vnatk_edit
+- vnatk_delete
 
-    **To create forms at runtime fromsequelize model details VNATK is using [Vuetify-Form-Base](https://github.com/wotamann/vuetify-form-base) a great plugin to convert your json as beautiful vuetify forms. It will always be a great help to study that also.**
+  **To create forms at runtime fromsequelize model details VNATK is using [Vuetify-Form-Base](https://github.com/wotamann/vuetify-form-base) a great plugin to convert your json as beautiful vuetify forms. It will always be a great help to study that also.**
 
 Lets have an complete example and then go each option one by one. Please read comments for better unerstaing in the examples
 
@@ -707,7 +713,7 @@ if not defined, vnatk will use root service
 
 `String` `[Optional]` - `defaults to root basepath`
 
--   defaults to crudoptions basepath
+- defaults to crudoptions basepath
 
 #### import.model
 
@@ -779,16 +785,16 @@ You can add the following \$vnatk\_ properties in importing row items (at root l
 
 This will guide VES how you want to treat a particular relation or row.
 
--   `$vnatk_data_handle` : This property has following options to be passed as string values
-    -   `alwaysCreate`: with this option, importer will always insert data in table
-    -   `findOrCreate`: with this option, importer will try to find record in table based on all fields values, if found no data will be inserted. For relations (Nested belongsTo, belongsTomany) founded Id will be used to make relations. if you have another criteria to search not by all fields, you can set `$vnatk_find_options`
-    -   `findAndUpdateOrCreate`: with this option, importer will find (Either by all fields or as per `$vnatk_find_options` if defined) and if found, values for item will be updated. If not found the record will be instered. For relations, if not created, founded record primary key will be used to set relations as per data.
-    -   `findToAssociate`: with this option, importer will find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing City. But if not found, this throws error.
-    -   `associateIfFound`: with this option, importer will try to find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing Group. But if not found, importer will simply skip association.
--   `$vnatk_find_options` : This property has following options to be passed as string values.
-    If defined, this option guides importer to find a record. If not defined system will find by all items. like, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don't want to find by name and status.
-    -   `modelscope`: `false` to unscope model before finding, or `String` to set scope for model.
-    -   `modeloptions`: `JSON`, provides `where` condition for find. This only allows you to define where condition, attributes or include are not permitted here.
+- `$vnatk_data_handle` : This property has following options to be passed as string values
+  - `alwaysCreate`: with this option, importer will always insert data in table
+  - `findOrCreate`: with this option, importer will try to find record in table based on all fields values, if found no data will be inserted. For relations (Nested belongsTo, belongsTomany) founded Id will be used to make relations. if you have another criteria to search not by all fields, you can set `$vnatk_find_options`
+  - `findAndUpdateOrCreate`: with this option, importer will find (Either by all fields or as per `$vnatk_find_options` if defined) and if found, values for item will be updated. If not found the record will be instered. For relations, if not created, founded record primary key will be used to set relations as per data.
+  - `findToAssociate`: with this option, importer will find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing City. But if not found, this throws error.
+  - `associateIfFound`: with this option, importer will try to find record by all fields or as per `$vnatk_find_options` if defined. If found record will be used to associate, like importing users and associating them with existing Group. But if not found, importer will simply skip association.
+- `$vnatk_find_options` : This property has following options to be passed as string values.
+  If defined, this option guides importer to find a record. If not defined system will find by all items. like, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don't want to find by name and status.
+  - `modelscope`: `false` to unscope model before finding, or `String` to set scope for model.
+  - `modeloptions`: `JSON`, provides `where` condition for find. This only allows you to define where condition, attributes or include are not permitted here.
 
 #### import.success
 

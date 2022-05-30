@@ -358,6 +358,7 @@ export default {
         return;
       }
 
+      let csvprefix = "";
       // if streamWriteObject is running means pagination is working
       let overrideHeader = {};
       if (this.streamWriteObject) {
@@ -377,20 +378,19 @@ export default {
           )
         )
       );
+
       if (this.separatorExcel) {
-        csv = "SEP=" + this.delimiter + "\r\n" + csv;
+        csvprefix = "SEP=" + this.delimiter + "\r\n";
       }
+      // if (this.encoding === "utf-8") {
+      //   csvprefix += "\ufeff";
+      // }
+
       //Add BOM when UTF-8
-      if (this.encoding === "utf-8") {
-        csv = "\ufeff" + csv;
-      }
 
       // console.log("csv -----", csv);
       this.$emit("export-finished");
       // if (!this.testing) {
-      let blob = new Blob([csv], {
-        type: "application/csvcharset=" + this.encoding,
-      });
 
       if (this.useStreamSaver) {
         // console.log("streamSaver save function called");
@@ -398,7 +398,7 @@ export default {
 
         if (this.streamWriteObject) {
           writer = this.streamWriteObject;
-          csv = "\r\n" + csv; // appending \r\n to chunks data from second counting
+          csv = csvprefix + "\r\n" + csv; // appending \r\n to chunks data from second counting
         } else {
           const fileStream = streamSaver.createWriteStream(
             this.fileName + "_" + this.postfixDateTime + ".csv"
@@ -410,6 +410,10 @@ export default {
         if (!this.fetchContinue) writer.close();
         // console.log("streamSaver save function called");
       } else {
+        csv = csvprefix + csv;
+        let blob = new Blob([csv], {
+          type: "application/csvcharset=" + this.encoding,
+        });
         saveAs(blob, this.fileName + "_" + this.postfixDateTime + ".csv");
       }
 
