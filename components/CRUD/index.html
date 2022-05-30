@@ -75,6 +75,8 @@
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#quicksearch">quicksearch</a>
     </li>
+    <li class="toctree-l3"><a class="reference internal" href="#quicksearch_1">quicksearch</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#create">create</a>
         <ul>
     <li class="toctree-l4"><a class="reference internal" href="#createuititle">create.uititle</a>
@@ -232,36 +234,36 @@ args @before-import='function5' // (data) args @after-import='function6' //
 &lt;!-- also use slots as per vuetify datatable --&gt;
 &lt;!-- You will have following slots for adding your own menu buttons --&gt;
 &lt;template v-slot:MenuTopLeftBefore&gt;
-    &lt;template v-slot:MenuTopLeftAfter&gt;
-        &lt;template v-slot:MenuTopRightBefore&gt;
-            &lt;template v-slot:MenuTopRightAfter&gt;&lt;/template&gt;&lt;/template&gt;&lt;/template
+  &lt;template v-slot:MenuTopLeftAfter&gt;
+    &lt;template v-slot:MenuTopRightBefore&gt;
+      &lt;template v-slot:MenuTopRightAfter&gt;&lt;/template&gt;&lt;/template&gt;&lt;/template
 &gt;&lt;/template&gt;
 </code></pre>
 <h2 id="sample-crud-option-passing">Sample crud option passing</h2>
 <p>A sample crud option can be as follows</p>
 <pre><code class="language-html">&lt;template&gt;
-    &lt;vnatk-crud :options=&quot;crudoptions&quot;&gt; &lt;/vnatk-crud&gt;
+  &lt;vnatk-crud :options=&quot;crudoptions&quot;&gt; &lt;/vnatk-crud&gt;
 &lt;/template&gt;
 
 &lt;script&gt;
-    import { VnatkCrud } from &quot;vnatk-vue&quot;;
-    import customer from &quot;../services/customer&quot;;
+  import { VnatkCrud } from &quot;vnatk-vue&quot;;
+  import customer from &quot;../services/customer&quot;;
 
-    export default {
-        name: &quot;SampleCRUD&quot;,
-        components: {
-            VnatkCrud,
+  export default {
+    name: &quot;SampleCRUD&quot;,
+    components: {
+      VnatkCrud,
+    },
+    data() {
+      return {
+        crudoptions: {
+          service: customer,
+          model: &quot;User&quot;,
+          title: &quot;Users&quot;,
         },
-        data() {
-            return {
-                crudoptions: {
-                    service: customer,
-                    model: &quot;User&quot;,
-                    title: &quot;Users&quot;,
-                },
-            };
-        },
-    };
+      };
+    },
+  };
 &lt;/script&gt;
 </code></pre>
 <h2 id="crud-options">Crud Options</h2>
@@ -285,8 +287,13 @@ args @before-import='function5' // (data) args @after-import='function6' //
 <p>quicksearch adds a input box at top-right of crud and allws you to search in your data.</p>
 <ul>
 <li><code>quicksearch: true</code> will search in your local crud data. (Client side only.)</li>
-<li><code>quicksearch: ['field1', 'field2']</code> This format will work if your pagination is set to server mode, vnatk-crud will perform a like query on the fields provided with user entered value and results will filter in crud.</li>
+<li><code>quicksearch: ['field1', 'field2']</code> This format will work if your pagination is set to server mode, vnatk-crud will perform a exact match (equal condition) query on the fields provided with user entered value and results will filter in crud.</li>
 <li><code>quicksearch: (usertext)=&gt;{ // do some change in read.modeloptions as per your need }</code> when given as function you can modify crud options based on usertext and vue reactivity will reload crud with new options.</li>
+</ul>
+<h3 id="quicksearch_1">quicksearch</h3>
+<p><code>Boolean</code> <code>[Optional]: Default value : false</code></p>
+<ul>
+<li><code>quicksearchlikeenabled: true</code> vnatk-crud will perform a like query on the fields (quicksearch: ['field1', 'field2']) provided with user entered value and results will filter in crud.</li>
 </ul>
 <h3 id="create">create</h3>
 <p><code>Boolean/JSON</code> <code>[Optional]</code> - <code>default true</code></p>
@@ -533,11 +540,9 @@ defines options for crud, like default action placement place and headers for v-
 <ul>
 <li>vnatk_add</li>
 <li>vnatk_edit</li>
-<li>
-<p>vnatk_delete</p>
-<p><strong>To create forms at runtime fromsequelize model details VNATK is using <a href="https://github.com/wotamann/vuetify-form-base">Vuetify-Form-Base</a> a great plugin to convert your json as beautiful vuetify forms. It will always be a great help to study that also.</strong></p>
-</li>
+<li>vnatk_delete</li>
 </ul>
+<p><strong>To create forms at runtime fromsequelize model details VNATK is using <a href="https://github.com/wotamann/vuetify-form-base">Vuetify-Form-Base</a> a great plugin to convert your json as beautiful vuetify forms. It will always be a great help to study that also.</strong></p>
 <p>Lets have an complete example and then go each option one by one. Please read comments for better unerstaing in the examples</p>
 <pre><code class="language-javascript">override: {
     actions: [
@@ -841,20 +846,16 @@ crudoptions:{
 <p>You can add the following \$vnatk_ properties in importing row items (at root level as well as nested level)</p>
 <p>This will guide VES how you want to treat a particular relation or row.</p>
 <ul>
-<li><code>$vnatk_data_handle</code> : This property has following options to be passed as string values<ul>
+<li><code>$vnatk_data_handle</code> : This property has following options to be passed as string values</li>
 <li><code>alwaysCreate</code>: with this option, importer will always insert data in table</li>
 <li><code>findOrCreate</code>: with this option, importer will try to find record in table based on all fields values, if found no data will be inserted. For relations (Nested belongsTo, belongsTomany) founded Id will be used to make relations. if you have another criteria to search not by all fields, you can set <code>$vnatk_find_options</code></li>
 <li><code>findAndUpdateOrCreate</code>: with this option, importer will find (Either by all fields or as per <code>$vnatk_find_options</code> if defined) and if found, values for item will be updated. If not found the record will be instered. For relations, if not created, founded record primary key will be used to set relations as per data.</li>
 <li><code>findToAssociate</code>: with this option, importer will find record by all fields or as per <code>$vnatk_find_options</code> if defined. If found record will be used to associate, like importing users and associating them with existing City. But if not found, this throws error.</li>
 <li><code>associateIfFound</code>: with this option, importer will try to find record by all fields or as per <code>$vnatk_find_options</code> if defined. If found record will be used to associate, like importing users and associating them with existing Group. But if not found, importer will simply skip association.</li>
-</ul>
-</li>
 <li><code>$vnatk_find_options</code> : This property has following options to be passed as string values.
-    If defined, this option guides importer to find a record. If not defined system will find by all items. like, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don't want to find by name and status.<ul>
+  If defined, this option guides importer to find a record. If not defined system will find by all items. like, if you want to find a City, if not found want to create it with status Active. What if the City is already in database but deactivated, you don't want to find by name and status.</li>
 <li><code>modelscope</code>: <code>false</code> to unscope model before finding, or <code>String</code> to set scope for model.</li>
 <li><code>modeloptions</code>: <code>JSON</code>, provides <code>where</code> condition for find. This only allows you to define where condition, attributes or include are not permitted here.</li>
-</ul>
-</li>
 </ul>
 <h4 id="importsuccess">import.success</h4>
 <p><code>function|callback</code> <code>[Optional]</code> - <code>default undefined</code></p>
