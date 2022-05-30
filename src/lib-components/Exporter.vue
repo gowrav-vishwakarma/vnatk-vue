@@ -382,9 +382,9 @@ export default {
       if (this.separatorExcel) {
         csvprefix = "SEP=" + this.delimiter + "\r\n";
       }
-      if (this.encoding === "utf-8") {
-        csvprefix += "\ufeff";
-      }
+      // if (this.encoding === "utf-8") {
+      //   csvprefix += "\ufeff";
+      // }
 
       //Add BOM when UTF-8
 
