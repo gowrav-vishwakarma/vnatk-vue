@@ -976,8 +976,17 @@ export default {
         index++
       ) {
         const fieldToSearch = this.optionsprop.quicksearch[index];
-        // condition[fieldToSearch] = { $like: "%" + this.quicksearchtext + "%" };
-        condition[fieldToSearch] = this.quicksearchtext;
+        if (
+          this.optionsprop.quicksearchlikeenabled &&
+          (this.optionsprop.quicksearchlikeenabled == true ||
+            this.optionsprop.quicksearchlikeenabled == "true")
+        ) {
+          condition[fieldToSearch] = {
+            $like: "%" + this.quicksearchtext + "%",
+          };
+        } else {
+          condition[fieldToSearch] = this.quicksearchtext;
+        }
       }
 
       // add structure if not added already
