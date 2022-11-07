@@ -3,13 +3,13 @@ import axios from "axios";
 //import mock_api from "@/services/mock_customer";
 
 const api = axios.create({
-  baseURL: process.env.VUE_APP_BASE_URL_PARTNER || "http://localhost:3006",
+  baseURL: process.env.VUE_APP_BASE_URL_CUSTOMER || "http://localhost:3001",
 });
 
 api.interceptors.request.use(
   async (config) => {
     var token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDIsImZpcnN0X25hbWUiOiJSYWtlc2giLCJsYXN0X25hbWUiOiJTIiwibW9iaWxlIjoiMDAwMDAwMDAwMCIsImVtYWlsIjoicmFrZXNoLnNAZnJlbmR5LmluIiwidXNlclR5cGUiOiJlbXBsb3llZSIsInByb2ZpbGVfaWQiOjEsInBhcnRuZXJJZCI6bnVsbCwicGFydG5lckluZm8iOm51bGwsIlByb2ZpbGUubmFtZSI6IlN1cGVyQWRtaW4iLCJFbXBsb3llZXMud2FyZWhvdXNlX2lkIjo0LCJFbXBsb3llZXMuZW1wbG95ZWVfaWQiOjQyLCJzZXJ2aWNlIjoid21zIiwiaWF0IjoxNjY3ODE0OTAzLCJleHAiOjE2OTkzNTA5MDN9.Za3_teg9ibTCp1_Wuv-w4F4CT5eOX_11GVA_eg5kK58";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdE5hbWUiOiJmcmVuZHkiLCJsYXN0TmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBmcmVuZHkuaW4iLCJ1c2VyVHlwZSI6ImVtcGxveWVlIiwiaWF0IjoxNjEzNTgwNzA2LCJleHAiOjE2NDUxMTY3MDZ9.Wwya4iThBfJX_y3S2Fr4X6p8KE55j1zkQbaJVKltojM";
     if (token) {
       config.headers.Authorization = "Bearer " + token;
     }
