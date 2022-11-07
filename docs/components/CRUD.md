@@ -1,14 +1,13 @@
 # vnatk-crud
 
 ```html
-<vnatk-crud :options="crudoptions" 
-@before-action-execute='function1', // (action,item, selectedItems) args 
-@after-action-execute='function2' // (metaData,response.data) 
-@on-data-fetch='function3' // data as arguments
-@before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args 
-@after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem) args 
-@before-import='function5' // (data) args 
-@after-import='function6' // (data) args >
+<vnatk-crud :options="crudoptions" @before-action-execute='function1', //
+(action,item, selectedItems) args @after-action-execute='function2' //
+(metaData,response.data) @on-data-fetch='function3' // data as arguments
+@before-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem)
+args @after-dialog-open='function4' // (action,CurrentItemCopy, OriginalRowItem)
+args @before-import='function5' // (data) args @after-import='function6' //
+(data) args >
 <!-- also use slots as per vuetify datatable -->
 <!-- You will have following slots for adding your own menu buttons -->
 <template v-slot:MenuTopLeftBefore>
@@ -88,6 +87,7 @@ quicksearch adds a input box at top-right of crud and allws you to search in you
 - `quicksearch: (usertext)=>{ // do some change in read.modeloptions as per your need }` when given as function you can modify crud options based on usertext and vue reactivity will reload crud with new options.
 
 ### quicksearch_like_enabled
+
 `Boolean` `[Optional]: Default value : false`
 
 `quicksearch_like_enabled: true` vnatk-crud will perform a like query on the fields (quicksearch: ['field1', 'field2']) provided with user entered value and results will filter in crud.
@@ -528,6 +528,19 @@ override: {
         type: "NoRecord",
         execute: this.clientFunctionCallBack,
         isClientAction: true,
+        // add button icon
+        icon: "mdi-users",
+        // add class and style property to action button
+        attributes: {
+            color: "primary",
+            outlined: true,
+            raised: true,
+            rounded: true,
+            small: "small",
+            style: {
+                "background-color": "yellow",
+            },
+        },
     },
     ],
 }

@@ -6,14 +6,16 @@
     <!-- <exampleimport /> -->
     <!-- <h1>Example 1</h1>
     <example1 /> -->
-    <h1>Example 2</h1>
-    <exampleimportBatchWise />
+    <!-- <h1>Example 2</h1> -->
+    <!-- <exampleimportBatchWise /> -->
     <!-- <exampleAutoCompleteWhere /> -->
     <!-- <h1>Example 3</h1>
     <example3 /> -->
     <!-- <model-designer-example /> -->
     <!-- <h1>Example Full</h1>
     <example-full /> -->
+    <h1>Example Action Style css</h1>
+    <exampleActionStyle />
   </v-app>
 </template>
 
@@ -28,7 +30,8 @@ import Vue from "vue";
 // import ExampleFull from "./example-full.vue";
 // import modelDesignerExample from "./modelDeginerExample.vue";
 // import exampleAutoCompleteWhere from "./exampleAutoCompleteWhere.vue";
-import exampleimportBatchWise from "./exampleimportBatchWise.vue";
+// import exampleimportBatchWise from "./exampleimportBatchWise.vue";
+import exampleActionStyle from "./example_action_style.vue";
 
 export default Vue.extend({
   name: "ServeDev",
@@ -42,7 +45,8 @@ export default Vue.extend({
     // ExampleFull,
     // modelDesignerExample,
     // exampleAutoCompleteWhere,
-    exampleimportBatchWise,
+    // exampleimportBatchWise,
+    exampleActionStyle,
   },
 });
 </script>
